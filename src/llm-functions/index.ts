@@ -1,6 +1,6 @@
 import { OpenAI } from "openai";
 const { VITE_OPENAI_CREDS } = import.meta.env;
-import { Subject } from "rxjs";
+import { Subject, firstValueFrom } from "rxjs";
 
 type LlmStreamEventWithPayload = {
   type: "collected" | "finished";
@@ -58,6 +58,17 @@ const fetchOpenAICompletion = (prompt: string) => {
   return operationEvents;
 };
 
-export const quickPredict = (text: string) => {
+export const predict = (text: string) => {
   return fetchOpenAICompletion(text);
+};
+
+export const qPredict = (text: string) => {
+  const p$ = predict(text);
+  return new Promise<string>((resolve) => {
+    p$.subscribe((event) => {
+      if (event.type === "finished") {
+        resolve(event.payload);
+      }
+    });
+  });
 };

@@ -1,16 +1,19 @@
 import { useState } from "react";
-import { quickPredict } from "../llm-functions";
+import { predict, qPredict } from "../llm-functions";
 
 function App() {
   const [prediction, setPrediction] = useState("");
 
   const doPrediction = async () => {
-    const p = quickPredict("What is toronto?");
-    p.subscribe((event) => {
-      if (event.type === "collected") {
-        setPrediction(event.payload);
-      }
-    });
+    // const p$ = predict("What is toronto?");
+    // p$.subscribe((event) => {
+    //   if (event.type === "collected") {
+    //     setPrediction(event.payload);
+    //   }
+    // });
+
+    const p = await qPredict("What is toronto?");
+    setPrediction(p);
   };
 
   return (
