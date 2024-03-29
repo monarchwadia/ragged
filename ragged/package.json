@@ -2,10 +2,16 @@
   "name": "ragged",
   "version": "0.0.1",
   "description": "A simple library for easy LLM access.",
-  "main": "build/main.js",
+  "main": "build/ragged.node.js",
+  "browser": "build/ragged.browser.js",
   "types": "build/main.d.ts",
   "scripts": {
-    "build": "esbuild main.ts --bundle --format=esm --outdir=./build --target=es2020,firefox70,safari12 && tsc --emitDeclarationOnly",
+    "build": "pnpm build:clean && pnpm build:node && pnpm build:browser && pnpm build:module && pnpm build:tsc",
+    "build:clean": "rm -rf ./build",
+    "build:module": "esbuild main.ts --bundle --outfile=./build/ragged.module.js --platform=neutral --format=esm",
+    "build:node": "esbuild main.ts --bundle --outfile=./build/ragged.node.js --platform=node",
+    "build:browser": "esbuild main.ts --bundle --outfile=./build/ragged.browser.js --target=firefox70,safari12 --format=esm",
+    "build:tsc": "tsc --emitDeclarationOnly",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
