@@ -5,8 +5,12 @@ function App() {
   const [prediction, setPrediction] = useState("");
 
   const doPrediction = async () => {
-    const p = await quickPredict("What is toronto?");
-    setPrediction(p);
+    const p = quickPredict("What is toronto?");
+    p.subscribe((event) => {
+      if (event.type === "collected") {
+        setPrediction(event.payload);
+      }
+    });
   };
 
   return (
