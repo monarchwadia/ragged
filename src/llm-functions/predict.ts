@@ -11,7 +11,7 @@ type LlmStreamEventWithoutPayload = {
 
 type LlmStreamEvent = LlmStreamEventWithPayload | LlmStreamEventWithoutPayload;
 
-const fetchOpenAICompletion = (o: OpenAI, prompt: string) => {
+export const predict = (o: OpenAI, prompt: string) => {
   const operationEvents = new Subject<LlmStreamEvent>();
 
   const response = o.chat.completions.create({
@@ -46,10 +46,6 @@ const fetchOpenAICompletion = (o: OpenAI, prompt: string) => {
     });
 
   return operationEvents;
-};
-
-export const predict = (o: OpenAI, text: string) => {
-  return fetchOpenAICompletion(o, text);
 };
 
 export const qPredict = (o: OpenAI, text: string) => {
