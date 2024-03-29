@@ -2,16 +2,19 @@
   "name": "ragged",
   "version": "0.0.1",
   "description": "A simple library for easy LLM access.",
-  "main": "app.js",
+  "main": "build/main.js",
+  "types": "build/main.d.ts",
   "scripts": {
-    "build": "esbuild app.js --outdir=./out --bundle --platform=node --target=node10.4",
+    "build": "esbuild main.ts --bundle --format=esm --outdir=./build --target=es2020,firefox70,safari12 && tsc --emitDeclarationOnly",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "monarchwadia",
   "license": "MIT",
   "devDependencies": {
-    "esbuild": "0.20.2"
+    "esbuild": "0.20.2",
+    "openai": "^4.0.0",
+    "rxjs": "^7.8.1"
   },
   "repository": {
     "type": "git",

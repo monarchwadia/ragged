@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { LlmFunctions } from "../llm-functions";
+import { Ragged } from "ragged";
 const { VITE_OPENAI_CREDS } = import.meta.env;
 
-const l = new LlmFunctions({
+const l = new Ragged({
   openai: {
     apiKey: VITE_OPENAI_CREDS,
     dangerouslyAllowBrowser: true,

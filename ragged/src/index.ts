@@ -2,12 +2,12 @@ import { buildOpenAI } from "./buildOpenai";
 import type { ClientOptions } from "openai";
 import { predict, qPredict } from "./predict";
 
-type LlmFunctionsConfiguration = {
+type RaggedConfiguration = {
   openai: ClientOptions;
 };
 
-export class LlmFunctions {
-  constructor(private config: LlmFunctionsConfiguration) {}
+export class Ragged {
+  constructor(private config: RaggedConfiguration) {}
 
   predict(text: string) {
     const o = buildOpenAI(this.config.openai);
