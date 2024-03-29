@@ -16,6 +16,7 @@ import * as esbuild from "esbuild";
  */
 async function base(options) {
   // same as in package.json
+  // TODO: Source maps https://esbuild.github.io/api/#sourcemap
   const opts = {
     entryPoints: ["./main.ts"],
     bundle: true,
