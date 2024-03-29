@@ -1,3 +1,3 @@
-export const predict = (text: string) => {
+export const quickPredict = async (text: string) => {
   return text;
 };
