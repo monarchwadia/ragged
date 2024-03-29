@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Ragged } from "ragged";
+import { Ragged } from "ragged/unminified";
 const { VITE_OPENAI_CREDS } = import.meta.env;
 
 const l = new Ragged({

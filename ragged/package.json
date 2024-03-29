@@ -2,15 +2,45 @@
   "name": "ragged",
   "version": "0.0.1",
   "description": "A simple library for easy LLM access.",
-  "main": "build/ragged.node.js",
-  "browser": "build/ragged.browser.js",
-  "types": "build/main.d.ts",
+  "exports": {
+    ".": {
+      "node": {
+        "types": "./build/main.d.ts",
+        "import": "./build/ragged.module.min.js",
+        "require": "./build/ragged.node.min.js",
+        "default": "./build/ragged.module.min.js"
+      },
+      "default": {
+        "types": "./build/main.d.ts",
+        "import": "./build/ragged.browser.min.js",
+        "node": "./build/ragged.node.min.js",
+        "default": "./build/ragged.browser.min.js"
+      }
+    },
+    "./unminified": {
+      "node": {
+        "types": "./build/main.d.ts",
+        "import": "./build/ragged.module.js",
+        "require": "./build/ragged.node.js",
+        "default": "./build/ragged.module.js"
+      },
+      "default": {
+        "types": "./build/main.d.ts",
+        "import": "./build/ragged.browser.js",
+        "default": "./build/ragged.browser.js"
+      }
+    }
+  },
   "scripts": {
+    "newbuild": "rm -rf ./build && node build.mjs && pnpm build:tsc",
     "build": "pnpm build:clean && pnpm build:node && pnpm build:browser && pnpm build:module && pnpm build:tsc",
     "build:clean": "rm -rf ./build",
     "build:module": "esbuild main.ts --bundle --outfile=./build/ragged.module.js --platform=neutral --format=esm",
     "build:node": "esbuild main.ts --bundle --outfile=./build/ragged.node.js --platform=node",
     "build:browser": "esbuild main.ts --bundle --outfile=./build/ragged.browser.js --target=firefox70,safari12 --format=esm",
+    "build:module:minified": "pnpm build:module --minify",
+    "build:node:minified": "pnpm build:node --minify",
+    "build:browser:minified": "pnpm build:browser --minify",
     "build:tsc": "tsc --emitDeclarationOnly",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
