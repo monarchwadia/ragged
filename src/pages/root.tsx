@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { predict, qPredict } from "../llm-functions";
+import { LlmFunctions } from "../llm-functions";
+const { VITE_OPENAI_CREDS } = import.meta.env;
+
+const l = new LlmFunctions({
+  openai: {
+    apiKey: VITE_OPENAI_CREDS,
+    dangerouslyAllowBrowser: true,
+  },
+});
 
 function App() {
   const [prediction, setPrediction] = useState("");
 
   const doPrediction = async () => {
-    // const p$ = predict("What is toronto?");
-    // p$.subscribe((event) => {
-    //   if (event.type === "collected") {
-    //     setPrediction(event.payload);
-    //   }
-    // });
-
-    const p = await qPredict("What is toronto?");
+    const p = await l.qPredict("What is toronto?");
     setPrediction(p);
   };
 
