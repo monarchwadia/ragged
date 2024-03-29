@@ -1,5 +1,5 @@
 {
-  "name": "@monarchwadia/ragged",
+  "name": "ragged",
   "version": "0.0.1",
   "description": "A simple library for easy LLM access.",
   "main": "app.js",
