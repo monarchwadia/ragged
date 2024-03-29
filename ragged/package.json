@@ -1,16 +1,24 @@
 {
-  "name": "ragged",
+  "name": "@monarchwadia/ragged",
   "version": "0.0.1",
-  "description": "",
+  "description": "A simple library for easy LLM access.",
   "main": "app.js",
   "scripts": {
     "build": "esbuild app.js --outdir=./out --bundle --platform=node --target=node10.4",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "monarchwadia",
   "license": "MIT",
   "devDependencies": {
     "esbuild": "0.20.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/monarchwadia/ragged.git"
+  },
+  "bugs": {
+    "url": "https://github.com/monarchwadia/ragged/issues"
+  },
+  "homepage": "https://github.com/monarchwadia/ragged#readme"
 }
