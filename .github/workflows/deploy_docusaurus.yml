@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           # 👇 Specify build output path
-          path: documentation/build
+          path: ./documentation/build
 
       - name: Deploy to GitHub Pages
         id: deployment
