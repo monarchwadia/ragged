@@ -1,35 +1,18 @@
 {
   "name": "ragged",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A simple library for easy LLM access.",
+  "type": "module",
+  "types": "./build/main.d.ts",
   "exports": {
     ".": {
-      "node": {
-        "types": "./build/main.d.ts",
-        "import": "./build/ragged.module.min.js",
-        "require": "./build/ragged.node.min.js",
-        "default": "./build/ragged.module.min.js"
-      },
-      "default": {
-        "types": "./build/main.d.ts",
-        "import": "./build/ragged.browser.min.js",
-        "default": "./build/ragged.browser.min.js"
-      }
-    },
-    "./unminified": {
-      "node": {
-        "types": "./build/main.d.ts",
-        "import": "./build/ragged.module.js",
-        "require": "./build/ragged.node.js",
-        "default": "./build/ragged.module.js"
-      },
-      "default": {
-        "types": "./build/main.d.ts",
-        "import": "./build/ragged.browser.js",
-        "default": "./build/ragged.browser.js"
-      }
+      "types": "./build/main.d.ts",
+      "import": "./build/ragged.js"
     }
   },
+  "files": [
+    "build"
+  ],
   "scripts": {
     "build": "rm -rf ./build && node build.mjs && tsc --emitDeclarationOnly",
     "test": "echo \"Error: no test specified\" && exit 1"

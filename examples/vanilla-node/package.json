@@ -1,11 +1,12 @@
 {
-  "name": "ts-node",
+  "name": "vanilla-node",
   "version": "1.0.0",
   "description": "",
-  "main": "main.ts",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "ts-node main.ts",
-    "test": "main.ts"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
@@ -15,9 +16,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "^5.2.2"
-  }
+  "license": "ISC"
 }
