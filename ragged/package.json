@@ -1,6 +1,6 @@
 {
   "name": "ragged",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A simple library for easy LLM access.",
   "exports": {
     ".": {
@@ -13,7 +13,6 @@
       "default": {
         "types": "./build/main.d.ts",
         "import": "./build/ragged.browser.min.js",
-        "node": "./build/ragged.node.min.js",
         "default": "./build/ragged.browser.min.js"
       }
     },
