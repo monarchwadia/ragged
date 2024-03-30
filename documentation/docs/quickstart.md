@@ -2,6 +2,22 @@
 sidebar_position: 1
 ---
 
+# What is ragged?
+
+`ragged` is a simple set of functions designed to make LLMs easy and uncomplicated to use. It exposes a simple interface for promise-based inference as well as event-driven inference, which means you can quickly and easily implement your LLM-powered application with a minimum of fuss.
+
+`ragged` is currently a work in progress, but the plan is to add the following features:
+
+1. An unified facade that allows calling multiple LLM APIs.
+2. Support for text-to-text, speech-to-text, text-to-speech, text-to-image, image-to-text, and other similar usage patterns.
+3. Support for OpenAI, Anthropic, and other LLM APIs.
+
+This is an early version of `ragged`, so you can definitely expect issues. Thank you for trying it out.
+
+# Why ragged?
+
+`ragged` was born out of frustration with the current state of LLM APIs. I kept finding myself re-implementing streaming chat completion again and again. The goal of `ragged` is to scratch my own itch: make streaming (and non-streaming) LLM APIs simple and easy to use, whether on the frontend or on the backend. That's it.
+
 # Quickstart
 
 `ragged` is quick and easy to get started with. Let's get right into it.
