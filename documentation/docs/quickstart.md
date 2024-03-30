@@ -41,7 +41,10 @@ dotenv.config();
 
 const r = new Ragged({
     openai: {
-        apiKey: process.env.OPENAI_API_KEY
+        apiKey: process.env.OPENAI_API_KEY,
+        // if you are in a browser envioronment, you can uncomment the following line to try out ragged.
+        // a better solution for browsers will be presented in the near future.
+        // dangerouslyAllowBrowser: true,
     }
 });
 

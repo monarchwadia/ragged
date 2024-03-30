@@ -1,10 +1,19 @@
-# Ragged
 
-A simple library for easy LLM access.
+# What is ragged?
 
-See documentation at https://monarchwadia.github.io/ragged/
+`ragged` is a simple set of functions designed to make LLMs easy and uncomplicated to use. It exposes a simple interface for promise-based inference as well as event-driven inference, which means you can quickly and easily implement your LLM-powered application with a minimum of fuss.
 
-NPM is at https://www.npmjs.com/package/ragged
+`ragged` is currently a work in progress, but the plan is to add the following features:
+
+1. An unified facade that allows calling multiple LLM APIs.
+2. Support for text-to-text, speech-to-text, text-to-speech, text-to-image, image-to-text, and other similar usage patterns.
+3. Support for OpenAI, Anthropic, and other LLM APIs.
+
+This is an early version of `ragged`, so you can definitely expect issues. Thank you for trying it out.
+
+# Why ragged?
+
+`ragged` was born out of frustration with the current state of LLM APIs. I kept finding myself re-implementing streaming chat completion again and again. The goal of `ragged` is to scratch my own itch: make streaming (and non-streaming) LLM APIs simple and easy to use, whether on the frontend or on the backend. That's it.
 
 # Quickstart
 
@@ -12,16 +21,10 @@ NPM is at https://www.npmjs.com/package/ragged
 
 ## Installation
 
-First, you'll need `openai` and `rxjs`, which are peer dependencies.
+You'll need to install `ragged` along with its peer dependencies, `openai` and `rxjs`.
 
 ```
-npm install --save openai rxjs
-```
-
-Then, you can install `ragged`.
-
-```
-npm install --save ragged
+npm install --save openai rxjs ragged
 ```
 
 ## Your first API call
@@ -30,33 +33,21 @@ If you already have OPENAI_API_KEY in your environment, then you can simply do t
 
 ```ts
 import { Ragged } from "ragged";
-
-// IMPORTANT: Make sure process.env has your openai api key
-
-const r = new Ragged();
-r.qPredict("What is Toronto?")
-  .then(console.log)
-  .catch(console.error)
-// Toronto is a city in Canada. It has a population of...
-```
-
-## Manually configuring the API key
-
-If you need to manually configure the OpenAI API key, you can do the following.
-
-```ts
-import { Ragged } from "ragged";
-
-const OPENAI_API_KEY = "your api key"
+import dotenv from "dotenv";
+dotenv.config();
 
 const r = new Ragged({
-  openai: { apiKey: OPENAI_API_KEY }
+    openai: {
+        apiKey: process.env.OPENAI_API_KEY,
+        // if you are in a browser envioronment, you can uncomment the following line to try out ragged.
+        // a better solution for browsers will be presented in the near future.
+        // dangerouslyAllowBrowser: true,
+    }
 });
 
 r.qPredict("What is Toronto?")
-  .then(console.log)
-  .catch(console.error);
-// Toronto is a city in Canada. It has a population of...
+    .then(console.log)
+    .catch(console.error)
 ```
 
 ## Streaming API
@@ -64,37 +55,26 @@ r.qPredict("What is Toronto?")
 The above example had a promise-based interface that is easy to use, but does not support streaming. Luckily, `ragged` offers full support for streaming.
 
 ```ts
-import { Ragged } from "ragged";
-
-const OPENAI_API_KEY = "your api key"
-
-const r = new Ragged({
-  openai: { apiKey: OPENAI_API_KEY }
-});
-
 r.predict("What is toronto?").subscribe((e) => {
-  // the "started" event is emitted when the prediction starts
   if (e.type === "started") {
+    // the "started" event is emitted when the prediction starts
     // no-op
   }
 
-  // WIP
-  // doesn't get emitted yet, but will in the future
-  // the "collected" event is emitted with the partially complete prediction as it streams down
   if (e.type === "collected") {
-    setPrediction(e.payload);
+    // the "collected" event is emitted with the partially complete prediction as it streams down
+    // Output is delivered in the string as collected so far.
     // Toronto
     // Toronto is
     // Toronto is a
-    // Toronto is a city
-    // Toronto is a city in
-    // etc
+    // ...
+    setPrediction(e.payload);
   }
 
-  // the "completed" event is emitted with the fully complete prediction
   if (e.type === "finished") {
-    setPrediction(e.payload);
-    // Toronto is a city in Canada.
+    // the "finished" event is emitted with the fully complete prediction
+    // Toronto is a city in Canada...
+    setPrediction(e.payload); 
   }
 });
 ```
