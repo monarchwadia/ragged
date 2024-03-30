@@ -12,16 +12,10 @@ NPM is at https://www.npmjs.com/package/ragged
 
 ## Installation
 
-First, you'll need `openai` and `rxjs`, which are peer dependencies.
+You'll need to install `ragged` along with its peer dependencies, `openai` and `rxjs`.
 
 ```
-npm install --save openai rxjs
-```
-
-Then, you can install `ragged`.
-
-```
-npm install --save ragged
+npm install --save openai rxjs ragged
 ```
 
 ## Your first API call
@@ -30,33 +24,18 @@ If you already have OPENAI_API_KEY in your environment, then you can simply do t
 
 ```ts
 import { Ragged } from "ragged";
-
-// IMPORTANT: Make sure process.env has your openai api key
-
-const r = new Ragged();
-r.qPredict("What is Toronto?")
-  .then(console.log)
-  .catch(console.error)
-// Toronto is a city in Canada. It has a population of...
-```
-
-## Manually configuring the API key
-
-If you need to manually configure the OpenAI API key, you can do the following.
-
-```ts
-import { Ragged } from "ragged";
-
-const OPENAI_API_KEY = "your api key"
+import dotenv from "dotenv";
+dotenv.config();
 
 const r = new Ragged({
-  openai: { apiKey: OPENAI_API_KEY }
+    openai: {
+        apiKey: process.env.OPENAI_API_KEY
+    }
 });
 
 r.qPredict("What is Toronto?")
-  .then(console.log)
-  .catch(console.error);
-// Toronto is a city in Canada. It has a population of...
+    .then(console.log)
+    .catch(console.error)
 ```
 
 ## Streaming API
@@ -64,37 +43,26 @@ r.qPredict("What is Toronto?")
 The above example had a promise-based interface that is easy to use, but does not support streaming. Luckily, `ragged` offers full support for streaming.
 
 ```ts
-import { Ragged } from "ragged";
-
-const OPENAI_API_KEY = "your api key"
-
-const r = new Ragged({
-  openai: { apiKey: OPENAI_API_KEY }
-});
-
 r.predict("What is toronto?").subscribe((e) => {
-  // the "started" event is emitted when the prediction starts
   if (e.type === "started") {
+    // the "started" event is emitted when the prediction starts
     // no-op
   }
 
-  // WIP
-  // doesn't get emitted yet, but will in the future
-  // the "collected" event is emitted with the partially complete prediction as it streams down
   if (e.type === "collected") {
-    setPrediction(e.payload);
+    // the "collected" event is emitted with the partially complete prediction as it streams down
+    // Output is delivered in the string as collected so far.
     // Toronto
     // Toronto is
     // Toronto is a
-    // Toronto is a city
-    // Toronto is a city in
-    // etc
+    // ...
+    setPrediction(e.payload);
   }
 
-  // the "completed" event is emitted with the fully complete prediction
   if (e.type === "finished") {
-    setPrediction(e.payload);
-    // Toronto is a city in Canada.
+    // the "finished" event is emitted with the fully complete prediction
+    // Toronto is a city in Canada...
+    setPrediction(e.payload); 
   }
 });
 ```
