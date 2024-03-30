@@ -31,11 +31,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf ./build && node build.mjs && pnpm build:tsc",
-    "build:module:minified": "pnpm build:module --minify",
-    "build:node:minified": "pnpm build:node --minify",
-    "build:browser:minified": "pnpm build:browser --minify",
-    "build:tsc": "tsc --emitDeclarationOnly",
+    "build": "rm -rf ./build && node build.mjs && tsc --emitDeclarationOnly",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
