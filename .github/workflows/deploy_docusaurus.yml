@@ -3,7 +3,7 @@
 on:
     push:
       branches:
-        - build
+        - main
 permissions:
   contents: read
   pages: write
