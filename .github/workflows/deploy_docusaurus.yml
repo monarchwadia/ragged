@@ -4,6 +4,10 @@ on:
     push:
       branches:
         - build
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 jobs:
   deploy_docusaurus:
     environment:
