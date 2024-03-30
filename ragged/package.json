@@ -1,6 +1,6 @@
 {
   "name": "ragged",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple library for easy LLM access.",
   "exports": {
     ".": {
