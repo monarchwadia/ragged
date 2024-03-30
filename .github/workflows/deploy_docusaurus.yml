@@ -43,18 +43,20 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm build
         working-directory: documentation
+        run: pnpm install build
 
       # 👆 Build steps
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
           # 👇 Specify build output path
           path: documentation/build
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
