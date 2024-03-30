@@ -44,7 +44,7 @@ jobs:
 
       - name: Build
         working-directory: documentation
-        run: pnpm install build
+        run: pnpm build
 
       # 👆 Build steps
 
