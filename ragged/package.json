@@ -1,6 +1,6 @@
 {
   "name": "ragged",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A simple library for easy LLM access.",
   "exports": {
     ".": {
@@ -31,12 +31,7 @@
     }
   },
   "scripts": {
-    "newbuild": "rm -rf ./build && node build.mjs && pnpm build:tsc",
-    "build": "pnpm build:clean && pnpm build:node && pnpm build:browser && pnpm build:module && pnpm build:tsc",
-    "build:clean": "rm -rf ./build",
-    "build:module": "esbuild main.ts --bundle --outfile=./build/ragged.module.js --platform=neutral --format=esm",
-    "build:node": "esbuild main.ts --bundle --outfile=./build/ragged.node.js --platform=node",
-    "build:browser": "esbuild main.ts --bundle --outfile=./build/ragged.browser.js --target=firefox70,safari12 --format=esm",
+    "build": "rm -rf ./build && node build.mjs && pnpm build:tsc",
     "build:module:minified": "pnpm build:module --minify",
     "build:node:minified": "pnpm build:node --minify",
     "build:browser:minified": "pnpm build:browser --minify",
