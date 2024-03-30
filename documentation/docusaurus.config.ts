@@ -4,8 +4,8 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "ragged",
-  tagline: "An LLM SDK for mere mortals.",
-  favicon: "img/favicon.ico",
+  tagline: "a simple library for easy LLM access",
+  // favicon: "img/favicon.ico",
 
   // Set the production url of your site here
   url: "https://monarchwadia.github.io",
@@ -66,9 +66,9 @@ const config: Config = {
           type: "docSidebar",
           sidebarId: "tutorialSidebar",
           position: "left",
-          label: "Tutorial",
+          label: "Quickstart",
         },
-        { to: "/blog", label: "Blog", position: "left" },
+        // { to: "/blog", label: "Blog", position: "left" },
         {
           href: "https://github.com/facebook/docusaurus",
           label: "GitHub",
