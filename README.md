@@ -34,7 +34,7 @@ import { Ragged } from "ragged";
 // IMPORTANT: Make sure process.env has your openai api key
 
 const r = new Ragged();
-r.qPredict("What is Toronto?")
+r.predict("What is Toronto?")
   .then(console.log)
   .catch(console.error)
 // Toronto is a city in Canada. It has a population of...
@@ -53,7 +53,7 @@ const r = new Ragged({
   openai: { apiKey: OPENAI_API_KEY }
 });
 
-r.qPredict("What is Toronto?")
+r.predict("What is Toronto?")
   .then(console.log)
   .catch(console.error);
 // Toronto is a city in Canada. It has a population of...
@@ -72,7 +72,7 @@ const r = new Ragged({
   openai: { apiKey: OPENAI_API_KEY }
 });
 
-r.predict("What is toronto?").subscribe((e) => {
+r.predictStream("What is toronto?").subscribe((e) => {
   // the "started" event is emitted when the prediction starts
   if (e.type === "started") {
     // no-op

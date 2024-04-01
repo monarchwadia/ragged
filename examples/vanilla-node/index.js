@@ -8,7 +8,7 @@ const r = new Ragged({
         apiKey: process.env.OPENAI_API_KEY
     }
 });
-r.qPredict("What is Toronto?")
+r.predict("What is Toronto?")
     .then(console.log)
     .catch(console.error)
 

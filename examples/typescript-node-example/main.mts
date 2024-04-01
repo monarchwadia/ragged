@@ -11,7 +11,7 @@ const ragged = new Ragged({
 });
 
 async function main() {
-  const r = await ragged.qPredict("What is Toronto?");
+  const r = await ragged.predict("What is Toronto?");
   console.log(r);
 }
 
