@@ -5,7 +5,7 @@ type DeltaCollection = {
   role: string;
 };
 
-type DetectorEvent =
+export type ChatCompletionDetectorEvent =
   | {
       type: "CHAT_COMPLETION_START";
       index: number;
@@ -26,7 +26,7 @@ type DetectorEvent =
       content: string;
     };
 
-type Listener = (obj: DetectorEvent) => void;
+type Listener = (obj: ChatCompletionDetectorEvent) => void;
 
 export class ChatCompletionDetector {
   private listeners: Listener[] = [];
@@ -95,7 +95,7 @@ export class ChatCompletionDetector {
     this.listeners.push(cb);
   }
 
-  private emit(evt: DetectorEvent) {
+  private emit(evt: ChatCompletionDetectorEvent) {
     for (const listener of this.listeners) {
       listener(evt);
     }
