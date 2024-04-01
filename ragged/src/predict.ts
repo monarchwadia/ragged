@@ -1,7 +1,6 @@
 import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
 import { ChatCompletionDetector } from "../detector/OpenAiChatCompletionDetector";
-import { ToolUseCompletionDetector } from "../detector/ToolUseCompletionDetector";
 
 type LlmStreamEvent =
   | { type: "started"; index: number }
@@ -10,14 +9,16 @@ type LlmStreamEvent =
   | { type: "finished"; index: number; payload: string }
   | {
       type: "tool_use_start";
-      index: { toolCallIndex: number; choiceIndex: number };
+      index: number;
+      toolCallIndex: number;
       payload: {
         name: string;
       };
     }
   | {
       type: "tool_use_finish";
-      index: { toolCallIndex: number; choiceIndex: number };
+      index: number;
+      toolCallIndex: number;
       payload: {
         name: string;
         arguments: unknown;
@@ -54,20 +55,11 @@ export const predictStream = (o: OpenAI, prompt: string) => {
         operationEvents.next({ type: "finished", index, payload: evt.content });
         operationEvents.complete();
         break;
-    }
-  });
-
-  const toolUseCompletionDetector = new ToolUseCompletionDetector();
-
-  toolUseCompletionDetector.listen((evt) => {
-    switch (evt.type) {
       case "TOOL_USE_START":
         operationEvents.next({
           type: "tool_use_start",
-          index: {
-            choiceIndex: evt.choiceIndex,
-            toolCallIndex: evt.toolCallIndex,
-          },
+          index: evt.index,
+          toolCallIndex: evt.toolCallIndex,
           payload: {
             name: evt.toolCall.name,
           },
@@ -76,10 +68,8 @@ export const predictStream = (o: OpenAI, prompt: string) => {
       case "TOOL_USE_FINISH":
         operationEvents.next({
           type: "tool_use_finish",
-          index: {
-            choiceIndex: evt.choiceIndex,
-            toolCallIndex: evt.toolCallIndex,
-          },
+          index: evt.index,
+          toolCallIndex: evt.toolCallIndex,
           payload: {
             name: evt.toolCall.name,
             arguments: evt.toolCall.arguments,
