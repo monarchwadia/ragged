@@ -6,6 +6,22 @@ import {
 import streamInput from "./ChatCompletionDetector.test.json";
 
 describe("ChatCompletionDetector", () => {
+  it("CHAT_COMPLETION_START should be accurate", () => {
+    let firstEvent: ChatCompletionDetectorEvent | null = null;
+    const detector = new ChatCompletionDetector();
+    detector.listen((evt) => {
+      if (!firstEvent) {
+        firstEvent = evt;
+      }
+    });
+    for (const obj of streamInput) {
+      detector.scan(obj);
+    }
+    expect(firstEvent).toEqual({
+      type: "CHAT_COMPLETION_START",
+      index: 0,
+    });
+  });
   it("CHAT_COMPLETION_FINISH should be accurate", () => {
     let completedEvent;
     const detector = new ChatCompletionDetector();
