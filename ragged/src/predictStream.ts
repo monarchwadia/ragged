@@ -135,14 +135,3 @@ export const predictStream = (o: OpenAI, prompt: string) => {
 
   return operationEvents;
 };
-
-export const predict = (o: OpenAI, text: string) => {
-  const p$ = predictStream(o, text);
-  return new Promise<string>((resolve) => {
-    p$.subscribe((event) => {
-      if (event.type === "finished") {
-        resolve(event.payload);
-      }
-    });
-  });
-};

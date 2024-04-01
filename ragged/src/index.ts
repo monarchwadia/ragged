@@ -1,6 +1,6 @@
 import { buildOpenAI } from "./buildOpenai";
 import type { ClientOptions } from "openai";
-import { predictStream, predict } from "./predict";
+import { predictStream } from "./predictStream";
 
 type RaggedConfiguration = {
   openai: ClientOptions;
@@ -16,6 +16,13 @@ export class Ragged {
 
   predict(text: string) {
     const o = buildOpenAI(this.config.openai);
-    return predict(o, text);
+    const p$ = predictStream(o, text);
+    return new Promise<string>((resolve) => {
+      p$.subscribe((event) => {
+        if (event.type === "finished") {
+          resolve(event.payload);
+        }
+      });
+    });
   }
 }
