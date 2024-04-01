@@ -17,13 +17,16 @@ function App() {
   const [prediction, setPrediction] = useState("");
 
   const doPredictionPromiseBased = async () => {
-    const p = await l.qPredict("What is toronto?");
+    const p = await l.predict("What is toronto?");
     setPrediction(p);
   };
 
   const doPredictionEventDriven = async () => {
-    const p = l.predict("What is toronto?");
+    const p = l.predictStream("What is toronto?");
+
     p.subscribe((e) => {
+      console.log("EVENT", e);
+      // console.log(e);
       // the "started" event is emitted when the prediction starts
       if (e.type === "started") {
         // no-op
@@ -33,6 +36,7 @@ function App() {
       // doesn't get emitted yet, but will in the future
       // the "collected" event is emitted with the partially complete prediction as it streams down
       if (e.type === "collected") {
+        console.log("SET PREDICTION", e.payload);
         setPrediction(e.payload);
         // Toronto
         // Toronto is
@@ -51,14 +55,14 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <div>{prediction}</div>
-      <div className="btn btn-success" onClick={doPredictionEventDriven}>
-        Predict Streaming
+      <div className="btn btn-success w-fit" onClick={doPredictionPromiseBased}>
+        Predict
       </div>
-      <div className="btn btn-success" onClick={doPredictionPromiseBased}>
-        Predict Async
+      <div className="btn btn-success w-fit" onClick={doPredictionEventDriven}>
+        Predict Streaming
       </div>
     </div>
   );

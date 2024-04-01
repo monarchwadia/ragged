@@ -11,22 +11,14 @@ type LlmStreamEvent =
 export const predictStream = (o: OpenAI, prompt: string) => {
   const operationEvents = new Subject<LlmStreamEvent>();
 
-  const response = o.chat.completions.create({
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-    stream: true,
-  });
-
   const chatCompletionDetector = new ChatCompletionDetector();
   chatCompletionDetector.listen((evt) => {
     const { type, index } = evt;
 
     switch (type) {
+      case "CHAT_COMPLETION_START":
+        operationEvents.next({ type: "started", index });
+        break;
       case "CHAT_COMPLETION_CHUNK":
         operationEvents.next({
           type: "chunk",
@@ -45,21 +37,58 @@ export const predictStream = (o: OpenAI, prompt: string) => {
         operationEvents.next({ type: "finished", index, payload: evt.content });
         operationEvents.complete();
         break;
-      case "CHAT_COMPLETION_START":
-        operationEvents.next({ type: "started", index });
-        break;
     }
   });
 
+  const response = o.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    stream: true,
+  });
+
+  const decoder = new TextDecoder();
   response
     .then((response) => {
-      for (const chunk in response) {
-        chatCompletionDetector.scan(chunk);
+      const reader = response.toReadableStream().getReader();
+
+      function read() {
+        reader
+          .read()
+          .then(({ done, value }) => {
+            if (done) {
+              return;
+            }
+
+            const val = decoder.decode(value);
+
+            chatCompletionDetector.scan(JSON.parse(val));
+            read();
+          })
+          .catch((error) => {
+            // Handle any errors that may have occurred
+            console.error(
+              "An error occurred while streaming responses from OpenAI:",
+              error
+            );
+
+            // You might want to emit an 'error' event instead
+            operationEvents.error(error);
+          });
       }
+
+      read();
     })
     .catch((error) => {
       // Handle any errors
-      console.error("An error occurred:", error);
+      console.error(
+        "An error occurred while trying to open the connection with OpenAI:",
+        error
+      );
 
       // You might want to emit an 'error' event instead
       operationEvents.error(error);
