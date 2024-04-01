@@ -37,18 +37,26 @@ If you already have OPENAI_API_KEY in your environment, then you can simply do t
 ```ts
 import { Ragged } from "ragged";
 
-// IMPORTANT: Make sure process.env has your openai api key
+const OPENAI_API_KEY = "your api key"
 
-const r = new Ragged();
+const r = new Ragged({
+    openai: {
+        apiKey: OPENAI_API_KEY
+    }
+});
 r.predict("What is Toronto?")
   .then(console.log)
   .catch(console.error)
 // Toronto is a city in Canada. It has a population of...
 ```
 
-## Manually configuring the API key
+## Manually configuring the OpenAI object
 
-If you need to manually configure the OpenAI API key, you can do the following.
+The `Ragged` object's constructor takes a single parameter which allows you to configure each AI API differently.
+
+The `openai` key allows you to directly modify how the OpenAI client gets instantiated.
+
+Please read the OpenAI documentation for instantiating the JavaScript OpenAI client for more details.
 
 ```ts
 import { Ragged } from "ragged";
@@ -57,10 +65,8 @@ const OPENAI_API_KEY = "your api key"
 
 const r = new Ragged({
     openai: {
-        apiKey: process.env.OPENAI_API_KEY,
-        // if you are in a browser envioronment, you can uncomment the following line to try out ragged.
-        // a better solution for browsers will be presented in the near future.
-        // dangerouslyAllowBrowser: true,
+        apiKey: OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true, // you need this if you're in a browser
     }
 });
 

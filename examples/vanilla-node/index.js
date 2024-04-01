@@ -11,5 +11,3 @@ const r = new Ragged({
 r.predict("What is Toronto?")
     .then(console.log)
     .catch(console.error)
-
-// const r = new Ragged();
