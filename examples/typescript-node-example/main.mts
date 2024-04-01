@@ -1,5 +1,3 @@
-// in order to use the unminified version, make sure you are using "moduleResolution='NodeNext'" in your tsconfig.json
-
 import { Ragged } from "ragged";
 import dotenv from "dotenv";
 dotenv.config();

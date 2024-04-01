@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
 import { ChatCompletionDetector } from "../detector/OpenAiChatCompletionDetector";
+import { JSONSchema4Object, JSONSchema4Type } from "json-schema";
 
 type LlmStreamEvent =
   | { type: "started"; index: number }
@@ -25,7 +26,34 @@ type LlmStreamEvent =
       };
     };
 
-export const predictStream = (o: OpenAI, prompt: string) => {
+type ResolvedPredictOptions = {
+  model: "gpt-3.5-turbo" | "gpt-4";
+  tools?: {
+    name: string;
+    description: string;
+    parameters: JSONSchema4Object;
+  }[];
+};
+
+export type PredictOptions = Partial<ResolvedPredictOptions>;
+
+const resolvePredictOptions = (
+  opts: Partial<ResolvedPredictOptions> = {}
+): ResolvedPredictOptions => {
+  const resolved: ResolvedPredictOptions = {
+    model: "gpt-3.5-turbo",
+    ...opts,
+  };
+
+  return resolved;
+};
+
+export const predictStream = (
+  o: OpenAI,
+  prompt: string,
+  opts?: Partial<ResolvedPredictOptions>
+) => {
+  const _opts = resolvePredictOptions(opts);
   const operationEvents = new Subject<LlmStreamEvent>();
 
   const chatCompletionDetector = new ChatCompletionDetector();
@@ -79,8 +107,8 @@ export const predictStream = (o: OpenAI, prompt: string) => {
     }
   });
 
-  const response = o.chat.completions.create({
-    model: "gpt-3.5-turbo",
+  const body: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
+    model: _opts.model,
     messages: [
       {
         role: "user",
@@ -88,7 +116,23 @@ export const predictStream = (o: OpenAI, prompt: string) => {
       },
     ],
     stream: true,
-  });
+  };
+
+  if (_opts.tools) {
+    body.tools = [];
+    for (const tool of _opts.tools) {
+      body.tools.push({
+        type: "function",
+        function: {
+          name: tool.name,
+          description: tool.description,
+          parameters: tool.parameters,
+        },
+      });
+    }
+  }
+
+  const response = o.chat.completions.create(body);
 
   const decoder = new TextDecoder();
   response

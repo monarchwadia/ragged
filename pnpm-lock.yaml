@@ -70,6 +70,30 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
+  examples/typescript-node-tool-use:
+    dependencies:
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      fluent-json-schema:
+        specifier: ^4.2.1
+        version: 4.2.1
+      openai:
+        specifier: ^4.0.0
+        version: 4.30.0
+      ragged:
+        specifier: workspace:*
+        version: link:../../ragged
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
+      typescript:
+        specifier: ^5.2.2
+        version: 5.4.3
+
   examples/vanilla-node:
     dependencies:
       dotenv:
@@ -160,6 +184,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
+      '@types/json-schema':
+        specifier: ^7.0.15
+        version: 7.0.15
       esbuild:
         specifier: 0.20.2
         version: 0.20.2
@@ -2908,6 +2935,10 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@fastify/deepmerge@1.3.0:
+    resolution: {integrity: sha512-J8TOSBq3SoZbDhM9+R/u77hP93gz/rajSA+K2kGyijPpORPWUXHUpTaleoj+92As0S9uPRP7Oi8IqMf0u+ro6A==}
+    dev: false
 
   /@hapi/hoek@9.3.0:
     resolution: {integrity: sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ==}
@@ -6299,6 +6330,12 @@ packages:
   /flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
     dev: true
+
+  /fluent-json-schema@4.2.1:
+    resolution: {integrity: sha512-vSvURY8BBRqxOFquy/wwjdnT4z07j2NZ+Cm3Nj881NHXKPSdiE4ZNyRImDh+SIk2yFZKzj7Clt+ENb5ha4uYJA==}
+    dependencies:
+      '@fastify/deepmerge': 1.3.0
+    dev: false
 
   /follow-redirects@1.15.6:
     resolution: {integrity: sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==}
@@ -11087,7 +11124,6 @@ packages:
     resolution: {integrity: sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
