@@ -1,6 +1,6 @@
 import { ChatCompletionDetector } from "./ChatCompletionDetector";
 // This is a test file for ChatCompletionDetector that contains the events streamed from a simple OpenAI gpt-3.5 call
-import streamInput from "./stream-input.json";
+import streamInput from "./ChatCompletionDetector.test.json";
 
 describe("ChatCompletionDetector", () => {
   it("should accurately return the chat completion finish", () => {
