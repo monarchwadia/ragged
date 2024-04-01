@@ -54,4 +54,36 @@ describe("ChatCompletionDetector", () => {
         "Toronto is the capital city of the province of Ontario in Canada. It is the largest city in Canada and is known for its diverse culture, thriving arts scene, and bustling downtown core. Toronto is also a major financial and business hub in North America.",
     });
   });
+  it("CHAT_COMPLETION_CHUNK should be accurate", () => {
+    let collectEvents: ChatCompletionDetectorEvent[] = [];
+    const detector = new ChatCompletionDetector();
+    detector.listen((evt) => {
+      if (evt.type === "CHAT_COMPLETION_CHUNK") {
+        collectEvents.push(evt);
+      }
+    });
+    for (const obj of streamInput) {
+      detector.scan(obj);
+    }
+    expect(collectEvents[0]).toEqual({
+      type: "CHAT_COMPLETION_CHUNK",
+      index: 0,
+      content: "",
+    });
+    expect(collectEvents[1]).toEqual({
+      type: "CHAT_COMPLETION_CHUNK",
+      index: 0,
+      content: "Toronto",
+    });
+    expect(collectEvents[2]).toEqual({
+      type: "CHAT_COMPLETION_CHUNK",
+      index: 0,
+      content: " is",
+    });
+    expect(collectEvents[51]).toEqual({
+      type: "CHAT_COMPLETION_CHUNK",
+      index: 0,
+      content: undefined,
+    });
+  });
 });
