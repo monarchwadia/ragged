@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
-import { ChatCompletionDetector } from "../detector/ChatCompletionDetector";
+import { ChatCompletionDetector } from "../detector/OpenAiChatCompletionDetector";
 import { ToolUseCompletionDetector } from "../detector/ToolUseCompletionDetector";
 
 type LlmStreamEvent =

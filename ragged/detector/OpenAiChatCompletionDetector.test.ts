@@ -1,20 +1,21 @@
 import {
   ChatCompletionDetector,
-  ChatCompletionDetectorEvent,
-} from "./ChatCompletionDetector";
+  OpenAiChatCompletionDetectorEvent,
+} from "./OpenAiChatCompletionDetector";
 // This is a test file for ChatCompletionDetector that contains the events streamed from a simple OpenAI gpt-3.5 call
-import streamInput from "./ChatCompletionDetector.test.json";
+import chatStreamInput from "./ChatCompletionDetector.test.json";
+import toolUseStreamInput from "./ToolUseCompletionDetector.test.json";
 
 describe("ChatCompletionDetector", () => {
   it("CHAT_COMPLETION_START should be accurate", () => {
-    let firstEvent: ChatCompletionDetectorEvent | null = null;
+    let firstEvent: OpenAiChatCompletionDetectorEvent | null = null;
     const detector = new ChatCompletionDetector();
     detector.listen((evt) => {
       if (!firstEvent) {
         firstEvent = evt;
       }
     });
-    for (const obj of streamInput) {
+    for (const obj of chatStreamInput) {
       detector.scan(obj);
     }
     expect(firstEvent).toEqual({
@@ -22,7 +23,7 @@ describe("ChatCompletionDetector", () => {
       index: 0,
     });
   });
-  it("CHAT_COMPLETION_FINISH should be accurate", () => {
+  it("CHAT_COMPLETION_FINISH should be accurate without tool use", () => {
     let completedEvent;
     const detector = new ChatCompletionDetector();
     detector.listen((evt) => {
@@ -30,7 +31,7 @@ describe("ChatCompletionDetector", () => {
         completedEvent = evt;
       }
     });
-    for (const obj of streamInput) {
+    for (const obj of chatStreamInput) {
       detector.scan(obj);
     }
 
@@ -43,14 +44,14 @@ describe("ChatCompletionDetector", () => {
   });
 
   it("CHAT_COMPLETION_COLLECT should be accurate", () => {
-    let collectEvents: ChatCompletionDetectorEvent[] = [];
+    let collectEvents: OpenAiChatCompletionDetectorEvent[] = [];
     const detector = new ChatCompletionDetector();
     detector.listen((evt) => {
       if (evt.type === "CHAT_COMPLETION_COLLECT") {
         collectEvents.push(evt);
       }
     });
-    for (const obj of streamInput) {
+    for (const obj of chatStreamInput) {
       detector.scan(obj);
     }
     expect(collectEvents[0]).toEqual({
@@ -71,14 +72,14 @@ describe("ChatCompletionDetector", () => {
     });
   });
   it("CHAT_COMPLETION_CHUNK should be accurate", () => {
-    let collectEvents: ChatCompletionDetectorEvent[] = [];
+    let collectEvents: OpenAiChatCompletionDetectorEvent[] = [];
     const detector = new ChatCompletionDetector();
     detector.listen((evt) => {
       if (evt.type === "CHAT_COMPLETION_CHUNK") {
         collectEvents.push(evt);
       }
     });
-    for (const obj of streamInput) {
+    for (const obj of chatStreamInput) {
       detector.scan(obj);
     }
     expect(collectEvents[0]).toEqual({
@@ -100,6 +101,90 @@ describe("ChatCompletionDetector", () => {
       type: "CHAT_COMPLETION_CHUNK",
       index: 0,
       content: "", // note, this is an empty string because the delta.content is null
+    });
+  });
+
+  it("TOOL_USE_START should work as expected", () => {
+    const detector = new ChatCompletionDetector();
+
+    let firstToolUseEvent: OpenAiChatCompletionDetectorEvent | undefined =
+      undefined;
+
+    detector.listen((evt) => {
+      if (evt.type === "TOOL_USE_START" && !firstToolUseEvent) {
+        firstToolUseEvent = evt;
+      }
+    });
+
+    for (const obj of toolUseStreamInput) {
+      detector.scan(obj);
+    }
+
+    expect(firstToolUseEvent).toEqual({
+      index: 0,
+      toolCallIndex: 0,
+      type: "TOOL_USE_START",
+      toolCall: {
+        name: "adder",
+      },
+    });
+  });
+
+  it("TOOL_USE_FINISH should work as expected", () => {
+    const detector = new ChatCompletionDetector();
+
+    let lastToolUseEvent: OpenAiChatCompletionDetectorEvent | undefined =
+      undefined;
+
+    detector.listen((evt) => {
+      if (evt.type === "TOOL_USE_FINISH") {
+        lastToolUseEvent = evt;
+      }
+    });
+
+    for (const obj of toolUseStreamInput) {
+      detector.scan(obj);
+    }
+
+    expect(lastToolUseEvent).toEqual({
+      index: 0,
+      toolCallIndex: 0,
+      type: "TOOL_USE_FINISH",
+      toolCall: {
+        name: "adder",
+        arguments: {
+          a: 1,
+          b: 1,
+        },
+      },
+    });
+  });
+
+  it("CHAT_COMPLETION_FINISH, with tool use, should be accurate", () => {
+    let completedEvent;
+    const detector = new ChatCompletionDetector();
+    detector.listen((evt) => {
+      if (evt.type === "CHAT_COMPLETION_FINISH") {
+        completedEvent = evt;
+      }
+    });
+    for (const obj of toolUseStreamInput) {
+      detector.scan(obj);
+    }
+
+    expect(completedEvent).toEqual({
+      type: "CHAT_COMPLETION_FINISH",
+      index: 0,
+      content: "",
+      toolCalls: [
+        {
+          name: "adder",
+          arguments: {
+            a: 1,
+            b: 1,
+          },
+        },
+      ],
     });
   });
 });
