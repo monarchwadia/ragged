@@ -98,7 +98,7 @@ export class ChatCompletionDetector {
 
   private emit(evt: ChatCompletionDetectorEvent) {
     for (const listener of this.listeners) {
-      listener(evt);
+      listener(structuredClone(evt));
     }
   }
 }
