@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
-    "start": "tsx main.mts"
+    "dev": "tsx main.mts"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
