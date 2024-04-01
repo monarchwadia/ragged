@@ -13,7 +13,7 @@ export type ChatCompletionDetectorEvent =
   | {
       type: "CHAT_COMPLETION_CHUNK";
       index: number;
-      content: string | null | undefined;
+      content: string;
     }
   | {
       type: "CHAT_COMPLETION_COLLECT";
@@ -71,7 +71,8 @@ export class ChatCompletionDetector {
 
       this.emit({
         type: "CHAT_COMPLETION_CHUNK",
-        content: delta.content,
+        // if the content is falsey (such as null or undefined), then we send an empty string
+        content: delta.content || "",
         index,
       });
 

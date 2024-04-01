@@ -1,17 +1,14 @@
 import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
+import { ChatCompletionDetector } from "../detector/ChatCompletionDetector";
 
-type LlmStreamEventWithPayload = {
-  type: "collected" | "finished";
-  payload: string;
-};
-type LlmStreamEventWithoutPayload = {
-  type: "started";
-};
+type LlmStreamEvent =
+  | { type: "started"; index: number }
+  | { type: "chunk"; index: number; payload: string }
+  | { type: "collected"; index: number; payload: string }
+  | { type: "finished"; index: number; payload: string };
 
-type LlmStreamEvent = LlmStreamEventWithPayload | LlmStreamEventWithoutPayload;
-
-export const predict = (o: OpenAI, prompt: string) => {
+export const predictStream = (o: OpenAI, prompt: string) => {
   const operationEvents = new Subject<LlmStreamEvent>();
 
   const response = o.chat.completions.create({
@@ -22,20 +19,43 @@ export const predict = (o: OpenAI, prompt: string) => {
         content: prompt,
       },
     ],
+    stream: true,
+  });
+
+  const chatCompletionDetector = new ChatCompletionDetector();
+  chatCompletionDetector.listen((evt) => {
+    const { type, index } = evt;
+
+    switch (type) {
+      case "CHAT_COMPLETION_CHUNK":
+        operationEvents.next({
+          type: "chunk",
+          index,
+          payload: evt.content,
+        });
+        break;
+      case "CHAT_COMPLETION_COLLECT":
+        operationEvents.next({
+          type: "collected",
+          index,
+          payload: evt.content,
+        });
+        break;
+      case "CHAT_COMPLETION_FINISH":
+        operationEvents.next({ type: "finished", index, payload: evt.content });
+        operationEvents.complete();
+        break;
+      case "CHAT_COMPLETION_START":
+        operationEvents.next({ type: "started", index });
+        break;
+    }
   });
 
   response
     .then((response) => {
-      const answer = response.choices[0].message.content;
-
-      // Emit a 'collected' event with the response data
-      operationEvents.next({ type: "collected", payload: answer || "" });
-
-      // When the operation is complete, emit a 'finished' event
-      operationEvents.next({ type: "finished", payload: answer || "" });
-
-      // Complete the Subject to let subscribers know the operation is done
-      operationEvents.complete();
+      for (const chunk in response) {
+        chatCompletionDetector.scan(chunk);
+      }
     })
     .catch((error) => {
       // Handle any errors
@@ -48,8 +68,8 @@ export const predict = (o: OpenAI, prompt: string) => {
   return operationEvents;
 };
 
-export const qPredict = (o: OpenAI, text: string) => {
-  const p$ = predict(o, text);
+export const predict = (o: OpenAI, text: string) => {
+  const p$ = predictStream(o, text);
   return new Promise<string>((resolve) => {
     p$.subscribe((event) => {
       if (event.type === "finished") {

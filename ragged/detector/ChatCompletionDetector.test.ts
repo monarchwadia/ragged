@@ -99,7 +99,7 @@ describe("ChatCompletionDetector", () => {
     expect(collectEvents[51]).toEqual({
       type: "CHAT_COMPLETION_CHUNK",
       index: 0,
-      content: undefined,
+      content: "", // note, this is an empty string because the delta.content is null
     });
   });
 });
