@@ -1,7 +1,7 @@
 import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
 import { ChatCompletionDetector } from "../detector/OpenAiChatCompletionDetector";
-import { JSONSchema4Object, JSONSchema4Type } from "json-schema";
+import { Tool } from "./ToolExecutor";
 
 type LlmStreamEvent =
   | { type: "started"; index: number }
@@ -26,21 +26,17 @@ type LlmStreamEvent =
       };
     };
 
-type ResolvedPredictOptions = {
+type RaggedPredictOptions = {
   model: "gpt-3.5-turbo" | "gpt-4";
-  tools?: {
-    name: string;
-    description: string;
-    parameters: JSONSchema4Object;
-  }[];
+  tools?: Tool[];
 };
 
-export type PredictOptions = Partial<ResolvedPredictOptions>;
+export type PredictOptions = Partial<RaggedPredictOptions>;
 
 const resolvePredictOptions = (
-  opts: Partial<ResolvedPredictOptions> = {}
-): ResolvedPredictOptions => {
-  const resolved: ResolvedPredictOptions = {
+  opts: Partial<RaggedPredictOptions> = {}
+): RaggedPredictOptions => {
+  const resolved: RaggedPredictOptions = {
     model: "gpt-3.5-turbo",
     ...opts,
   };
@@ -51,7 +47,7 @@ const resolvePredictOptions = (
 export const predictStream = (
   o: OpenAI,
   prompt: string,
-  opts?: Partial<ResolvedPredictOptions>
+  opts?: Partial<RaggedPredictOptions>
 ) => {
   const _opts = resolvePredictOptions(opts);
   const operationEvents = new Subject<LlmStreamEvent>();
@@ -126,7 +122,9 @@ export const predictStream = (
         function: {
           name: tool.name,
           description: tool.description,
-          parameters: tool.parameters,
+          // TODO: make sure this is being set correctly
+          parameters: {},
+          // parameters: tool.handler,
         },
       });
     }

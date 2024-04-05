@@ -1,6 +1,6 @@
 import S from "fluent-json-schema";
 
-import { Ragged } from "ragged";
+import { Ragged } from "../../ragged/main";
 import type { PredictOptions } from "ragged";
 import dotenv from "dotenv";
 dotenv.config();
@@ -24,7 +24,7 @@ async function main() {
       {
         name: "add",
         description: "Add two numbers",
-        parameters: S.object()
+        inputValidator: S.object()
           .prop("a", S.number())
           .prop("b", S.number())
           .valueOf() as any,

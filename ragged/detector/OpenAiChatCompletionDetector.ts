@@ -57,6 +57,7 @@ export class ChatCompletionDetector {
   private deltaCollections: DeltaCollection[] = [];
 
   scan(obj: unknown) {
+    console.log("SCAN", obj);
     // check if the object is a chat completion chunk
     const isChatCompletionChunk =
       obj instanceof Object &&

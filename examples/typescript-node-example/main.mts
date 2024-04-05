@@ -1,4 +1,4 @@
-import { Ragged } from "ragged";
+import { Ragged } from "../../ragged/main";
 import dotenv from "dotenv";
 dotenv.config();
 
