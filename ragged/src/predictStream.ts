@@ -55,6 +55,8 @@ export const predictStream = (
 
   const chatCompletionDetector = new ChatCompletionDetector();
 
+  const tools = opts?.tools;
+
   chatCompletionDetector.listen((evt) => {
     const { type, index } = evt;
 
@@ -119,7 +121,7 @@ export const predictStream = (
     let systemPrompts = "# Tools Catalogue\n\n";
 
     _opts.tools.forEach((tool) => {
-      const compiled = tool.compile();
+      const compiled = tool._compile();
       systemPrompts += compiled + "\n\n";
     });
 

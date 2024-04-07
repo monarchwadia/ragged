@@ -12,15 +12,19 @@ async function main() {
   const adder = new RaggedTool()
     .title("adder")
     .example({
+      description: "Add two numbers together",
       input: [1, 2],
       output: 3,
     })
     .example({
-      input: [3, 4],
-      output: 7,
+      description: "Empty array will return 0",
+      input: [],
+      output: 0,
     })
     .handler((input: number[]) => {
-      return input.reduce((a, b) => a + b, 0);
+      const result = input.reduce((a, b) => a + b, 0);
+      console.log(result);
+      return result;
     });
 
   const r = await ragged.predict("Add 1124124 and 14151512", {

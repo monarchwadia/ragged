@@ -23,6 +23,7 @@ export class RaggedTool {
   private _title: string | undefined = undefined;
   private _examples: UsageExample[] = [];
   private _handler: Function | undefined = undefined;
+  private _description: string | undefined = undefined;
 
   constructor() {}
 
@@ -38,6 +39,11 @@ export class RaggedTool {
     return this;
   }
 
+  description(description: string) {
+    this._description = description;
+    return this;
+  }
+
   example(example: UsageExample) {
     this._examples.push(example);
     return this;
@@ -48,7 +54,15 @@ export class RaggedTool {
     return this;
   }
 
-  compile() {
+  getTitle() {
+    return this._title;
+  }
+
+  getHandler() {
+    return this._handler;
+  }
+
+  _compile() {
     if (!this._title) {
       throw new RaggedToolCompilationError(
         "Could not compile tool without a title. Check that you have called `title()` to set the title of this tool."
@@ -66,9 +80,13 @@ export class RaggedTool {
     // add title
     compiled += `# ${this._title}\n\n`;
 
+    if (this._description) {
+      compiled += `${this._description}\n\n`;
+    }
+
     // add examples
     this._examples.forEach((example, i) => {
-      compiled += `## Example ${i}\n\n`;
+      compiled += `## Example ${i + 1}\n\n`;
       if (example.description) {
         compiled += `${example.description}\n\n`;
       }
