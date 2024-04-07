@@ -2,6 +2,7 @@ import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
 import { ChatCompletionDetector } from "../detector/OpenAiChatCompletionDetector";
 import { Tool } from "./ToolExecutor";
+import type { RaggedTool } from "./RaggedTool";
 
 type LlmStreamEvent =
   | { type: "started"; index: number }
@@ -28,7 +29,7 @@ type LlmStreamEvent =
 
 type RaggedPredictOptions = {
   model: "gpt-3.5-turbo" | "gpt-4";
-  tools?: Tool[];
+  tools?: RaggedTool[];
 };
 
 export type PredictOptions = Partial<RaggedPredictOptions>;
@@ -114,20 +115,47 @@ export const predictStream = (
     stream: true,
   };
 
-  if (_opts.tools) {
-    body.tools = [];
-    for (const tool of _opts.tools) {
-      body.tools.push({
+  if (_opts.tools?.length) {
+    let systemPrompts = "# Tools Catalogue\n\n";
+
+    _opts.tools.forEach((tool) => {
+      const compiled = tool.compile();
+      systemPrompts += compiled + "\n\n";
+    });
+
+    body.messages = [
+      {
+        role: "system",
+        content: systemPrompts,
+      },
+      ...body.messages,
+    ];
+
+    body.tools = [
+      {
         type: "function",
         function: {
-          name: tool.name,
-          description: tool.description,
-          // TODO: make sure this is being set correctly
-          parameters: {},
-          // parameters: tool.handler,
+          name: "callTool",
+          description:
+            "Calls a tool with a given name and input. Tools are all accessible via a unified interface. The only tool available to the GPT model is `callTool`, which allows the model to call a tool with a given name and input.",
+          parameters: {
+            type: "object",
+            properties: {
+              name: {
+                type: "string",
+                description:
+                  "The name of the tool to call. A list of tools will be provided in the context, in a section called 'Tools Catalogue'.",
+              },
+              payload: {
+                description:
+                  "The input to the tool. The format of this input will depend on the tool being called.",
+              },
+            },
+            required: ["name"],
+          },
         },
-      });
-    }
+      },
+    ];
   }
 
   const response = o.chat.completions.create(body);
@@ -146,7 +174,6 @@ export const predictStream = (
             }
 
             const val = decoder.decode(value);
-
             chatCompletionDetector.scan(JSON.parse(val));
             read();
           })

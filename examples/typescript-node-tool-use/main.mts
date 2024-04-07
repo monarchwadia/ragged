@@ -1,15 +1,6 @@
-import S from "fluent-json-schema";
-
-import { Ragged } from "../../ragged/main";
-import type { PredictOptions } from "ragged";
+import { Ragged, RaggedTool } from "../../ragged/main";
 import dotenv from "dotenv";
 dotenv.config();
-
-type ToolFuncArgs = { a: number; b: number };
-const toolFunc = (args: ToolFuncArgs) => {
-  return args.a + args.b;
-};
-const toolFuncDefinition: PredictOptions["tools"] = [{}];
 
 const ragged = new Ragged({
   openai: {
@@ -18,19 +9,25 @@ const ragged = new Ragged({
 });
 
 async function main() {
+  const adder = new RaggedTool()
+    .title("adder")
+    .example({
+      input: [1, 2],
+      output: 3,
+    })
+    .example({
+      input: [3, 4],
+      output: 7,
+    })
+    .handler((input: number[]) => {
+      return input.reduce((a, b) => a + b, 0);
+    });
+
   const r = await ragged.predict("Add 1124124 and 14151512", {
     model: "gpt-4",
-    tools: [
-      {
-        name: "add",
-        description: "Add two numbers",
-        inputValidator: S.object()
-          .prop("a", S.number())
-          .prop("b", S.number())
-          .valueOf() as any,
-      },
-    ],
+    tools: [adder],
   });
+
   console.log(r);
 }
 
