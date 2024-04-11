@@ -75,33 +75,42 @@ export class RaggedTool {
       );
     }
 
-    let compiled = "";
+    // let compiled = "";
 
-    // add title
-    compiled += `# ${this._title}\n\n`;
+    // // add title
+    // compiled += `# ${this._title}\n\n`;
 
-    if (this._description) {
-      compiled += `${this._description}\n\n`;
-    }
+    // if (this._description) {
+    //   compiled += `${this._description}\n\n`;
+    // }
 
-    // add examples
-    this._examples.forEach((example, i) => {
-      compiled += `## Example ${i + 1}\n\n`;
-      if (example.description) {
-        compiled += `${example.description}\n\n`;
-      }
-      compiled += `### Input\n\n\`\`\`\n${JSON.stringify(
-        example.input,
-        null,
-        2
-      )}\n\`\`\`\n\n`;
-      compiled += `### Output\n\n\`\`\`\n${JSON.stringify(
-        example.output,
-        null,
-        2
-      )}\n\`\`\`\n\n`;
-    });
+    // // add examples
+    // this._examples.forEach((example, i) => {
+    //   compiled += `## Example ${i + 1}\n\n`;
+    //   if (example.description) {
+    //     compiled += `${example.description}\n\n`;
+    //   }
+    //   compiled += `### Input\n\n\`\`\`\n${JSON.stringify(
+    //     example.input,
+    //     null,
+    //     2
+    //   )}\n\`\`\`\n\n`;
+    //   compiled += `### Output\n\n\`\`\`\n${JSON.stringify(
+    //     example.output,
+    //     null,
+    //     2
+    //   )}\n\`\`\`\n\n`;
+    // });
 
-    return compiled;
+    // serialized object
+    return JSON.stringify(
+      {
+        title: this._title,
+        description: this._description,
+        examples: this._examples,
+      },
+      null,
+      2
+    );
   }
 }
