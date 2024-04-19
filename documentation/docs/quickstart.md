@@ -4,35 +4,27 @@ sidebar_position: 1
 
 # What is ragged?
 
-`ragged` is a simple set of functions designed to make LLMs easy and uncomplicated to use. It exposes a simple interface for promise-based inference as well as event-driven inference, which means you can quickly and easily implement your LLM-powered application with a minimum of fuss.
-
-`ragged` is currently a work in progress, but the plan is to add the following features:
-
-1. An unified facade that allows calling multiple LLM APIs.
-2. Support for text-to-text, speech-to-text, text-to-speech, text-to-image, image-to-text, and other similar usage patterns.
-3. Support for OpenAI, Anthropic, and other LLM APIs.
-
-This is an early version of `ragged`, so you can definitely expect issues. Thank you for trying it out.
+`ragged` is a set of streamlined functions aimed at simplifying the usage of Large Language Models (LLMs). It offers an easy-to-use interface supporting both promise-based and event-driven inference, allowing for quick integration into applications utilizing LLMs. Currently in development, `ragged` is designed to provide a unified facade for interacting with various LLM APIs, including OpenAI and Anthropic, supporting diverse interaction patterns like text-to-text, speech-to-text, text-to-speech, text-to-image, and image-to-text.
 
 # Why ragged?
 
-`ragged` was born out of frustration with the current state of LLM APIs. I kept finding myself re-implementing streaming chat completion again and again. The goal of `ragged` is to scratch my own itch: make streaming (and non-streaming) LLM APIs simple and easy to use, whether on the frontend or on the backend. That's it.
+Developed from a need to address repetitive implementations across LLM APIs, `ragged` aims to simplify the use of streaming (and non-streaming) LLM APIs for developers in both frontend and backend environments. Its core philosophy is to eliminate the complexities commonly associated with managing and configuring multiple LLM services.
 
 # Quickstart
 
-`ragged` is quick and easy to get started with. Let's get right into it.
+This comprehensive guide should help new developers get started quickly with `ragged`, leveraging its features for efficient LLM integrations.
 
 ## Installation
 
 You'll need to install `ragged` along with its peer dependencies, `openai` and `rxjs`.
 
-```
+```sh
 npm install --save openai rxjs ragged
 ```
 
-## Your first API call
+## Your First API Call
 
-If you already have OPENAI_API_KEY in your environment, then you can simply do the following...
+If you already have `OPENAI_API_KEY` in your environment, then you can simply do the following...
 
 ```ts
 import { Ragged } from "ragged";
@@ -50,13 +42,9 @@ r.predict("What is Toronto?")
 // Toronto is a city in Canada. It has a population of...
 ```
 
-## Manually configuring the OpenAI object
+## Manually Configuring the OpenAI Object
 
-The `Ragged` object's constructor takes a single parameter which allows you to configure each AI API differently.
-
-The `openai` key allows you to directly modify how the OpenAI client gets instantiated.
-
-Please read the OpenAI documentation for instantiating the JavaScript OpenAI client for more details.
+The Ragged object's constructor allows for detailed configuration of each AI API.
 
 ```ts
 import { Ragged } from "ragged";
@@ -78,7 +66,7 @@ r.predict("What is Toronto?")
 
 ## Streaming API
 
-The above example had a promise-based interface that is easy to use, but does not support streaming. Luckily, `ragged` offers full support for streaming.
+`ragged` also supports streaming responses, making real-time interaction feasible.
 
 ```ts
 import { Ragged } from "ragged";
@@ -89,32 +77,63 @@ const r = new Ragged({
   openai: { apiKey: OPENAI_API_KEY }
 });
 
-r.predictStream("What is toronto?").subscribe((e) => {
-  // the "started" event is emitted when the prediction starts
+r.predictStream("What is Toronto?").subscribe((e) => {
   if (e.type === "started") {
-    // the "started" event is emitted when the prediction starts
     // no-op
   }
 
   if (e.type === "collected") {
-    // the "collected" event is emitted with the partially complete prediction as it streams down
-    // Output is delivered in the string as collected so far.
-    // Toronto
-    // Toronto is
-    // Toronto is a
-    // ...
-    setPrediction(e.payload);
+    setPrediction(e.payload); // Outputs incrementally collected responses
   }
 
   if (e.type === "finished") {
-    // the "finished" event is emitted with the fully complete prediction
-    // Toronto is a city in Canada...
-    setPrediction(e.payload); 
+    setPrediction(e.payload); // Outputs the complete response
   }
 });
 ```
 
-### Compatibility
+## Tool Integration Example
 
-* Node.js
-* Recent versions of all major browsers
+Integrating tools with ragged allows for the extension of its capabilities.
+
+```ts
+import { Ragged, RaggedTool } from "ragged";
+import dotenv from "dotenv";
+dotenv.config();
+
+const ragged = new Ragged({
+  openai: {
+    apiKey: process.env.OPENAI_CREDS,
+  },
+});
+
+async function main() {
+  const adder = new RaggedTool()
+    .title("adder")
+    .example({
+      description: "Add two numbers together",
+      input: [1, 2],
+      output: 3,
+    })
+    .example({
+      description: "Empty array will return 0",
+      input: [],
+      output: 0,
+    })
+    .handler((input: number[]) => {
+      const result = input.reduce((a, b) => a + b, 0);
+      console.log(result);
+      return result;
+    });
+
+  const r = await ragged.predict("Add 1124124 and 14151512", {
+    model: "gpt-4",
+    tools: [adder],
+  });
+
+  console.log(r); // 15275636
+}
+
+main().then(console.log).catch(console.error);
+```
+
