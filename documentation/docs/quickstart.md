@@ -12,7 +12,7 @@ Developed from a need to address repetitive implementations across LLM APIs, `ra
 
 # Quickstart
 
-This comprehensive guide should help new developers get started quickly with `ragged`, leveraging its features for efficient LLM integrations.
+This Quickstart should help new developers get started quickly with `ragged`, leveraging its features for efficient LLM integrations.
 
 ## Installation
 

@@ -38,6 +38,10 @@ jobs:
         working-directory: ragged
         run: pnpm install
 
+      - name: Copy Quickstart
+        working-directory: .
+        run: cp documentation/docs/quickstart.md README.md && cp documentation/docs/quickstart.md ragged/README.md
+
       - name: Build
         working-directory: ragged
         run: pnpm build
