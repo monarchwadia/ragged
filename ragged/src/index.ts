@@ -13,7 +13,7 @@ const handleToolUseFinish = (
 ) => {
   p$.subscribe((event) => {
     if (event.type === "tool_use_finish") {
-      console.log("TOOL USE", event.payload);
+      // console.log("TOOL USE", event.payload);
 
       const name: string = (event.payload.arguments as any).name;
       const payload: unknown = (event.payload.arguments as any).payload;

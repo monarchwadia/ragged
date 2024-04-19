@@ -122,7 +122,7 @@ async function main() {
     })
     .handler((input: number[]) => {
       const result = input.reduce((a, b) => a + b, 0);
-      console.log(result);
+      console.log(result); // 15275636
       return result;
     });
 
@@ -130,8 +130,6 @@ async function main() {
     model: "gpt-4",
     tools: [adder],
   });
-
-  console.log(r); // 15275636
 }
 
 main().then(console.log).catch(console.error);

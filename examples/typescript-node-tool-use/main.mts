@@ -23,16 +23,14 @@ async function main() {
     })
     .handler((input: number[]) => {
       const result = input.reduce((a, b) => a + b, 0);
-      console.log(result);
+      console.log(result); // 15275636
       return result;
     });
 
-  const r = await ragged.predict("Add 1124124 and 14151512", {
+  await ragged.predict("Add 1124124 and 14151512", {
     model: "gpt-4",
     tools: [adder],
   });
-
-  console.log(r);
 }
 
 main().then(console.log).catch(console.error);
