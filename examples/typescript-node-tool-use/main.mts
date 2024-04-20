@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const ragged = new Ragged({
-  openai: {
+  provider: "openai",
+  config: {
     apiKey: process.env.OPENAI_CREDS,
   },
 });
@@ -28,7 +29,9 @@ async function main() {
     });
 
   await ragged.predict("Add 1124124 and 14151512", {
-    model: "gpt-4",
+    requestOverrides: {
+      model: "gpt-4",
+    },
     tools: [adder],
   });
 }

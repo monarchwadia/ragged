@@ -25,6 +25,8 @@ export type Tool = {
   handler: (input: unknown) => unknown;
 };
 
+// TODO: This is not being used but needs to be used.
+
 export class ToolExecutor {
   private toolMap: Record<string, Tool> = {};
 

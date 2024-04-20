@@ -4,38 +4,73 @@ import { OpenAiChatCompletionDetector } from "./detector/OpenAiChatCompletionDet
 import { Tool } from "../../ToolExecutor";
 import type { RaggedTool } from "../../RaggedTool";
 import { RaggedLlmStreamEvent } from "../types";
+import { ChatCompletionTool } from "openai/resources/index.mjs";
 
+const buildCallTool = (): ChatCompletionTool => ({
+  type: "function",
+  function: {
+    name: "callTool",
+    description:
+      "Calls a tool with a given name and input. Tools are all accessible via a unified interface. The only tool available to the GPT model is `callTool`, which allows the model to call a tool with a given name and input.",
+    parameters: {
+      type: "object",
+      properties: {
+        name: {
+          type: "string",
+          description:
+            "The name of the tool to call. A list of tools will be provided in the context, in a section called 'Tools Catalogue'.",
+        },
+        payload: {
+          description:
+            "The input to the tool. The format of this input will depend on the tool being called.",
+        },
+      },
+      required: ["name"],
+    },
+  },
+})
+
+// TODO: need to migrate to ToolExecutor
 const handleToolUseFinish = (
-  name: string,
-  payload: unknown,
+  callToolName: string,
+  payload: any,
   tools: RaggedTool[]
 ) => {
-  if (!name) {
+  if (callToolName !== "callTool") {
     console.error(
-      `LLM tried to call tool with no name. This is a bug in Ragged's prompt.`
+      `LLM failed to correctly call Ragged's OpenAI driver's callTool middle tier. The name provided by OpenAI was ${callToolName} but it should have been callTool.`
+    );
+    return;
+  }
+
+  if (!payload.name) {
+    console.error(
+      `LLM failed to correctly call Ragged's OpenAI driver's callTool middle tier. No name for the tool was provided was provided.`
     );
     return;
   }
 
   if (tools?.length) {
     const foundTool = tools.find(
-      (tool: RaggedTool) => tool.getTitle() === name
+      (tool: RaggedTool) => tool.getTitle() === payload.name
     );
     if (!foundTool) {
       console.error(
-        `LLM tried to call tool with name ${name} but no such tool was provided.`
+        `LLM tried to call tool with name ${payload.name} but no such tool was provided.`
       );
       return;
     }
     const handler = foundTool.getHandler();
     if (!handler) {
       console.error(
-        `LLM tried to call tool with name ${name} but no handler was set on the tool.`
+        `LLM tried to call tool with name ${payload.name} but no handler was set on the tool.`
       );
       return;
     }
 
-    const result = handler(payload);
+    // TODO: need to do validation
+
+    const result = handler(payload.payload);
 
     return result;
   }
@@ -138,31 +173,7 @@ export const predictStream = (
       ...body.messages,
     ];
 
-    body.tools = [
-      {
-        type: "function",
-        function: {
-          name: "callTool",
-          description:
-            "Calls a tool with a given name and input. Tools are all accessible via a unified interface. The only tool available to the GPT model is `callTool`, which allows the model to call a tool with a given name and input.",
-          parameters: {
-            type: "object",
-            properties: {
-              name: {
-                type: "string",
-                description:
-                  "The name of the tool to call. A list of tools will be provided in the context, in a section called 'Tools Catalogue'.",
-              },
-              payload: {
-                description:
-                  "The input to the tool. The format of this input will depend on the tool being called.",
-              },
-            },
-            required: ["name"],
-          },
-        },
-      },
-    ];
+    body.tools = [buildCallTool()];
   }
 
   const response = o.chat.completions.create(body);

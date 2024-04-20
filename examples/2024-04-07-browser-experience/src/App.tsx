@@ -21,7 +21,8 @@ function App() {
 
   const processCommand = () => {
     const r = new Ragged({
-      openai: {
+      provider: "openai",
+      config: {
         // might be better to just wrap the openai client itself. that way, things are much more clear.
         // const openai = new OpenAI({apiKey, dangersoulyAllowBrowser: true});
         // const r = new Ragged(openai);
@@ -53,7 +54,8 @@ function App() {
         output:
           '[{ "name": "Living room", "brightness": 0 }, { "name": "Kitchen", "brightness": 0 }, { "name": "Bedroom", "brightness": 0 }]',
       })
-      .handler((payload) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .handler((payload: any) => {
         setRooms(payload);
         // setRooms(payload);
       });
@@ -67,12 +69,15 @@ function App() {
       {
         // note that gpt-4-turbo is best for function calling.. but it throws an error because it's not specified in ragged
         // need to add the ability to specify the model without throwing a typescript error
-        model: "gpt-4-turbo",
         tools: [tool],
+        requestOverrides: {
+          model: "gpt-4-turbo",
+        },
       }
     );
 
-    stream.subscribe((response) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    stream.subscribe((response: any) => {
       // Here are the current options: "started" | "chunk" | "collected" | "finished" | "tool_use_start" | "tool_use_finish"
       // none of these are really useful names for the user. instead, the emitted event type names needs to be more user friendly.
       // for example,
