@@ -14,7 +14,7 @@
     "build"
   ],
   "scripts": {
-    "build": "rm -rf ./build && node build.mjs && tsc --emitDeclarationOnly",
+    "build": "pnpm test && rm -rf ./build && node build.mjs && tsc --emitDeclarationOnly",
     "test": "jest"
   },
   "keywords": [],

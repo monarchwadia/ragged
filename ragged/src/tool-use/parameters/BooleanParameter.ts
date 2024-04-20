@@ -1,5 +1,5 @@
 import { BaseParameterBuilder } from "./BaseParameter";
-import { BooleanParameter } from "./types";
+import { BooleanParameter } from "../types";
 
 export class BooleanParameterBuilder extends BaseParameterBuilder<BooleanParameter> {
   constructor() {

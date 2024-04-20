@@ -1,4 +1,4 @@
-import { BaseParameter } from "./types";
+import { BaseParameter } from "../types";
 
 export class BaseParameterBuilder<P extends BaseParameter> {
   public _parameter: P;

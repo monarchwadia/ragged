@@ -1,5 +1,5 @@
 import { BaseParameterBuilder } from "./BaseParameter";
-import { StringParameter } from "./types";
+import { StringParameter } from "../types";
 
 export class StringParameterBuilder extends BaseParameterBuilder<StringParameter> {
   constructor() {

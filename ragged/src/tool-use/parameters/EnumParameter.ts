@@ -1,5 +1,5 @@
 import { BaseParameterBuilder } from "./BaseParameter";
-import { EnumParameter } from "./types";
+import { EnumParameter } from "../types";
 
 export class EnumParameterBuilder extends BaseParameterBuilder<EnumParameter> {
   constructor() {

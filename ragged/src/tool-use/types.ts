@@ -1,3 +1,8 @@
+import { BooleanParameterBuilder } from "./parameters/BooleanParameter";
+import { EnumParameterBuilder } from "./parameters/EnumParameter";
+import { NumberParameterBuilder } from "./parameters/NumberParameter";
+import { StringParameterBuilder } from "./parameters/StringParameter";
+
 export interface BaseParameter {
   type: string | undefined;
   description?: string;
@@ -53,3 +58,9 @@ export interface NewTool {
   description: string | undefined;
   inputs: Record<string, NewToolParameter> | undefined;
 }
+
+export type ParameterBuilder =
+  | BooleanParameterBuilder
+  | EnumParameterBuilder
+  | NumberParameterBuilder
+  | StringParameterBuilder;
