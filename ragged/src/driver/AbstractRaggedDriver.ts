@@ -32,7 +32,7 @@ export abstract class AbstractRaggedDriver<ConstructorConfig, RequestOpts> {
 
   abstract predict(
     text: string,
-    options?: PredictStreamOptions<RequestOpts>
+    options?: PredictOptions<RequestOpts>
   ): Promise<string>;
 
   isValid(): boolean {
