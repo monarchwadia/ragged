@@ -1,16 +1,10 @@
 <script lang="ts">
 	import RadialIndicator from '$lib/components/RadialIndicator.svelte';
+	import type { SpaceShip, LoggedInUser } from '../types';
 
-	type SpaceShip = {
-		name: string;
-		sections: SpaceshipSection[];
-		shieldStrength: number;
-	};
-	type SpaceshipSection = {
-		id: number;
-		name: string;
-		hullStrength: number;
-	};
+	// state
+
+	let loggedInUser: LoggedInUser = 'Crew';
 
 	let spaceship: SpaceShip = {
 		name: 'USS Enterprise',
@@ -21,6 +15,8 @@
 			{ id: 3, name: 'Crew Quarters', hullStrength: 25 }
 		]
 	};
+
+	// utils
 
 	const getHullStrengthRgb = (hullStrength: number) => {
 		if (hullStrength > 75) {
@@ -44,32 +40,47 @@
 	};
 </script>
 
-<div class="flex flex-col w-fit gap-4 p-8">
-	<h1 class="text-3xl font-bold">{spaceship.name}</h1>
-	<div class="flex flex-row gap-2">
-		<RadialIndicator
-			label="Shields"
-			color={getHullStrengthRgb(spaceship.shieldStrength)}
-			value={spaceship.shieldStrength}
-		/>
-		<RadialIndicator
-			label="Avg Hull"
-			color={getHullStrengthRgb(getAvgHullStrength(spaceship))}
-			value={getAvgHullStrength(spaceship)}
-		/>
-	</div>
-	{#each spaceship.sections as section}
-		<div class="card bg-base-200 card-compact card-bordered shadow-lg">
-			<div class="card-body">
-				<h2 class="card-title">{section.name}</h2>
-				<div class="flex flex-col text-center w-fit">
-					<RadialIndicator
-						label="Hull"
-						color={getHullStrengthRgb(section.hullStrength)}
-						value={section.hullStrength}
-					/>
+<div class="flex flex-row gap-8 p-8">
+	<div class="flex flex-col w-fit gap-4">
+		<h1 class="text-3xl font-bold">{spaceship.name}</h1>
+		<div class="flex flex-row gap-2">
+			<RadialIndicator
+				label="Shields"
+				color={getHullStrengthRgb(spaceship.shieldStrength)}
+				value={spaceship.shieldStrength}
+			/>
+			<RadialIndicator
+				label="Avg Hull"
+				color={getHullStrengthRgb(getAvgHullStrength(spaceship))}
+				value={getAvgHullStrength(spaceship)}
+			/>
+		</div>
+		{#each spaceship.sections as section}
+			<div class="card bg-base-200 card-compact card-bordered shadow-lg">
+				<div class="card-body">
+					<h2 class="card-title">{section.name}</h2>
+					<div class="flex flex-col text-center w-fit">
+						<RadialIndicator
+							label="Hull"
+							color={getHullStrengthRgb(section.hullStrength)}
+							value={section.hullStrength}
+						/>
+					</div>
 				</div>
 			</div>
-		</div>
-	{/each}
+		{/each}
+	</div>
+	<div class="flex flex-col gap-2">
+		<h1 class="text-3xl font-bold">Controls</h1>
+		<label class="label" for="user-select">User Select</label>
+		<select
+			class="select select-bordered"
+			name="user-select"
+			id="user-select"
+			bind:value={loggedInUser}
+		>
+			<option value="Crew">Crew</option>
+			<option value="Captain">Captain</option>
+		</select>
+	</div>
 </div>
