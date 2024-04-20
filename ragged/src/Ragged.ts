@@ -1,7 +1,7 @@
 import { buildOpenAI } from "./buildOpenai";
 import type { ClientOptions } from "openai";
-import { predictStream } from "./predictStream";
-import type { PredictOptions } from "./predictStream";
+import { predictStream } from "./driver/openai/predictStream";
+import { RaggedTool } from "./RaggedTool";
 
 type RaggedConfiguration = {
   openai: ClientOptions;
@@ -9,7 +9,7 @@ type RaggedConfiguration = {
 
 const handleToolUseFinish = (
   p$: ReturnType<typeof predictStream>,
-  opts?: Partial<PredictOptions>
+  opts: any
 ) => {
   p$.subscribe((event) => {
     if (event.type === "tool_use_finish") {
@@ -26,7 +26,10 @@ const handleToolUseFinish = (
       }
 
       if (opts?.tools?.length) {
-        const foundTool = opts.tools.find((tool) => tool.getTitle() === name);
+        const foundTool = opts.tools.find(
+          // TODO: RaggedTool should not be passed in the opts object. It should be passed somewhere else.
+          (tool: RaggedTool) => tool.getTitle() === name
+        );
         if (!foundTool) {
           console.error(
             `LLM tried to call tool with name ${name} but no such tool was provided.`
@@ -50,14 +53,14 @@ const handleToolUseFinish = (
 export class Ragged {
   constructor(private config: RaggedConfiguration) {}
 
-  predictStream(text: string, opts?: Partial<PredictOptions>) {
+  predictStream(text: string, opts?: any) {
     const o = buildOpenAI(this.config.openai);
     const p$ = predictStream(o, text, opts);
     handleToolUseFinish(p$, opts);
     return p$;
   }
 
-  predict(text: string, opts?: Partial<PredictOptions>) {
+  predict(text: string, opts?: any) {
     const o = buildOpenAI(this.config.openai);
     const p$ = predictStream(o, text, opts);
     handleToolUseFinish(p$, opts);

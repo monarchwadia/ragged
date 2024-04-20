@@ -1,3 +1,2 @@
-export { Ragged } from "./src";
+export { Ragged } from "./src/Ragged";
 export { RaggedTool } from "./src/RaggedTool";
-export type { PredictOptions } from "./src/predictStream";

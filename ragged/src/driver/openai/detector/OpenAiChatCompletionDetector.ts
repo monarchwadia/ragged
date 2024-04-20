@@ -52,7 +52,7 @@ export type OpenAiChatCompletionDetectorEvent =
 
 type Listener = (obj: OpenAiChatCompletionDetectorEvent) => void;
 
-export class ChatCompletionDetector {
+export class OpenAiChatCompletionDetector {
   private listeners: Listener[] = [];
   private deltaCollections: DeltaCollection[] = [];
 

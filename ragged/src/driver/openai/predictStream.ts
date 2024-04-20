@@ -1,43 +1,16 @@
 import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
-import { ChatCompletionDetector } from "../detector/OpenAiChatCompletionDetector";
-import { Tool } from "./ToolExecutor";
-import type { RaggedTool } from "./RaggedTool";
+import { OpenAiChatCompletionDetector } from "./detector/OpenAiChatCompletionDetector";
+import { Tool } from "../../ToolExecutor";
+import type { RaggedTool } from "../../RaggedTool";
+import { RaggedLlmStreamEvent } from "../types";
 
-type LlmStreamEvent =
-  | { type: "started"; index: number }
-  | { type: "chunk"; index: number; payload: string }
-  | { type: "collected"; index: number; payload: string }
-  | { type: "finished"; index: number; payload: string }
-  | {
-      type: "tool_use_start";
-      index: number;
-      toolCallIndex: number;
-      payload: {
-        name: string;
-      };
-    }
-  | {
-      type: "tool_use_finish";
-      index: number;
-      toolCallIndex: number;
-      payload: {
-        name: string;
-        arguments: unknown;
-      };
-    };
-
-type RaggedPredictOptions = {
-  model: "gpt-3.5-turbo" | "gpt-4";
-  tools?: RaggedTool[];
-};
-
-export type PredictOptions = Partial<RaggedPredictOptions>;
+type OpenAiOptions = any;
 
 const resolvePredictOptions = (
-  opts: Partial<RaggedPredictOptions> = {}
-): RaggedPredictOptions => {
-  const resolved: RaggedPredictOptions = {
+  opts: Partial<OpenAiOptions> = {}
+): OpenAiOptions => {
+  const resolved: OpenAiOptions = {
     model: "gpt-3.5-turbo",
     ...opts,
   };
@@ -48,12 +21,12 @@ const resolvePredictOptions = (
 export const predictStream = (
   o: OpenAI,
   prompt: string,
-  opts?: Partial<RaggedPredictOptions>
+  opts?: Partial<OpenAiOptions>
 ) => {
   const _opts = resolvePredictOptions(opts);
-  const operationEvents = new Subject<LlmStreamEvent>();
+  const operationEvents = new Subject<RaggedLlmStreamEvent>();
 
-  const chatCompletionDetector = new ChatCompletionDetector();
+  const chatCompletionDetector = new OpenAiChatCompletionDetector();
 
   const tools = opts?.tools;
 
@@ -120,7 +93,8 @@ export const predictStream = (
   if (_opts.tools?.length) {
     let systemPrompts = "# Tools Catalogue\n\n";
 
-    _opts.tools.forEach((tool) => {
+    // TODO: RaggedTool should be sent in a separate argument or not at all
+    _opts.tools.forEach((tool: RaggedTool) => {
       const compiled = tool._compile();
       systemPrompts += compiled + "\n\n";
     });

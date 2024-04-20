@@ -1,15 +1,15 @@
 import {
-  ChatCompletionDetector,
+  OpenAiChatCompletionDetector,
   OpenAiChatCompletionDetectorEvent,
 } from "./OpenAiChatCompletionDetector";
 // This is a test file for ChatCompletionDetector that contains the events streamed from a simple OpenAI gpt-3.5 call
-import chatStreamInput from "./ChatCompletionDetector.test.json";
-import toolUseStreamInput from "./ToolUseCompletionDetector.test.json";
+import chatStreamInput from "./OpenAiChatCompletionDetector.test.json";
+import toolUseStreamInput from "./OpenAiToolUseCompletionDetector.test.json";
 
 describe("ChatCompletionDetector", () => {
   it("CHAT_COMPLETION_START should be accurate", () => {
     let firstEvent: OpenAiChatCompletionDetectorEvent | null = null;
-    const detector = new ChatCompletionDetector();
+    const detector = new OpenAiChatCompletionDetector();
     detector.listen((evt) => {
       if (!firstEvent) {
         firstEvent = evt;
@@ -25,7 +25,7 @@ describe("ChatCompletionDetector", () => {
   });
   it("CHAT_COMPLETION_FINISH should be accurate without tool use", () => {
     let completedEvent;
-    const detector = new ChatCompletionDetector();
+    const detector = new OpenAiChatCompletionDetector();
     detector.listen((evt) => {
       if (evt.type === "CHAT_COMPLETION_FINISH") {
         completedEvent = evt;
@@ -45,7 +45,7 @@ describe("ChatCompletionDetector", () => {
 
   it("CHAT_COMPLETION_COLLECT should be accurate", () => {
     let collectEvents: OpenAiChatCompletionDetectorEvent[] = [];
-    const detector = new ChatCompletionDetector();
+    const detector = new OpenAiChatCompletionDetector();
     detector.listen((evt) => {
       if (evt.type === "CHAT_COMPLETION_COLLECT") {
         collectEvents.push(evt);
@@ -73,7 +73,7 @@ describe("ChatCompletionDetector", () => {
   });
   it("CHAT_COMPLETION_CHUNK should be accurate", () => {
     let collectEvents: OpenAiChatCompletionDetectorEvent[] = [];
-    const detector = new ChatCompletionDetector();
+    const detector = new OpenAiChatCompletionDetector();
     detector.listen((evt) => {
       if (evt.type === "CHAT_COMPLETION_CHUNK") {
         collectEvents.push(evt);
@@ -105,7 +105,7 @@ describe("ChatCompletionDetector", () => {
   });
 
   it("TOOL_USE_START should work as expected", () => {
-    const detector = new ChatCompletionDetector();
+    const detector = new OpenAiChatCompletionDetector();
 
     let firstToolUseEvent: OpenAiChatCompletionDetectorEvent | undefined =
       undefined;
@@ -131,7 +131,7 @@ describe("ChatCompletionDetector", () => {
   });
 
   it("TOOL_USE_FINISH should work as expected", () => {
-    const detector = new ChatCompletionDetector();
+    const detector = new OpenAiChatCompletionDetector();
 
     let lastToolUseEvent: OpenAiChatCompletionDetectorEvent | undefined =
       undefined;
@@ -162,7 +162,7 @@ describe("ChatCompletionDetector", () => {
 
   it("CHAT_COMPLETION_FINISH, with tool use, should be accurate", () => {
     let completedEvent;
-    const detector = new ChatCompletionDetector();
+    const detector = new OpenAiChatCompletionDetector();
     detector.listen((evt) => {
       if (evt.type === "CHAT_COMPLETION_FINISH") {
         completedEvent = evt;
