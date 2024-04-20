@@ -1,7 +1,7 @@
 import { t } from "./t";
 
 describe("t", () => {
-  it("allows", () => {
+  it("builds properly", () => {
     const schema = t
       .tool()
       .title("adder")
