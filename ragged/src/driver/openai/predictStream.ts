@@ -5,31 +5,53 @@ import { Tool } from "../../ToolExecutor";
 import type { RaggedTool } from "../../RaggedTool";
 import { RaggedLlmStreamEvent } from "../types";
 
-type OpenAiOptions = any;
+const handleToolUseFinish = (
+  name: string,
+  payload: unknown,
+  tools: RaggedTool[]
+) => {
+  if (!name) {
+    console.error(
+      `LLM tried to call tool with no name. This is a bug in Ragged's prompt.`
+    );
+    return;
+  }
 
-const resolvePredictOptions = (
-  opts: Partial<OpenAiOptions> = {}
-): OpenAiOptions => {
-  const resolved: OpenAiOptions = {
-    model: "gpt-3.5-turbo",
-    ...opts,
-  };
+  if (tools?.length) {
+    const foundTool = tools.find(
+      (tool: RaggedTool) => tool.getTitle() === name
+    );
+    if (!foundTool) {
+      console.error(
+        `LLM tried to call tool with name ${name} but no such tool was provided.`
+      );
+      return;
+    }
+    const handler = foundTool.getHandler();
+    if (!handler) {
+      console.error(
+        `LLM tried to call tool with name ${name} but no handler was set on the tool.`
+      );
+      return;
+    }
 
-  return resolved;
+    const result = handler(payload);
+
+    return result;
+  }
 };
 
 export const predictStream = (
   o: OpenAI,
   prompt: string,
-  opts?: Partial<OpenAiOptions>
+  requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>,
+  tools: RaggedTool[]
 ) => {
-  const _opts = resolvePredictOptions(opts);
   const operationEvents = new Subject<RaggedLlmStreamEvent>();
 
   const chatCompletionDetector = new OpenAiChatCompletionDetector();
 
-  const tools = opts?.tools;
-
+  // set up the listener. the events are pushed to the listener elsewhere in this file.
   chatCompletionDetector.listen((evt) => {
     const { type, index } = evt;
 
@@ -75,12 +97,20 @@ export const predictStream = (
             arguments: evt.toolCall.arguments,
           },
         });
+
+        // TODO: provide the result to the LLM in the openerationEvents
+        const toolUseResult = handleToolUseFinish(
+          evt.toolCall.name,
+          evt.toolCall.arguments,
+          tools
+        );
+
         break;
     }
   });
 
   const body: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
-    model: _opts.model,
+    model: "gpt-3.5-turbo",
     messages: [
       {
         role: "user",
@@ -88,13 +118,14 @@ export const predictStream = (
       },
     ],
     stream: true,
+    ...requestOverrides,
   };
 
-  if (_opts.tools?.length) {
+  if (tools?.length) {
     let systemPrompts = "# Tools Catalogue\n\n";
 
     // TODO: RaggedTool should be sent in a separate argument or not at all
-    _opts.tools.forEach((tool: RaggedTool) => {
+    tools.forEach((tool: RaggedTool) => {
       const compiled = tool._compile();
       systemPrompts += compiled + "\n\n";
     });

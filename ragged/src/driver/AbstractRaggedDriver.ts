@@ -1,29 +1,41 @@
 import { Subject } from "rxjs";
 import { RaggedConfigValidationResult, RaggedLlmStreamEvent } from "./types";
+import { RaggedTool } from "../RaggedTool";
 
-export abstract class AbstractRaggedDriver {
-  /**
-   * Called when the RaggedDriver is initialized, which happens after construction but before usage.
-   */
-  abstract onInitialization(): void;
+type PredictOptions<RequestOpts> = {
+  tools: RaggedTool[];
+  requestOverrides: RequestOpts;
+};
+
+type PredictStreamOptions<RequestOpts> = {
+  tools: RaggedTool[];
+  requestOverrides: RequestOpts;
+};
+
+export abstract class AbstractRaggedDriver<ConstructorConfig, RequestOpts> {
+  protected config?: ConstructorConfig;
 
   /**
-   * Indicates whether the driver supports streaming. If this returns false, the driver will be used in non-streaming mode.
-   * If it is used in streaming mode, then Ragged will throw an error indicating that streaming is not supported.
+   * This function should be responsible for validating the configuration options for the LLM provider. If the configuration options are invalid,
+   * this method should return an object with `isValid` set to `false` and an array of error messages in `errors`. If the configuration
+   * options are valid, this method should save the configuration options and return an object with `isValid` set to `true`.
+   * Saving the configuration options should be done in a way that allows the driver to use them later when making predictions.
    */
-  abstract isStreamingSupported(): boolean;
-
-  /**
-   * Validates the configuration options for the driver. If the configuration options are invalid, this method should return
-   * an object with `isValid` set to `false` and an array of error messages in `errors`. If the configuration options are valid,
-   * this method should return an object with `isValid` set to `true`.
-   */
-  abstract validateConfigurationOptions(
+  abstract initializeAndValidateConfiguration(
     opts: Object
   ): RaggedConfigValidationResult;
 
   abstract predictStream(
     text: string,
-    overrides?: any
+    options?: PredictStreamOptions<RequestOpts>
   ): Subject<RaggedLlmStreamEvent>;
+
+  abstract predict(
+    text: string,
+    options?: PredictStreamOptions<RequestOpts>
+  ): Promise<string>;
+
+  isValid(): boolean {
+    return !!this.config;
+  }
 }

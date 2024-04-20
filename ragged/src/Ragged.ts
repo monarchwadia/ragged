@@ -1,75 +1,43 @@
-import { buildOpenAI } from "./buildOpenai";
-import type { ClientOptions } from "openai";
-import { predictStream } from "./driver/openai/predictStream";
 import { RaggedTool } from "./RaggedTool";
+import { RaggedConfiguration } from "./types";
+import { resolveDriver } from "./driver/resolveDriver";
 
-type RaggedConfiguration = {
-  openai: ClientOptions;
+type PredictOptions = {
+  tools: RaggedTool[];
+  requestOverrides: unknown;
 };
 
-const handleToolUseFinish = (
-  p$: ReturnType<typeof predictStream>,
-  opts: any
-) => {
-  p$.subscribe((event) => {
-    if (event.type === "tool_use_finish") {
-      // console.log("TOOL USE", event.payload);
-
-      const name: string = (event.payload.arguments as any).name;
-      const payload: unknown = (event.payload.arguments as any).payload;
-
-      if (!name) {
-        console.error(
-          `LLM tried to call tool with no name. This is a bug in Ragged's prompt.`
-        );
-        return;
-      }
-
-      if (opts?.tools?.length) {
-        const foundTool = opts.tools.find(
-          // TODO: RaggedTool should not be passed in the opts object. It should be passed somewhere else.
-          (tool: RaggedTool) => tool.getTitle() === name
-        );
-        if (!foundTool) {
-          console.error(
-            `LLM tried to call tool with name ${name} but no such tool was provided.`
-          );
-          return;
-        }
-        const handler = foundTool.getHandler();
-        if (!handler) {
-          console.error(
-            `LLM tried to call tool with name ${name} but no handler was set on the tool.`
-          );
-          return;
-        }
-        const result = handler(payload);
-        // TODO: provide the result to the LLM if in agentic mode
-      }
-    }
-  });
-};
+export class InvalidConfigurationError extends Error {
+  constructor(errors: string[]) {
+    super(
+      "The configuration you provided to Ragged was invalid: " +
+        errors.join("\n")
+    );
+  }
+}
 
 export class Ragged {
   constructor(private config: RaggedConfiguration) {}
 
-  predictStream(text: string, opts?: any) {
-    const o = buildOpenAI(this.config.openai);
-    const p$ = predictStream(o, text, opts);
-    handleToolUseFinish(p$, opts);
+  predictStream(text: string, options?: PredictOptions) {
+    const driver = this.getValidatedDriver();
+    const p$ = driver.predictStream(text, options);
     return p$;
   }
 
-  predict(text: string, opts?: any) {
-    const o = buildOpenAI(this.config.openai);
-    const p$ = predictStream(o, text, opts);
-    handleToolUseFinish(p$, opts);
-    return new Promise<string>((resolve) => {
-      p$.subscribe((event) => {
-        if (event.type === "finished") {
-          resolve(event.payload);
-        }
-      });
-    });
+  predict(text: string, options?: PredictOptions) {
+    const driver = this.getValidatedDriver();
+    return driver.predict(text, options);
+  }
+
+  private getValidatedDriver() {
+    const driver = resolveDriver(this.config);
+    const validationResult = driver.initializeAndValidateConfiguration(
+      this.config.config
+    );
+    if (!validationResult.isValid) {
+      throw new InvalidConfigurationError(validationResult.errors);
+    }
+    return driver;
   }
 }

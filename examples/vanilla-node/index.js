@@ -4,8 +4,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const r = new Ragged({
-    openai: {
-        apiKey: process.env.OPENAI_API_KEY
+    provider: "openai",
+    config: {
+        apiKey: process.env.OPENAI_API_KEY,
     }
 });
 r.predict("What is Toronto?")

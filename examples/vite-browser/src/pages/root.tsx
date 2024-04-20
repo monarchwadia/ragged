@@ -7,7 +7,8 @@ import { Ragged } from "ragged";
 const { VITE_OPENAI_CREDS } = import.meta.env;
 
 const l = new Ragged({
-  openai: {
+  provider: "openai",
+  config: {
     apiKey: VITE_OPENAI_CREDS,
     dangerouslyAllowBrowser: true,
   },
