@@ -1,4 +1,4 @@
-import { Ragged, RaggedTool } from "../../ragged/main";
+import { Ragged, t } from "ragged";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -10,20 +10,24 @@ const ragged = new Ragged({
 });
 
 async function main() {
-  const adder = new RaggedTool()
+  const adder = t
+    .tool()
     .title("adder")
-    .example({
-      description: "Add two numbers together",
-      input: [1, 2],
-      output: 3,
+    .description("Add two numbers together")
+    .inputs({
+      a: t.number().description("first number").isRequired(),
+      b: t.number().description("second number").isRequired(),
     })
-    .example({
-      description: "Empty array will return 0",
-      input: [],
-      output: 0,
-    })
-    .handler((input: number[]) => {
-      const result = input.reduce((a, b) => a + b, 0);
+    .handler((input: { a: number; b: number }) => {
+      console.log(
+        "handler",
+        input,
+        input.a,
+        input.b,
+        typeof input.a,
+        typeof input.b
+      );
+      const result = input.a + input.b;
       console.log(result); // 15275636
       return result;
     });

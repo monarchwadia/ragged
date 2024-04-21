@@ -1,9 +1,9 @@
-import { RaggedTool } from "./RaggedTool";
 import { RaggedConfiguration } from "./types";
 import { resolveDriver } from "./driver/resolveDriver";
+import { NewToolBuilder } from "./tool-use/NewToolBuilder";
 
 type PredictOptions = {
-  tools: RaggedTool[];
+  tools: NewToolBuilder[];
   requestOverrides: unknown;
 };
 

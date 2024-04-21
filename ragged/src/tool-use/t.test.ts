@@ -11,9 +11,9 @@ describe("t", () => {
         b: t.number().description("second number").isRequired(),
       });
 
-    const newTool = schema.build();
+    const toolHolder = schema.build();
 
-    expect(newTool).toEqual({
+    expect(toolHolder.tool).toEqual({
       title: "adder",
       description: "adds two numbers",
       inputs: {

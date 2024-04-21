@@ -3,10 +3,11 @@ import { AbstractRaggedDriver } from "../AbstractRaggedDriver";
 import { RaggedConfigValidationResult, RaggedLlmStreamEvent } from "../types";
 import { predictStream } from "./predictStream";
 import { Subject } from "rxjs";
-import { RaggedTool } from "../../RaggedTool";
+import { NewToolBuilder } from "../../tool-use/NewToolBuilder";
+import { buildTool } from "../../tool-use/buildTool";
 
 type PredictOptions = {
-  tools: RaggedTool[];
+  tools: NewToolBuilder[];
   requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>;
 };
 
@@ -51,22 +52,16 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
     options?: PredictOptions
   ): Subject<RaggedLlmStreamEvent> {
     const o = new OpenAI(this.config);
-    const p$ = predictStream(
-      o,
-      text,
-      options?.requestOverrides || {},
-      options?.tools || []
-    );
+    const tools = options?.tools.map((tool) => tool.build()) || [];
+
+    const p$ = predictStream(o, text, options?.requestOverrides || {}, tools);
     return p$;
   }
   predict(text: string, options?: PredictOptions): Promise<string> {
     const o = new OpenAI(this.config);
-    const p$ = predictStream(
-      o,
-      text,
-      options?.requestOverrides || {},
-      options?.tools || []
-    );
+    const tools = options?.tools.map((tool) => tool.build()) || [];
+
+    const p$ = predictStream(o, text, options?.requestOverrides || {}, tools);
     return new Promise<string>((resolve) => {
       p$.subscribe((event) => {
         if (event.type === "finished") {

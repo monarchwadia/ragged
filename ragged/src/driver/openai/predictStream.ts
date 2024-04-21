@@ -1,86 +1,15 @@
 import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
 import { OpenAiChatCompletionDetector } from "./detector/OpenAiChatCompletionDetector";
-import { Tool } from "../../ToolExecutor";
-import type { RaggedTool } from "../../RaggedTool";
 import { RaggedLlmStreamEvent } from "../types";
-import { ChatCompletionTool } from "openai/resources/index.mjs";
-
-const buildCallTool = (): ChatCompletionTool => ({
-  type: "function",
-  function: {
-    name: "callTool",
-    description:
-      "Calls a tool with a given name and input. Tools are all accessible via a unified interface. The only tool available to the GPT model is `callTool`, which allows the model to call a tool with a given name and input.",
-    parameters: {
-      type: "object",
-      properties: {
-        name: {
-          type: "string",
-          description:
-            "The name of the tool to call. A list of tools will be provided in the context, in a section called 'Tools Catalogue'.",
-        },
-        payload: {
-          description:
-            "The input to the tool. The format of this input will depend on the tool being called.",
-        },
-      },
-      required: ["name"],
-    },
-  },
-})
-
-// TODO: need to migrate to ToolExecutor
-const handleToolUseFinish = (
-  callToolName: string,
-  payload: any,
-  tools: RaggedTool[]
-) => {
-  if (callToolName !== "callTool") {
-    console.error(
-      `LLM failed to correctly call Ragged's OpenAI driver's callTool middle tier. The name provided by OpenAI was ${callToolName} but it should have been callTool.`
-    );
-    return;
-  }
-
-  if (!payload.name) {
-    console.error(
-      `LLM failed to correctly call Ragged's OpenAI driver's callTool middle tier. No name for the tool was provided was provided.`
-    );
-    return;
-  }
-
-  if (tools?.length) {
-    const foundTool = tools.find(
-      (tool: RaggedTool) => tool.getTitle() === payload.name
-    );
-    if (!foundTool) {
-      console.error(
-        `LLM tried to call tool with name ${payload.name} but no such tool was provided.`
-      );
-      return;
-    }
-    const handler = foundTool.getHandler();
-    if (!handler) {
-      console.error(
-        `LLM tried to call tool with name ${payload.name} but no handler was set on the tool.`
-      );
-      return;
-    }
-
-    // TODO: need to do validation
-
-    const result = handler(payload.payload);
-
-    return result;
-  }
-};
+import { NewToolHolder } from "../../tool-use/types";
+import { mapToolToOpenAi } from "./mapToolToOpenAi";
 
 export const predictStream = (
   o: OpenAI,
   prompt: string,
   requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>,
-  tools: RaggedTool[]
+  tools: NewToolHolder[]
 ) => {
   const operationEvents = new Subject<RaggedLlmStreamEvent>();
 
@@ -133,12 +62,40 @@ export const predictStream = (
           },
         });
 
-        // TODO: provide the result to the LLM in the openerationEvents
-        const toolUseResult = handleToolUseFinish(
-          evt.toolCall.name,
-          evt.toolCall.arguments,
-          tools
-        );
+        // call the handler and push up the result in the events.
+        // if the tool is not found, push up an error
+
+        if (tools?.length) {
+          const foundTool = tools.find(
+            (tool) => tool.tool.title === evt.toolCall.name
+          );
+          if (!foundTool) {
+            console.error(
+              `LLM tried to call tool with name ${evt.toolCall.name} but no such tool was provided.`
+            );
+            return;
+          }
+          const handler = foundTool.handler;
+          if (!handler) {
+            console.error(
+              `LLM tried to call tool with name ${evt.toolCall.name} but no handler was set on the tool.`
+            );
+            return;
+          }
+
+          // TODO: need to do validation
+          const result = handler(evt.toolCall.arguments);
+
+          // TODO: provide the result to the LLM in the openerationEvents
+          return;
+        }
+
+        // // TODO: provide the result to the LLM in the openerationEvents
+        // const toolUseResult = handleToolUseFinish(
+        //   evt.toolCall.name,
+        //   evt.toolCall.arguments,
+        //   tools
+        // );
 
         break;
     }
@@ -156,24 +113,8 @@ export const predictStream = (
     ...requestOverrides,
   };
 
-  if (tools?.length) {
-    let systemPrompts = "# Tools Catalogue\n\n";
-
-    // TODO: RaggedTool should be sent in a separate argument or not at all
-    tools.forEach((tool: RaggedTool) => {
-      const compiled = tool._compile();
-      systemPrompts += compiled + "\n\n";
-    });
-
-    body.messages = [
-      {
-        role: "system",
-        content: systemPrompts,
-      },
-      ...body.messages,
-    ];
-
-    body.tools = [buildCallTool()];
+  if (tools.length) {
+    body.tools = tools.map((toolHolder) => mapToolToOpenAi(toolHolder.tool));
   }
 
   const response = o.chat.completions.create(body);

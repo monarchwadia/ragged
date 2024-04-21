@@ -59,6 +59,11 @@ export interface NewTool {
   inputs: Record<string, NewToolParameter> | undefined;
 }
 
+export interface NewToolHolder {
+  tool: NewTool;
+  handler: Function;
+}
+
 export type ParameterBuilder =
   | BooleanParameterBuilder
   | EnumParameterBuilder

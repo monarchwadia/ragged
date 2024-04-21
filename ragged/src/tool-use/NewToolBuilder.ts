@@ -1,9 +1,15 @@
 import { buildTool } from "./buildTool";
-import { NewTool, NewToolParameter, ParameterBuilder } from "./types";
+import {
+  NewTool,
+  NewToolHolder,
+  NewToolParameter,
+  ParameterBuilder,
+} from "./types";
 
 export class NewToolBuilder {
   _parameters: NewTool;
   _inputs: Record<string, ParameterBuilder> | undefined;
+  _handler: Function;
 
   constructor() {
     this._parameters = {
@@ -11,6 +17,8 @@ export class NewToolBuilder {
       description: undefined,
       inputs: undefined,
     };
+
+    this._handler = () => {};
 
     this._inputs = undefined;
   }
@@ -30,11 +38,16 @@ export class NewToolBuilder {
     return this;
   }
 
+  handler(handler: Function) {
+    this._handler = handler;
+    return this;
+  }
+
   /**
    * Builds the Ragged tool definition that can be used by drivers to define API-level LLM tools.
-   * @returns {NewTool} The built tool definition.
+   * @returns The built tool definition.
    */
-  build(): NewTool {
+  build(): NewToolHolder {
     const builtToolDefinition: NewTool = {
       title: this._parameters.title,
       description: this._parameters.description,
@@ -47,6 +60,9 @@ export class NewToolBuilder {
       ] = buildTool(this._inputs[key]);
     }
 
-    return builtToolDefinition;
+    return {
+      tool: builtToolDefinition,
+      handler: this._handler,
+    };
   }
 }

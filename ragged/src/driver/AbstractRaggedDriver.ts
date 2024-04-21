@@ -1,14 +1,14 @@
 import { Subject } from "rxjs";
 import { RaggedConfigValidationResult, RaggedLlmStreamEvent } from "./types";
-import { RaggedTool } from "../RaggedTool";
+import { NewToolBuilder } from "../tool-use/NewToolBuilder";
 
 type PredictOptions<RequestOpts> = {
-  tools: RaggedTool[];
+  tools: NewToolBuilder[];
   requestOverrides: RequestOpts;
 };
 
 type PredictStreamOptions<RequestOpts> = {
-  tools: RaggedTool[];
+  tools: NewToolBuilder[];
   requestOverrides: RequestOpts;
 };
 
