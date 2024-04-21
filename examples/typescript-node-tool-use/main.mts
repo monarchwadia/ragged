@@ -1,3 +1,4 @@
+import { RaggedToolUseResultEvent } from "ragged/src/driver/types";
 import { Ragged, t } from "../../ragged/main";
 import dotenv from "dotenv";
 dotenv.config();
@@ -23,6 +24,8 @@ async function main() {
       return result;
     });
 
+  const prompt = "add 66 and 66";
+  console.log("prompt:", prompt);
   const result = await ragged.predict("add 66 and 66", {
     requestOverrides: {
       model: "gpt-4",
@@ -30,7 +33,17 @@ async function main() {
     tools: [adder],
   });
 
-  console.log(result);
+  const toolUseResult = result.find((r) => r.type === "tool_use_result") as
+    | RaggedToolUseResultEvent
+    | undefined;
+
+  console.log("answer:", toolUseResult?.payload.result);
 }
 
-main().then(console.log).catch(console.error);
+// console output:
+// prompt: add 66 and 66
+// answer: 132
+
+main()
+  .then(() => console.log("done!"))
+  .catch(console.error);

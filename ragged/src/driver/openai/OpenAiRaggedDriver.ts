@@ -2,7 +2,7 @@ import OpenAI, { ClientOptions } from "openai";
 import { AbstractRaggedDriver } from "../AbstractRaggedDriver";
 import {
   RaggedConfigValidationResult,
-  RaggedLlmCommonEvent,
+  RaggedLlmPromisableEvent,
   RaggedLlmStreamEvent,
 } from "../types";
 import { predictStream } from "./predictStream";
@@ -64,14 +64,14 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
   predict(
     text: string,
     options?: PredictOptions
-  ): Promise<RaggedLlmCommonEvent[]> {
+  ): Promise<RaggedLlmPromisableEvent[]> {
     const o = new OpenAI(this.config);
     const tools = options?.tools.map((tool) => tool.build()) || [];
 
     const p$ = predictStream(o, text, options?.requestOverrides || {}, tools);
-    return new Promise<RaggedLlmCommonEvent[]>((resolve) => {
-      let mostRecentlyCollected: RaggedLlmCommonEvent | null = null;
-      const events: RaggedLlmCommonEvent[] = [];
+    return new Promise<RaggedLlmPromisableEvent[]>((resolve) => {
+      let mostRecentlyCollected: RaggedLlmPromisableEvent | null = null;
+      const events: RaggedLlmPromisableEvent[] = [];
 
       p$.subscribe((event) => {
         // for certain events, we don't want to include them in the final result because they're more relevant for streaming

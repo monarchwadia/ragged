@@ -1,7 +1,7 @@
 import { Subject } from "rxjs";
 import {
   RaggedConfigValidationResult,
-  RaggedLlmCommonEvent,
+  RaggedLlmPromisableEvent,
   RaggedLlmStreamEvent,
 } from "./types";
 import { NewToolBuilder } from "../tool-use/NewToolBuilder";
@@ -37,7 +37,7 @@ export abstract class AbstractRaggedDriver<ConstructorConfig, RequestOpts> {
   abstract predict(
     text: string,
     options?: PredictOptions<RequestOpts>
-  ): Promise<RaggedLlmCommonEvent[]>;
+  ): Promise<RaggedLlmPromisableEvent[]>;
 
   isValid(): boolean {
     return !!this.config;
