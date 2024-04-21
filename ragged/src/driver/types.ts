@@ -2,19 +2,8 @@ export type RaggedConfigValidationResult =
   | { isValid: true }
   | { isValid: false; errors: string[] };
 
-export type RaggedLlmStreamEvent =
-  | { type: "started"; index: number }
-  | { type: "chunk"; index: number; payload: string }
-  | { type: "collected"; index: number; payload: string }
+export type RaggedLlmCommonEvent =
   | { type: "finished"; index: number; payload: string }
-  | {
-      type: "tool_use_start";
-      index: number;
-      toolCallIndex: number;
-      payload: {
-        name: string;
-      };
-    }
   | {
       type: "tool_use_finish";
       index: number;
@@ -32,5 +21,19 @@ export type RaggedLlmStreamEvent =
         name: string;
         arguments: unknown;
         result: unknown;
+      };
+    };
+
+export type RaggedLlmStreamEvent =
+  | RaggedLlmCommonEvent
+  | { type: "started"; index: number }
+  | { type: "chunk"; index: number; payload: string }
+  | { type: "collected"; index: number; payload: string }
+  | {
+      type: "tool_use_start";
+      index: number;
+      toolCallIndex: number;
+      payload: {
+        name: string;
       };
     };

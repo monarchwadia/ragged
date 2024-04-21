@@ -1,6 +1,10 @@
 import OpenAI, { ClientOptions } from "openai";
 import { AbstractRaggedDriver } from "../AbstractRaggedDriver";
-import { RaggedConfigValidationResult, RaggedLlmStreamEvent } from "../types";
+import {
+  RaggedConfigValidationResult,
+  RaggedLlmCommonEvent,
+  RaggedLlmStreamEvent,
+} from "../types";
 import { predictStream } from "./predictStream";
 import { Subject } from "rxjs";
 import { NewToolBuilder } from "../../tool-use/NewToolBuilder";
@@ -57,15 +61,35 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
     const p$ = predictStream(o, text, options?.requestOverrides || {}, tools);
     return p$;
   }
-  predict(text: string, options?: PredictOptions): Promise<string> {
+  predict(
+    text: string,
+    options?: PredictOptions
+  ): Promise<RaggedLlmCommonEvent[]> {
     const o = new OpenAI(this.config);
     const tools = options?.tools.map((tool) => tool.build()) || [];
 
     const p$ = predictStream(o, text, options?.requestOverrides || {}, tools);
-    return new Promise<string>((resolve) => {
+    return new Promise<RaggedLlmCommonEvent[]>((resolve) => {
+      let mostRecentlyCollected: RaggedLlmCommonEvent | null = null;
+      const events: RaggedLlmCommonEvent[] = [];
+
       p$.subscribe((event) => {
-        if (event.type === "finished") {
-          resolve(event.payload);
+        // for certain events, we don't want to include them in the final result because they're more relevant for streaming
+        switch (event.type) {
+          case "started":
+          case "tool_use_start":
+          case "chunk":
+          case "collected":
+            return;
+          case "finished":
+            events.push(event);
+            resolve(events);
+            return;
+          case "tool_use_finish":
+          case "tool_use_result":
+            events.push(event);
+            return;
+          // TODO: error case
         }
       });
     });

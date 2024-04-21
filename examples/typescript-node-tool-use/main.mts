@@ -23,12 +23,14 @@ async function main() {
       return result;
     });
 
-  await ragged.predict("Add 1124124 and 14151512", {
+  const result = await ragged.predict("add 66 and 66", {
     requestOverrides: {
       model: "gpt-4",
     },
     tools: [adder],
   });
+
+  console.log(result);
 }
 
 main().then(console.log).catch(console.error);
