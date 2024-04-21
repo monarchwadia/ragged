@@ -23,4 +23,14 @@ export type RaggedLlmStreamEvent =
         name: string;
         arguments: unknown;
       };
+    }
+  | {
+      type: "tool_use_result";
+      index: number;
+      toolCallIndex: number;
+      payload: {
+        name: string;
+        arguments: unknown;
+        result: unknown;
+      };
     };

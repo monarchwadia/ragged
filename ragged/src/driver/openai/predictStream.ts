@@ -87,6 +87,17 @@ export const predictStream = (
           const result = handler(evt.toolCall.arguments);
 
           // TODO: provide the result to the LLM in the openerationEvents
+          operationEvents.next({
+            type: "tool_use_result",
+            index: evt.index,
+            toolCallIndex: evt.toolCallIndex,
+            payload: {
+              name: evt.toolCall.name,
+              arguments: evt.toolCall.arguments,
+              result,
+            },
+          });
+
           return;
         }
 

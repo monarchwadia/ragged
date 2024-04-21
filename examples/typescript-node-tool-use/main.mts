@@ -1,4 +1,4 @@
-import { Ragged, t } from "ragged";
+import { Ragged, t } from "../../ragged/main";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -19,16 +19,7 @@ async function main() {
       b: t.number().description("second number").isRequired(),
     })
     .handler((input: { a: number; b: number }) => {
-      console.log(
-        "handler",
-        input,
-        input.a,
-        input.b,
-        typeof input.a,
-        typeof input.b
-      );
       const result = input.a + input.b;
-      console.log(result); // 15275636
       return result;
     });
 
