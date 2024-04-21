@@ -32,14 +32,16 @@ import { Ragged } from "ragged";
 const OPENAI_API_KEY = "your api key"
 
 const r = new Ragged({
-    openai: {
-        apiKey: OPENAI_API_KEY
-    }
+  provider: "openai",
+  config: {
+    apiKey: OPENAI_API_KEY,
+  },
 });
+
 r.predict("What is Toronto?")
   .then(console.log)
   .catch(console.error)
-// Toronto is a city in Canada. It has a population of...
+// { ..., payload: 'Toronto is a city in Canada. It has a population of...'}
 ```
 
 ## Manually Configuring the OpenAI Object
@@ -52,16 +54,17 @@ import { Ragged } from "ragged";
 const OPENAI_API_KEY = "your api key"
 
 const r = new Ragged({
-    openai: {
-        apiKey: OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true, // you need this if you're in a browser
-    }
+  provider: "openai",
+  config: {
+    apiKey: OPENAI_API_KEY,
+    dangerouslyAllowBrowser: true, // you need this if you're in a browser
+  },
 });
 
 r.predict("What is Toronto?")
   .then(console.log)
   .catch(console.error);
-// Toronto is a city in Canada. It has a population of...
+// { ..., payload: 'Toronto is a city in Canada. It has a population of...'}
 ```
 
 ## Streaming API
@@ -74,7 +77,11 @@ import { Ragged } from "ragged";
 const OPENAI_API_KEY = "your api key"
 
 const r = new Ragged({
-  openai: { apiKey: OPENAI_API_KEY }
+  provider: "openai",
+  config: {
+    apiKey: OPENAI_API_KEY,
+    dangerouslyAllowBrowser: true,
+  },
 });
 
 r.predictStream("What is Toronto?").subscribe((e) => {
@@ -97,41 +104,61 @@ r.predictStream("What is Toronto?").subscribe((e) => {
 Integrating tools with ragged allows for the extension of its capabilities.
 
 ```ts
-import { Ragged, RaggedTool } from "ragged";
+import { Ragged, t } from "ragged";
 import dotenv from "dotenv";
 dotenv.config();
 
-const ragged = new Ragged({
-  openai: {
-    apiKey: process.env.OPENAI_CREDS,
-  },
-});
+const OPENAI_API_KEY = "your api key"
 
 async function main() {
-  const adder = new RaggedTool()
+  // first tool
+  const adder = t
+    .tool()
     .title("adder")
-    .example({
-      description: "Add two numbers together",
-      input: [1, 2],
-      output: 3,
+    .description("Add two numbers together")
+    .inputs({
+      a: t.number().description("first number").isRequired(),
+      b: t.number().description("second number").isRequired(),
     })
-    .example({
-      description: "Empty array will return 0",
-      input: [],
-      output: 0,
-    })
-    .handler((input: number[]) => {
-      const result = input.reduce((a, b) => a + b, 0);
-      console.log(result); // 15275636
-      return result;
-    });
+    .handler((input: { a: number; b: number }) => input.a + input.b);
 
-  const r = await ragged.predict("Add 1124124 and 14151512", {
-    model: "gpt-4",
-    tools: [adder],
+  // second tool
+  const multiplier = t
+    .tool()
+    .title("multiplier")
+    .description("Multiply two numbers together")
+    .inputs({
+      a: t.number().description("first number").isRequired(),
+      b: t.number().description("second number").isRequired(),
+    })
+    .handler((input: { a: number; b: number }) => input.a * input.b);
+
+  const r = new Ragged({
+    provider: "openai",
+    config: {
+      apiKey: OPENAI_API_KEY,
+    },
+  });
+
+  const prompt = "add 123 + 456";
+  console.log("prompt:", prompt);
+  const p$ = r.predictStream(prompt, {
+    tools: [adder, multiplier],
+    requestOverrides: {
+      model: "gpt-4",
+    },
+  });
+
+  p$.subscribe((event) => {
+    if (event.type === "collected") {
+      console.log(event.payload);
+    }
   });
 }
 
-main().then(console.log).catch(console.error);
+main().catch(console.error);
+
+// prompt: add 123 + 456
+// answer: 578
 ```
 

@@ -1,9 +1,9 @@
 # PNPM setup from https://github.com/pnpm/action-setup
 
 on:
-    push:
-      branches:
-        - main
+  push:
+    branches:
+      - main
 permissions:
   contents: read
   pages: write
@@ -48,7 +48,7 @@ jobs:
 
       - name: Build
         working-directory: documentation
-        run: pnpm build
+        run: pnpm build-docs
 
       # 👆 Build steps
 

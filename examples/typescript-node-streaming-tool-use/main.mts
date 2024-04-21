@@ -5,6 +5,7 @@ dotenv.config();
 const OPENAI_CREDS = process.env.OPENAI_CREDS;
 
 async function main() {
+  // first tool
   const adder = t
     .tool()
     .title("adder")
@@ -15,6 +16,7 @@ async function main() {
     })
     .handler((input: { a: number; b: number }) => input.a + input.b);
 
+  // second tool
   const multiplier = t
     .tool()
     .title("multiplier")
@@ -32,7 +34,7 @@ async function main() {
     },
   });
 
-  const prompt = "tell me what is Order 66 in star wars?";
+  const prompt = "add 123 + 456";
   console.log("prompt:", prompt);
   const p$ = r.predictStream(prompt, {
     tools: [adder, multiplier],
