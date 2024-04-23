@@ -1,11 +1,5 @@
-import { RaggedConfiguration } from "./types";
+import { PredictOptions, RaggedChat, RaggedConfiguration } from "./types";
 import { resolveDriver } from "./driver/resolveDriver";
-import { NewToolBuilder } from "./tool-use/NewToolBuilder";
-
-type PredictOptions = {
-  tools: NewToolBuilder[];
-  requestOverrides: unknown;
-};
 
 export class InvalidConfigurationError extends Error {
   constructor(errors: string[]) {
@@ -28,6 +22,16 @@ export class Ragged {
   predict(text: string, options?: PredictOptions) {
     const driver = this.getValidatedDriver();
     return driver.predict(text, options);
+  }
+
+  chat(history: RaggedChat.History.Item[], options?: RaggedChat.Options) {
+    const driver = this.getValidatedDriver();
+    return driver.chat(history, options);
+  }
+
+  chatStream(history: RaggedChat.History.Item[], options?: RaggedChat.Options) {
+    const driver = this.getValidatedDriver();
+    return driver.chatStream(history, options);
   }
 
   private getValidatedDriver() {

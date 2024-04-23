@@ -11,6 +11,22 @@ export const predictStream = (
   requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>,
   tools: NewToolHolder[]
 ) => {
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    {
+      role: "user",
+      content: prompt,
+    },
+  ];
+
+  return chatStream(o, messages, requestOverrides, tools);
+};
+
+export const chatStream = (
+  o: OpenAI,
+  messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+  requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>,
+  tools: NewToolHolder[]
+) => {
   const operationEvents = new Subject<RaggedLlmStreamEvent>();
 
   const chatCompletionDetector = new OpenAiChatCompletionDetector();
@@ -114,12 +130,7 @@ export const predictStream = (
 
   const body: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
     model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
+    messages: messages,
     stream: true,
     ...requestOverrides,
   };

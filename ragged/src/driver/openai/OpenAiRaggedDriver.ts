@@ -5,10 +5,11 @@ import {
   RaggedLlmPromisableEvent,
   RaggedLlmStreamEvent,
 } from "../types";
-import { predictStream } from "./predictStream";
+import { chatStream, predictStream } from "./predictStream";
 import { Subject } from "rxjs";
 import { NewToolBuilder } from "../../tool-use/NewToolBuilder";
 import { buildTool } from "../../tool-use/buildTool";
+import { RaggedChat } from "../../types";
 
 type PredictOptions = {
   tools: NewToolBuilder[];
@@ -19,6 +20,57 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
   ClientOptions,
   Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>
 > {
+  chat(
+    history: RaggedChat.History.Item[],
+    options?: RaggedChat.Options | undefined
+  ): Promise<RaggedChat.Stream.StreamingChatResponseEvent> {
+    throw new Error("Method not implemented.");
+  }
+
+  chatStream(
+    history: RaggedChat.History.Item[],
+    options?: RaggedChat.Options | undefined
+  ): Subject<RaggedChat.Stream.StreamingChatResponseEvent> {
+    const o = new OpenAI(this.config);
+    const tools = options?.tools.map((tool) => tool.build()) || [];
+
+    const mappedHistory: OpenAI.Chat.Completions.ChatCompletionMessageParam[] =
+      [];
+
+    history.forEach((x): OpenAI.Chat.Completions.ChatCompletionMessageParam => {
+      switch (x.type) {
+        case "text":
+          let role: OpenAI.Chat.Completions.ChatCompletionMessageParam["role"];
+          if (x.data.sender === "human") {
+            role = "user";
+          } else if (x.data.sender === "ai") {
+            role = "assistant";
+          } else if (x.data.sender === "system") {
+            role = "system";
+          } else {
+            throw new Error("Unknown sender type: " + x.data.sender);
+          }
+          return {
+            role,
+            content: x.data.text,
+          };
+
+        case "tool-request":
+          return {
+            role: "tool",
+          };
+      }
+    });
+
+    const p$ = chatStream(
+      o,
+      mappedHistory,
+      options?.requestOverrides || {},
+      tools
+    );
+    return p$;
+  }
+
   initializeAndValidateConfiguration(
     opts: Object
   ): RaggedConfigValidationResult {

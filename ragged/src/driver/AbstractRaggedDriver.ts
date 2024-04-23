@@ -5,6 +5,7 @@ import {
   RaggedLlmStreamEvent,
 } from "./types";
 import { NewToolBuilder } from "../tool-use/NewToolBuilder";
+import { RaggedChat } from "../types";
 
 type PredictOptions<RequestOpts> = {
   tools: NewToolBuilder[];
@@ -38,6 +39,16 @@ export abstract class AbstractRaggedDriver<ConstructorConfig, RequestOpts> {
     text: string,
     options?: PredictOptions<RequestOpts>
   ): Promise<RaggedLlmPromisableEvent[]>;
+
+  abstract chat(
+    history: RaggedChat.History.Item[],
+    options?: RaggedChat.Options
+  ): Promise<RaggedChat.Stream.StreamingChatResponseEvent>;
+
+  abstract chatStream(
+    history: RaggedChat.History.Item[],
+    options?: RaggedChat.Options
+  ): Subject<RaggedChat.Stream.StreamingChatResponseEvent>;
 
   isValid(): boolean {
     return !!this.config;
