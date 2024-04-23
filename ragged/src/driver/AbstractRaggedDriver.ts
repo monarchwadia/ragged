@@ -8,12 +8,12 @@ import { NewToolBuilder } from "../tool-use/NewToolBuilder";
 
 type PredictOptions<RequestOpts> = {
   tools: NewToolBuilder[];
-  requestOverrides: RequestOpts;
+  requestOverrides?: RequestOpts;
 };
 
 type PredictStreamOptions<RequestOpts> = {
   tools: NewToolBuilder[];
-  requestOverrides: RequestOpts;
+  requestOverrides?: RequestOpts;
 };
 
 export abstract class AbstractRaggedDriver<ConstructorConfig, RequestOpts> {

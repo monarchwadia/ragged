@@ -4,7 +4,7 @@ import { NewToolBuilder } from "./tool-use/NewToolBuilder";
 
 type PredictOptions = {
   tools: NewToolBuilder[];
-  requestOverrides: unknown;
+  requestOverrides?: unknown;
 };
 
 export class InvalidConfigurationError extends Error {

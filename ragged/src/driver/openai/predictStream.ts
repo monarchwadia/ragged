@@ -121,7 +121,7 @@ export const predictStream = (
       },
     ],
     stream: true,
-    ...requestOverrides,
+    ...(requestOverrides || {}),
   };
 
   if (tools.length) {

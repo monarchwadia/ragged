@@ -12,7 +12,7 @@ import { buildTool } from "../../tool-use/buildTool";
 
 type PredictOptions = {
   tools: NewToolBuilder[];
-  requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>;
+  requestOverrides?: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>;
 };
 
 export class OpenAiRaggedDriver extends AbstractRaggedDriver<
