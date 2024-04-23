@@ -140,7 +140,7 @@
 </script>
 
 <div class="h-full w-full p-4 flex flex-row gap-2">
-	<div class="flex flex-col gap-4 bg-base-200 p-4 border w-2/5">
+	<div class="flex flex-col gap-4 bg-base-200 p-4 border border-accent w-2/5">
 		<h1 class="text-xl font-bold">Smart Reader</h1>
 		<div class="flex flex-col gap-4 max-h-[90vh] overflow-scroll">
 			<div class="flex flex-col gap-4">
@@ -171,13 +171,13 @@
 			</div>
 		</div>
 	</div>
-	<div class="flex flex-col w-full gap-4 border p-4 bg-base-200">
+	<div class="flex flex-col w-full gap-4 border border-accent p-4 bg-base-200">
 		<div class="flex flex-col gap-4 max-h-[90vh] overflow-scroll">
 			{#if results.length === 0}
 				<p>No results found</p>
 			{:else}
 				{#each results as result}
-					<div class="border-2 border-gray-200 p-4">
+					<div class="border-2 border-base-300 p-4">
 						<h2 class="text-lg font-bold">{result.title}</h2>
 						<p>{result.extract}</p>
 					</div>
