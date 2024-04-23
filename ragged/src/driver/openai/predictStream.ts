@@ -27,18 +27,18 @@ export const predictStream = (
         operationEvents.next({
           type: "chunk",
           index,
-          payload: evt.content,
+          data: evt.content,
         });
         break;
       case "CHAT_COMPLETION_COLLECT":
         operationEvents.next({
           type: "collected",
           index,
-          payload: evt.content,
+          data: evt.content,
         });
         break;
       case "CHAT_COMPLETION_FINISH":
-        operationEvents.next({ type: "finished", index, payload: evt.content });
+        operationEvents.next({ type: "finished", index, data: evt.content });
         operationEvents.complete();
         break;
       case "TOOL_USE_START":
@@ -46,7 +46,7 @@ export const predictStream = (
           type: "tool_use_start",
           index: evt.index,
           toolCallIndex: evt.toolCallIndex,
-          payload: {
+          data: {
             name: evt.toolCall.name,
           },
         });
@@ -56,7 +56,7 @@ export const predictStream = (
           type: "tool_use_finish",
           index: evt.index,
           toolCallIndex: evt.toolCallIndex,
-          payload: {
+          data: {
             name: evt.toolCall.name,
             arguments: evt.toolCall.arguments,
           },
@@ -91,7 +91,7 @@ export const predictStream = (
             type: "tool_use_result",
             index: evt.index,
             toolCallIndex: evt.toolCallIndex,
-            payload: {
+            data: {
               name: evt.toolCall.name,
               arguments: evt.toolCall.arguments,
               result,

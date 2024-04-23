@@ -2,9 +2,9 @@ import { RaggedConfiguration } from "./types";
 import { resolveDriver } from "./driver/resolveDriver";
 import { NewToolBuilder } from "./tool-use/NewToolBuilder";
 
-type PredictOptions = {
+type PredictOptions<Overrides = any> = {
   tools: NewToolBuilder[];
-  requestOverrides?: unknown;
+  requestOverrides?: Overrides;
 };
 
 export class InvalidConfigurationError extends Error {

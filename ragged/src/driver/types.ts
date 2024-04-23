@@ -5,25 +5,25 @@ export type RaggedConfigValidationResult =
 export type RaggedFinishedEvent = {
   type: "finished";
   index: number;
-  payload: string;
+  data: string;
 };
-export type RaggedToolUseFinishedEvent = {
+export type RaggedToolUseFinishedEvent<Args = any> = {
   type: "tool_use_finish";
   index: number;
   toolCallIndex: number;
-  payload: {
+  data: {
     name: string;
-    arguments: unknown;
+    arguments: Args;
   };
 };
-export type RaggedToolUseResultEvent = {
+export type RaggedToolUseResultEvent<Args = any, Result = any> = {
   type: "tool_use_result";
   index: number;
   toolCallIndex: number;
-  payload: {
+  data: {
     name: string;
-    arguments: unknown;
-    result: unknown;
+    arguments: Args;
+    result: Result;
   };
 };
 
@@ -31,18 +31,18 @@ export type RaggedStartedEvent = { type: "started"; index: number };
 export type RaggedChunkEvent = {
   type: "chunk";
   index: number;
-  payload: string;
+  data: string;
 };
 export type RaggedCollectedEvent = {
   type: "collected";
   index: number;
-  payload: string;
+  data: string;
 };
 export type RaggedToolUseStartEvent = {
   type: "tool_use_start";
   index: number;
   toolCallIndex: number;
-  payload: {
+  data: {
     name: string;
   };
 };

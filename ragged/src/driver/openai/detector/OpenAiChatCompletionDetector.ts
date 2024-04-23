@@ -184,17 +184,17 @@ export class OpenAiChatCompletionDetector {
           }
         }
 
-        const chatCompletionFinishPayload: OpenAiChatCompletionDetectorEvent = {
+        const chatCompletionEvt: OpenAiChatCompletionDetectorEvent = {
           type: "CHAT_COMPLETION_FINISH",
           index: choiceIndex,
           content: dc.content,
         };
 
         if (parsedToolCalls.length) {
-          chatCompletionFinishPayload.toolCalls = parsedToolCalls;
+          chatCompletionEvt.toolCalls = parsedToolCalls;
         }
 
-        this.emit(chatCompletionFinishPayload);
+        this.emit(chatCompletionEvt);
       }
     }
   }

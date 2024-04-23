@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { AppBus } from '$lib/bus/AppBus';
 	import type { SearchResult } from '$lib/types';
 	import { onMount } from 'svelte';
 	import { Ragged, t } from '../../../../ragged';
+	import { searchWiki } from '$lib/api/wiki';
 
 	let r: Ragged;
 	let commandInput = '';
@@ -11,13 +11,12 @@
 	let results: SearchResult[] = [];
 
 	// actions
-	const doSearch = (text: string) => {
-		AppBus.next({
-			type: 'search.request',
-			payload: {
-				searchTerm: text
-			}
-		});
+	const doSearch = async (text: string) => {
+		try {
+			results = await searchWiki(text);
+		} catch (e) {
+			console.error('Error while searching', e);
+		}
 	};
 
 	const processCommand = async (command: string) => {
@@ -30,14 +29,21 @@
 		const p$ = r.predictStream(input, {
 			tools,
 			requestOverrides: {
-				model: 'gpt-4-turbo'
+				model: 'gpt-4'
 			}
 		});
-		// p$.subscribe((s) => {
-		// 	console.log('event', s);
-		// 	if (s.type === 'tool_use_finish') {
-		// 	}
-		// });
+		p$.subscribe((s) => {
+			console.log('event', s);
+			if (s.type === 'tool_use_finish') {
+				if (s.data.name === 'provide-analysis') {
+					analysis = s.data.arguments.results;
+				}
+
+				if (s.data.name === 'search-wikipedia') {
+					doSearch(s.data.arguments.searchTerm);
+				}
+			}
+		});
 	};
 
 	// tools
@@ -50,11 +56,6 @@
 			)
 			.inputs({
 				searchTerm: t.string().description('The term to search for on Wikipedia.').isRequired()
-			})
-			.handler((inputs: { searchTerm: string }) => {
-				searchTerm = inputs.searchTerm;
-				console.log('searching wikipedia for:', inputs.searchTerm);
-				doSearch(inputs.searchTerm);
 			}),
 		t
 			.tool()
@@ -70,10 +71,6 @@
 					)
 					.isRequired()
 			})
-			.handler((inputs: { results: string }) => {
-				console.log('providing analysis:', inputs.results);
-				analysis = inputs.results;
-			})
 	];
 
 	onMount(() => {
@@ -82,13 +79,6 @@
 			config: {
 				apiKey: import.meta.env.VITE_OPENAI_CREDS,
 				dangerouslyAllowBrowser: true
-			}
-		});
-
-		// search tool
-		AppBus.subscribe((message) => {
-			if (message.type === 'search.response') {
-				results = message.payload.results;
 			}
 		});
 	});

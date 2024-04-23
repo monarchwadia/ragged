@@ -46,26 +46,26 @@ main()
 
 // import { ChatCompletionTool } from "openai/resources/index.mjs";
 
-const buildCallTool = ()/*: ChatCompletionTool */ => ({
-  type: "function",
-  function: {
-    name: "callTool",
-    description:
-      "Calls a tool with a given name and input. Tools are all accessible via a unified interface. The only tool available to the GPT model is `callTool`, which allows the model to call a tool with a given name and input.",
-    parameters: {
-      type: "object",
-      properties: {
-        name: {
-          type: "string",
-          description:
-            "The name of the tool to call. A list of tools will be provided in the context, in a section called 'Tools Catalogue'.",
-        },
-        payload: {
-          description:
-            "The input to the tool. The format of this input will depend on the tool being called.",
-        },
-      },
-      required: ["name"],
-    },
-  },
-});
+// const buildCallTool = ()/*: ChatCompletionTool */ => ({
+//   type: "function",
+//   function: {
+//     name: "callTool",
+//     description:
+//       "Calls a tool with a given name and input. Tools are all accessible via a unified interface. The only tool available to the GPT model is `callTool`, which allows the model to call a tool with a given name and input.",
+//     parameters: {
+//       type: "object",
+//       properties: {
+//         name: {
+//           type: "string",
+//           description:
+//             "The name of the tool to call. A list of tools will be provided in the context, in a section called 'Tools Catalogue'.",
+//         },
+//         data: {
+//           description:
+//             "The input to the tool. The format of this input will depend on the tool being called.",
+//         },
+//       },
+//       required: ["name"],
+//     },
+//   },
+// });
