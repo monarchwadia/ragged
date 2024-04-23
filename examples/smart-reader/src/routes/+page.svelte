@@ -35,7 +35,7 @@
 		const p$ = r.predictStream(input, {
 			tools,
 			requestOverrides: {
-				model: 'gpt-4'
+				model: 'gpt-4-turbo'
 			}
 		});
 
