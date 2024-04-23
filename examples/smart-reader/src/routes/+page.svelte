@@ -10,6 +10,7 @@
 	let commandInput = '';
 	let assistantOutput = '';
 	let results: SearchResult[] = [];
+	let isProcessing = false;
 
 	// ACTIONS
 
@@ -24,6 +25,9 @@
 	// RAGGED ENTRYPOINT
 
 	const processCommand = async (command: string) => {
+		if (isProcessing) return;
+
+		isProcessing = true;
 		console.log('command', command);
 		console.log('results', results);
 
@@ -41,16 +45,23 @@
 
 		// HANDLING RAGGED EVENTS
 
-		p$.subscribe((s) => {
-			console.log('event', s);
-			if (s.type === 'tool_use_finish') {
-				if (s.data.name === 'search-wikipedia') {
-					doSearch(s.data.arguments.searchTerm);
+		p$.subscribe({
+			next: (s) => {
+				console.log('event', s);
+				// handle tools
+				if (s.type === 'tool_use_finish') {
+					if (s.data.name === 'search-wikipedia') {
+						doSearch(s.data.arguments.searchTerm);
+					}
 				}
-			}
 
-			if (s.type === 'collected') {
-				assistantOutput = s.data;
+				// output the assistant response
+				if (s.type === 'collected') {
+					assistantOutput = s.data;
+				}
+			},
+			complete: () => {
+				isProcessing = false;
 			}
 		});
 	};
@@ -81,33 +92,39 @@
 	});
 </script>
 
-<div class="h-full w-full p-4">
-	<div class="sticky top-0 flex flex-col gap-4 bg-base-100 p-4 border-2 border-accent my-4">
+<div class="h-full w-full p-4 flex flex-row gap-2">
+	<div class="flex flex-col gap-4 bg-base-200 p-4 border w-2/5">
 		<h1 class="text-xl font-bold">Smart Reader</h1>
-		<div class="flex flex-row gap-4">
+		<div class="flex flex-col gap-4">
 			<div class="flex flex-col gap-4">
-				<form class="form w-3xl" on:submit={(e) => processCommand(commandInput)}>
+				<form
+					class="form w-3xl flex flex-col gap-2"
+					on:submit={(e) => processCommand(commandInput)}
+				>
 					<label for="command-ai" class="label font-bold">Command AI</label>
 					<input
-						type="text"
 						id="command-ai"
 						name="command-ai"
 						class="input input-bordered"
 						placeholder="Command AI"
 						bind:value={commandInput}
+						disabled={isProcessing}
 					/>
-					<input type="submit" class="btn" value="Command" />
+					<input
+						type="submit"
+						class="btn btn-primary w-fit"
+						value={isProcessing ? '⌛' : 'Command'}
+					/>
 				</form>
 			</div>
 			<div class="flex flex-col">
 				<h2 class="text-lg font-bold">Assistant Output</h2>
-				<p>{assistantOutput}</p>
+				<pre class="whitespace-pre-wrap">{assistantOutput}</pre>
 			</div>
 		</div>
 	</div>
-	<div class="flex flex-row gap-4 border-2 border-red-50 m-auto">
-		<div class="flex flex-col gap-4 w-7/12">x</div>
-		<div class="flex flex-col gap-4 w-5/12">
+	<div class="flex flex-col w-full gap-4 border p-4 bg-base-200">
+		<div class="flex flex-col gap-4 max-h-[90vh] overflow-scroll">
 			{#if results.length === 0}
 				<p>No results found</p>
 			{:else}
