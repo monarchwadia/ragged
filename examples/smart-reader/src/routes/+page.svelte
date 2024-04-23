@@ -4,13 +4,15 @@
 	import { Ragged, t } from '../../../../ragged';
 	import { searchWiki } from '$lib/api/wiki';
 
+	// STATE
+
 	let r: Ragged;
 	let commandInput = '';
-	let searchTerm = '';
-	let analysis = '';
+	let assistantOutput = '';
 	let results: SearchResult[] = [];
 
-	// actions
+	// ACTIONS
+
 	const doSearch = async (text: string) => {
 		try {
 			results = await searchWiki(text);
@@ -19,59 +21,54 @@
 		}
 	};
 
+	// RAGGED ENTRYPOINT
+
 	const processCommand = async (command: string) => {
 		console.log('command', command);
 		console.log('results', results);
-		const input = JSON.stringify({
-			command,
-			results
-		});
+
+		let input: string =
+			'# Command\n\nExecute the user command below, taking the Currently Displayed Results into account.';
+		input += `# User Command\n\n${command}\n\n`;
+		input += `# Currently Displayed Results\n\n${JSON.stringify(results)}\n\n`;
+
 		const p$ = r.predictStream(input, {
 			tools,
 			requestOverrides: {
 				model: 'gpt-4'
 			}
 		});
+
+		// HANDLING RAGGED EVENTS
+
 		p$.subscribe((s) => {
 			console.log('event', s);
 			if (s.type === 'tool_use_finish') {
-				if (s.data.name === 'provide-analysis') {
-					analysis = s.data.arguments.results;
-				}
-
 				if (s.data.name === 'search-wikipedia') {
 					doSearch(s.data.arguments.searchTerm);
 				}
 			}
+
+			if (s.type === 'collected') {
+				assistantOutput = s.data;
+			}
 		});
 	};
 
-	// tools
+	// LLM TOOLS
 	const tools = [
 		t
 			.tool()
 			.title('search-wikipedia')
 			.description(
-				'Search Wikipedia for a term. This will return a list of results. It will also display the results to the user.'
+				'Search Wikipedia for a term. This will return a list of results. It will also display the results to the user. You must only call this function when you are explicitly asked to run a search.'
 			)
 			.inputs({
 				searchTerm: t.string().description('The term to search for on Wikipedia.').isRequired()
-			}),
-		t
-			.tool()
-			.title('provide-analysis')
-			.description(
-				'Analyze the current results of a search in a particular way. This will display the results of the analysis to the user. The results to analyze will be provided in plaintext format.'
-			)
-			.inputs({
-				results: t
-					.string()
-					.description(
-						'Your analysis of the results, in plaintext format. If you have no analysis, you can say "No input received.".'
-					)
-					.isRequired()
 			})
 	];
+
+	// SETUP
 
 	onMount(() => {
 		r = new Ragged({
@@ -101,22 +98,10 @@
 					/>
 					<input type="submit" class="btn" value="Command" />
 				</form>
-				<form class="form w-3xl" on:submit={(e) => doSearch(searchTerm)}>
-					<label for="search-input" class="label font-bold">Search Wikipedia</label>
-					<input
-						type="text"
-						id="search-input"
-						name="search-input"
-						class="input input-bordered"
-						placeholder="Search Wikipedia"
-						bind:value={searchTerm}
-					/>
-					<input type="submit" class="btn" value="Search" />
-				</form>
 			</div>
 			<div class="flex flex-col">
-				<h2 class="text-lg font-bold">Analysis</h2>
-				<p>{analysis}</p>
+				<h2 class="text-lg font-bold">Assistant Output</h2>
+				<p>{assistantOutput}</p>
 			</div>
 		</div>
 	</div>
