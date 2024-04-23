@@ -3,20 +3,33 @@
 	import { onMount } from 'svelte';
 	import { Ragged, t } from '../../../../ragged';
 	import { searchWiki } from '$lib/api/wiki';
+	import type { EventHistory } from '$lib/components/Console.types';
+	import Console from '$lib/components/Console.svelte';
 
 	// STATE
 
 	let r: Ragged;
 	let commandInput = '';
-	let assistantOutput = '';
+	let assistantOutput: string | undefined = undefined;
 	let results: SearchResult[] = [];
 	let isProcessing = false;
+
+	let history: EventHistory[] = [];
 
 	// ACTIONS
 
 	const doSearch = async (text: string) => {
 		try {
 			results = await searchWiki(text);
+			history = [
+				...history,
+				{
+					type: 'wiki-search',
+					data: {
+						titles: results.map((r) => r.title)
+					}
+				}
+			];
 		} catch (e) {
 			console.error('Error while searching', e);
 		}
@@ -26,6 +39,17 @@
 
 	const processCommand = async (command: string) => {
 		if (isProcessing) return;
+
+		history = [
+			...history,
+			{
+				type: 'chat',
+				data: {
+					sender: 'user',
+					message: command
+				}
+			}
+		];
 
 		isProcessing = true;
 		console.log('command', command);
@@ -47,7 +71,30 @@
 
 		p$.subscribe({
 			next: (s) => {
-				console.log('event', s);
+				history = [
+					...history,
+					{
+						type: 'ragged',
+						data: s
+					}
+				];
+
+				if (s.type === 'finished') {
+					assistantOutput = undefined;
+					if (s.data.length > 0) {
+						history = [
+							...history,
+							{
+								type: 'chat',
+								data: {
+									sender: 'ai',
+									message: s.data
+								}
+							}
+						];
+					}
+				}
+
 				// handle tools
 				if (s.type === 'tool_use_finish') {
 					if (s.data.name === 'search-wikipedia') {
@@ -95,7 +142,7 @@
 <div class="h-full w-full p-4 flex flex-row gap-2">
 	<div class="flex flex-col gap-4 bg-base-200 p-4 border w-2/5">
 		<h1 class="text-xl font-bold">Smart Reader</h1>
-		<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-4 max-h-[90vh] overflow-scroll">
 			<div class="flex flex-col gap-4">
 				<form
 					class="form w-3xl flex flex-col gap-2"
@@ -119,7 +166,8 @@
 			</div>
 			<div class="flex flex-col">
 				<h2 class="text-lg font-bold">Assistant Output</h2>
-				<pre class="whitespace-pre-wrap">{assistantOutput}</pre>
+				<!-- <pre class="whitespace-pre-wrap">{assistantOutput}</pre> -->
+				<Console {history} incomingStream={assistantOutput} />
 			</div>
 		</div>
 	</div>
