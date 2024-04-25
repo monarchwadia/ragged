@@ -37,7 +37,7 @@ async function main() {
     | RaggedToolUseResultEvent
     | undefined;
 
-  console.log("answer:", toolUseResult?.payload.result);
+  console.log("answer:", toolUseResult?.data.result);
 }
 
 // console output:
