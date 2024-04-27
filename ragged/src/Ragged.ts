@@ -19,16 +19,6 @@ export class InvalidConfigurationError extends Error {
 export class Ragged {
   constructor(private config: RaggedConfiguration) {}
 
-  // Need to add new functions and rename the current one
-  //
-  // chat(chat[], tools?[]) -> promise<chathistory[]>
-  // chatStream(chat[], tools?[]) -> subject<chathistory>
-  //
-  // ask(text:string, tools?[]) -> promise<string>
-  // askStream(text:string, tools?[]) -> subject<chunk/joined>
-  //
-  // useRagged - a hook for react
-
   predictStream(text: string, options?: PredictOptions) {
     const driver = this.getValidatedDriver();
     const p$ = driver.predictStream(text, options);
