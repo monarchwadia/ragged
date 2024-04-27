@@ -1,4 +1,4 @@
-import { Ragged, RaggedTool } from "ragged";
+import { Ragged, t } from "ragged";
 import { useState } from "react";
 
 type Room = {
@@ -23,9 +23,6 @@ function App() {
     const r = new Ragged({
       provider: "openai",
       config: {
-        // might be better to just wrap the openai client itself. that way, things are much more clear.
-        // const openai = new OpenAI({apiKey, dangersoulyAllowBrowser: true});
-        // const r = new Ragged(openai);
         apiKey: import.meta.env.VITE_OPENAI_CREDS,
         dangerouslyAllowBrowser: true,
       },
@@ -35,30 +32,57 @@ function App() {
     // There is no way to enforce package-private scope in Typescript, so we'll have to find a way to do clean up the interface in another way.
     // Tool also needs a `validator` method, which can be used to validate the input and output of the tool.
     // Tool also needs separate event handlers for "on tool call initialized" and "on tool call received", and these should be in the tool itself
-    const tool = new RaggedTool()
+    const tool = t
+      .tool()
       .title("set-lights")
       .description(
         "This tool controls the lighting in various rooms by adjusting brightness levels. Users can specify the brightness for each room using a percentage scale (0-100%), where the payload is an array of objects. Each object represents a room, containing 'name' (string) and 'brightness' (number) properties. The 'brightness' property is denoted in floating point numbers between 0 and 1, where 0 corresponds to 0%, 0.5 corresponds to 50%, 1 corresponds to 100%, and so on."
       )
-      .example({
-        description:
-          "When the user says 'set brightness to 50% in all rooms', it returns an array of rooms with the brightness set to 0.5.",
-        input: `[{ "name": "Living room", "brightness": 1.0 }, { "name": "Kitchen", "brightness": 1.0 }, { "name": "Bedroom", "brightness": 1.0 }]`,
-        output: `[{ "name": "Living room", "brightness": 0.5 }, { "name": "Kitchen", "brightness": 0.5 }, { "name": "Bedroom", "brightness": 0.5 }]`,
-      })
-      .example({
-        description:
-          "When the user says 'set brightness to 0%', it assumes the user is talking about all rooms. It returns an array of rooms with the brightness set to 0.",
-        input:
-          '[{ "name": "Living room", "brightness": 0.5 }, { "name": "Kitchen", "brightness": 0.7 }, { "name": "Bedroom", "brightness": 1.0 }]',
-        output:
-          '[{ "name": "Living room", "brightness": 0 }, { "name": "Kitchen", "brightness": 0 }, { "name": "Bedroom", "brightness": 0 }]',
+      .inputs({
+        roomName: t
+          .string()
+          .description("The name of the room to set the brightness for."),
+        brightness: t
+          .number()
+          .description("The brightness level to set the room to."),
       })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .handler((payload: any) => {
-        setRooms(payload);
-        // setRooms(payload);
+        // This handler will be called multiple times, once for each room. This needs to be documented
+        // somewhere to avoid confusion.
+        setRooms((rooms) => {
+          return rooms.map((room) => {
+            if (room.name === payload.roomName) {
+              return { ...room, brightness: payload.brightness };
+            }
+            return room;
+          });
+        });
       });
+
+    // const tool = new RaggedTool()
+    //   .title("set-lights")
+    //   .description(
+    //     "This tool controls the lighting in various rooms by adjusting brightness levels. Users can specify the brightness for each room using a percentage scale (0-100%), where the payload is an array of objects. Each object represents a room, containing 'name' (string) and 'brightness' (number) properties. The 'brightness' property is denoted in floating point numbers between 0 and 1, where 0 corresponds to 0%, 0.5 corresponds to 50%, 1 corresponds to 100%, and so on."
+    //   )
+    //   .example({
+    //     description:
+    //       "When the user says 'set brightness to 50% in all rooms', it returns an array of rooms with the brightness set to 0.5.",
+    //     input: `[{ "name": "Living room", "brightness": 1.0 }, { "name": "Kitchen", "brightness": 1.0 }, { "name": "Bedroom", "brightness": 1.0 }]`,
+    //     output: `[{ "name": "Living room", "brightness": 0.5 }, { "name": "Kitchen", "brightness": 0.5 }, { "name": "Bedroom", "brightness": 0.5 }]`,
+    //   })
+    //   .example({
+    //     description:
+    //       "When the user says 'set brightness to 0%', it assumes the user is talking about all rooms. It returns an array of rooms with the brightness set to 0.",
+    //     input:
+    //       '[{ "name": "Living room", "brightness": 0.5 }, { "name": "Kitchen", "brightness": 0.7 }, { "name": "Bedroom", "brightness": 1.0 }]',
+    //     output:
+    //       '[{ "name": "Living room", "brightness": 0 }, { "name": "Kitchen", "brightness": 0 }, { "name": "Bedroom", "brightness": 0 }]',
+    //   })
+    //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //   .handler((payload: any) => {
+    //     setRooms(payload);
+    //   });
 
     const stream = r.predictStream(
       `
@@ -67,8 +91,6 @@ function App() {
     Input: ${JSON.stringify(rooms)}
   `,
       {
-        // note that gpt-4-turbo is best for function calling.. but it throws an error because it's not specified in ragged
-        // need to add the ability to specify the model without throwing a typescript error
         tools: [tool],
         requestOverrides: {
           model: "gpt-4-turbo",
@@ -78,16 +100,7 @@ function App() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stream.subscribe((response: any) => {
-      // Here are the current options: "started" | "chunk" | "collected" | "finished" | "tool_use_start" | "tool_use_finish"
-      // none of these are really useful names for the user. instead, the emitted event type names needs to be more user friendly.
-      // for example,
-      // "started" could be "predict.start"
-      // "chunk" could be "text.chunk"
-      // "collected" could be "text"
-      // "tool_use_start" could be "tool.init"
-      // "tool_use_finish" could be "tool"
-      // "finished" could be "predict.end"
-      if (response.type === "collected") {
+      if (response.type === "text.joined") {
         setHistory((prev) => {
           const newHistory = [...prev];
           newHistory.pop();
@@ -95,11 +108,6 @@ function App() {
           return newHistory;
         });
       }
-
-      // if (response.type === "tool_use_finish") {
-      //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      //   setRooms(response.payload as any);
-      // }
     });
   };
 

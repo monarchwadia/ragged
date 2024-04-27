@@ -35,8 +35,8 @@ function App() {
 
       // WIP
       // doesn't get emitted yet, but will in the future
-      // the "collected" event is emitted with the partially complete prediction as it streams down
-      if (e.type === "collected") {
+      // the "text.joined" event is emitted with the partially complete prediction as it streams down
+      if (e.type === "text.joined") {
         console.log("SET PREDICTION", e.payload);
         setPrediction(e.payload);
         // Toronto

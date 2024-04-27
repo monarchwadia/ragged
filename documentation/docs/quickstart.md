@@ -89,7 +89,7 @@ r.predictStream("What is Toronto?").subscribe((e) => {
     // no-op
   }
 
-  if (e.type === "collected") {
+  if (e.type === "text.joined") {
     setPrediction(e.payload); // Outputs incrementally collected responses
   }
 
@@ -150,7 +150,7 @@ async function main() {
   });
 
   p$.subscribe((event) => {
-    if (event.type === "collected") {
+    if (event.type === "text.joined") {
       console.log(event.payload);
     }
   });

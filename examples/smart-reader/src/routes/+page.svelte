@@ -96,14 +96,14 @@
 				}
 
 				// handle tools
-				if (s.type === 'tool_use_finish') {
+				if (s.type === 'tool.inputs') {
 					if (s.data.name === 'search-wikipedia') {
 						doSearch(s.data.arguments.searchTerm);
 					}
 				}
 
 				// output the assistant response
-				if (s.type === 'collected') {
+				if (s.type === 'text.joined') {
 					assistantOutput = s.data;
 				}
 			},

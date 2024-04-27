@@ -3,7 +3,7 @@
 
 	export let history: EventHistory[] = [];
 	export let incomingStream: string | undefined;
-	const bannedEvents = ['chunk', 'collected'];
+	const bannedEvents = ['text.chunk', 'text.joined'];
 
 	const mappedHistory = (history: EventHistory[]) => {
 		const step1 = history
@@ -40,7 +40,7 @@
 			}
 
 			if (event.type === 'ragged') {
-				if (event.data.type === 'tool_use_start') {
+				if (event.data.type === 'tool.started') {
 					numToolUses++;
 				} else {
 					if (numToolUses > 0) {

@@ -2,13 +2,25 @@ export type RaggedConfigValidationResult =
   | { isValid: true }
   | { isValid: false; errors: string[] };
 
+// General events
+export type RaggedStartedEvent = { type: "started"; index: number };
 export type RaggedFinishedEvent = {
   type: "finished";
   index: number;
   data: string;
 };
+
+// Tool events
+export type RaggedToolUseStartEvent = {
+  type: "tool.started";
+  index: number;
+  toolCallIndex: number;
+  data: {
+    name: string;
+  };
+};
 export type RaggedToolUseFinishedEvent<Args = any> = {
-  type: "tool_use_finish";
+  type: "tool.inputs";
   index: number;
   toolCallIndex: number;
   data: {
@@ -17,7 +29,7 @@ export type RaggedToolUseFinishedEvent<Args = any> = {
   };
 };
 export type RaggedToolUseResultEvent<Args = any, Result = any> = {
-  type: "tool_use_result";
+  type: "tool.finished";
   index: number;
   toolCallIndex: number;
   data: {
@@ -27,24 +39,16 @@ export type RaggedToolUseResultEvent<Args = any, Result = any> = {
   };
 };
 
-export type RaggedStartedEvent = { type: "started"; index: number };
+// Text events
 export type RaggedChunkEvent = {
-  type: "chunk";
+  type: "text.chunk";
   index: number;
   data: string;
 };
 export type RaggedCollectedEvent = {
-  type: "collected";
+  type: "text.joined";
   index: number;
   data: string;
-};
-export type RaggedToolUseStartEvent = {
-  type: "tool_use_start";
-  index: number;
-  toolCallIndex: number;
-  data: {
-    name: string;
-  };
 };
 
 export type RaggedLlmPromisableEvent =

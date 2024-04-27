@@ -77,16 +77,16 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
         // for certain events, we don't want to include them in the final result because they're more relevant for streaming
         switch (event.type) {
           case "started":
-          case "tool_use_start":
-          case "chunk":
-          case "collected":
+          case "tool.started":
+          case "text.chunk":
+          case "text.joined":
             return;
           case "finished":
             events.push(event);
             resolve(events);
             return;
-          case "tool_use_finish":
-          case "tool_use_result":
+          case "tool.inputs":
+          case "tool.finished":
             events.push(event);
             return;
           // TODO: error case

@@ -33,7 +33,7 @@ async function main() {
     tools: [adder],
   });
 
-  const toolUseResult = result.find((r) => r.type === "tool_use_result") as
+  const toolUseResult = result.find((r) => r.type === "tool.finished") as
     | RaggedToolUseResultEvent
     | undefined;
 

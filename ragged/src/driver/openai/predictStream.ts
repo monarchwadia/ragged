@@ -25,14 +25,14 @@ export const predictStream = (
         break;
       case "CHAT_COMPLETION_CHUNK":
         operationEvents.next({
-          type: "chunk",
+          type: "text.chunk",
           index,
           data: evt.content,
         });
         break;
       case "CHAT_COMPLETION_COLLECT":
         operationEvents.next({
-          type: "collected",
+          type: "text.joined",
           index,
           data: evt.content,
         });
@@ -43,7 +43,7 @@ export const predictStream = (
         break;
       case "TOOL_USE_START":
         operationEvents.next({
-          type: "tool_use_start",
+          type: "tool.started",
           index: evt.index,
           toolCallIndex: evt.toolCallIndex,
           data: {
@@ -53,7 +53,7 @@ export const predictStream = (
         break;
       case "TOOL_USE_FINISH":
         operationEvents.next({
-          type: "tool_use_finish",
+          type: "tool.inputs",
           index: evt.index,
           toolCallIndex: evt.toolCallIndex,
           data: {
@@ -88,7 +88,7 @@ export const predictStream = (
 
           // TODO: provide the result to the LLM in the openerationEvents
           operationEvents.next({
-            type: "tool_use_result",
+            type: "tool.finished",
             index: evt.index,
             toolCallIndex: evt.toolCallIndex,
             data: {

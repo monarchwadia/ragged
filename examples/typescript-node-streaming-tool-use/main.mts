@@ -44,8 +44,8 @@ async function main() {
   });
 
   p$.subscribe((event) => {
-    if (event.type === "collected") {
-      console.log(event.payload);
+    if (event.type === "tool.finished") {
+      console.log("answer: " + event.data.result);
     }
   });
 }
