@@ -60,30 +60,6 @@ function App() {
         });
       });
 
-    // const tool = new RaggedTool()
-    //   .title("set-lights")
-    //   .description(
-    //     "This tool controls the lighting in various rooms by adjusting brightness levels. Users can specify the brightness for each room using a percentage scale (0-100%), where the payload is an array of objects. Each object represents a room, containing 'name' (string) and 'brightness' (number) properties. The 'brightness' property is denoted in floating point numbers between 0 and 1, where 0 corresponds to 0%, 0.5 corresponds to 50%, 1 corresponds to 100%, and so on."
-    //   )
-    //   .example({
-    //     description:
-    //       "When the user says 'set brightness to 50% in all rooms', it returns an array of rooms with the brightness set to 0.5.",
-    //     input: `[{ "name": "Living room", "brightness": 1.0 }, { "name": "Kitchen", "brightness": 1.0 }, { "name": "Bedroom", "brightness": 1.0 }]`,
-    //     output: `[{ "name": "Living room", "brightness": 0.5 }, { "name": "Kitchen", "brightness": 0.5 }, { "name": "Bedroom", "brightness": 0.5 }]`,
-    //   })
-    //   .example({
-    //     description:
-    //       "When the user says 'set brightness to 0%', it assumes the user is talking about all rooms. It returns an array of rooms with the brightness set to 0.",
-    //     input:
-    //       '[{ "name": "Living room", "brightness": 0.5 }, { "name": "Kitchen", "brightness": 0.7 }, { "name": "Bedroom", "brightness": 1.0 }]',
-    //     output:
-    //       '[{ "name": "Living room", "brightness": 0 }, { "name": "Kitchen", "brightness": 0 }, { "name": "Bedroom", "brightness": 0 }]',
-    //   })
-    //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //   .handler((payload: any) => {
-    //     setRooms(payload);
-    //   });
-
     const stream = r.predictStream(
       `
     User: ${prompt}

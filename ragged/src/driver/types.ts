@@ -11,7 +11,7 @@ export type RaggedFinishedEvent = {
 };
 
 // Tool events
-export type RaggedToolUseStartEvent = {
+export type RaggedToolStartedEvent = {
   type: "tool.started";
   index: number;
   toolCallIndex: number;
@@ -19,7 +19,7 @@ export type RaggedToolUseStartEvent = {
     name: string;
   };
 };
-export type RaggedToolUseFinishedEvent<Args = any> = {
+export type RaggedToolInputsEvent<Args = any> = {
   type: "tool.inputs";
   index: number;
   toolCallIndex: number;
@@ -28,7 +28,7 @@ export type RaggedToolUseFinishedEvent<Args = any> = {
     arguments: Args;
   };
 };
-export type RaggedToolUseResultEvent<Args = any, Result = any> = {
+export type RaggedToolFinishedEvent<Args = any, Result = any> = {
   type: "tool.finished";
   index: number;
   toolCallIndex: number;
@@ -40,12 +40,12 @@ export type RaggedToolUseResultEvent<Args = any, Result = any> = {
 };
 
 // Text events
-export type RaggedChunkEvent = {
+export type RaggedTextChunkEvent = {
   type: "text.chunk";
   index: number;
   data: string;
 };
-export type RaggedCollectedEvent = {
+export type RaggedTextJoinedEvent = {
   type: "text.joined";
   index: number;
   data: string;
@@ -53,14 +53,14 @@ export type RaggedCollectedEvent = {
 
 export type RaggedLlmPromisableEvent =
   | RaggedFinishedEvent
-  | RaggedToolUseFinishedEvent
-  | RaggedToolUseResultEvent;
+  | RaggedToolInputsEvent
+  | RaggedToolFinishedEvent;
 
 export type RaggedLlmStreamEvent =
   | RaggedFinishedEvent
-  | RaggedToolUseFinishedEvent
-  | RaggedToolUseResultEvent
+  | RaggedToolInputsEvent
+  | RaggedToolFinishedEvent
   | RaggedStartedEvent
-  | RaggedChunkEvent
-  | RaggedCollectedEvent
-  | RaggedToolUseStartEvent;
+  | RaggedTextChunkEvent
+  | RaggedTextJoinedEvent
+  | RaggedToolStartedEvent;
