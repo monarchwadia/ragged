@@ -3,14 +3,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const ragged = new Ragged({
-  openai: {
+  provider: "openai",
+  config: {
     apiKey: process.env.OPENAI_CREDS,
   },
 });
 
-async function main() {
-  const r = await ragged.predict("What is Toronto?");
-  console.log(r);
-}
-
-main();
+ragged.predict("What is Toronto?").then(console.log).catch(console.error);
