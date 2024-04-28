@@ -36,7 +36,7 @@ async function main() {
 
   const prompt = "add 123 + 456";
   console.log("prompt:", prompt);
-  const p$ = r.chatStream(prompt, {
+  const p$ = r.chat(prompt, {
     tools: [adder, multiplier],
     requestOverrides: {
       model: "gpt-4",

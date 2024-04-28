@@ -1,6 +1,8 @@
 import { RaggedConfiguration } from "./types";
 import { resolveDriver } from "./driver/resolveDriver";
 import { NewToolBuilder } from "./tool-use/NewToolBuilder";
+import { RaggedHistoryItem, RaggedLlmStreamEvent } from "./driver/types";
+import { RaggedSubject } from "./RaggedSubject";
 
 type PredictOptions<Overrides = any> = {
   tools: NewToolBuilder[];
@@ -19,16 +21,44 @@ export class InvalidConfigurationError extends Error {
 export class Ragged {
   constructor(private config: RaggedConfiguration) {}
 
-  chatStream(text: string, options?: PredictOptions) {
+  chat(
+    history: RaggedHistoryItem[] | string,
+    options?: PredictOptions
+  ): RaggedSubject {
+    if (typeof history === "string") {
+      history = [
+        {
+          type: "history.text",
+          role: "human",
+          data: {
+            text: history,
+          },
+        },
+      ];
+    }
     const driver = this.getValidatedDriver();
-    const p$ = driver.chatStream(text, options);
+    const p$ = driver.chatStream(history, options);
     return p$;
   }
 
-  chat(text: string, options?: PredictOptions) {
-    const driver = this.getValidatedDriver();
-    return driver.chat(text, options);
-  }
+  // chat(
+  //   history: RaggedHistoryItem[] | string,
+  //   options?: PredictOptions
+  // ): Promise<RaggedLlmStreamEvent[]> {
+  //   if (typeof history === "string") {
+  //     history = [
+  //       {
+  //         type: "history.text",
+  //         role: "human",
+  //         data: {
+  //           text: history,
+  //         },
+  //       },
+  //     ];
+  //   }
+  //   const driver = this.getValidatedDriver();
+  //   return driver.chat(history, options);
+  // }
 
   private getValidatedDriver() {
     const driver = resolveDriver(this.config);

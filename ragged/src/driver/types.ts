@@ -51,10 +51,10 @@ export type RaggedTextJoinedEvent = {
   data: string;
 };
 
-export type RaggedLlmPromisableEvent =
-  | RaggedFinishedEvent
-  | RaggedToolInputsEvent
-  | RaggedToolFinishedEvent;
+// export type RaggedLlmPromisableEvent =
+//   | RaggedFinishedEvent
+//   | RaggedToolInputsEvent
+//   | RaggedToolFinishedEvent;
 
 export type RaggedLlmStreamEvent =
   | RaggedFinishedEvent
@@ -64,3 +64,30 @@ export type RaggedLlmStreamEvent =
   | RaggedTextChunkEvent
   | RaggedTextJoinedEvent
   | RaggedToolStartedEvent;
+
+export type TextHistoryItem = {
+  type: "history.text";
+  role: "ai" | "human" | "system";
+  data: {
+    text: string;
+  };
+};
+
+export type ToolRequestHistoryItem = {
+  type: "history.tool.request";
+  toolRequestId: string;
+  toolName: string;
+  inputs: any;
+};
+
+export type ToolResultHistoryItem = {
+  type: "history.tool.result";
+  toolRequestId: string;
+  toolName: string;
+  result: any;
+};
+
+export type RaggedHistoryItem =
+  | TextHistoryItem
+  | ToolRequestHistoryItem
+  | ToolResultHistoryItem;

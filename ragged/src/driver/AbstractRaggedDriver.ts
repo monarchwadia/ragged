@@ -1,10 +1,10 @@
-import { Subject } from "rxjs";
 import {
   RaggedConfigValidationResult,
-  RaggedLlmPromisableEvent,
+  RaggedHistoryItem,
   RaggedLlmStreamEvent,
 } from "./types";
 import { NewToolBuilder } from "../tool-use/NewToolBuilder";
+import { RaggedSubject } from "../RaggedSubject";
 
 type PredictOptions<RequestOpts> = {
   tools: NewToolBuilder[];
@@ -30,14 +30,14 @@ export abstract class AbstractRaggedDriver<ConstructorConfig, RequestOpts> {
   ): RaggedConfigValidationResult;
 
   abstract chatStream(
-    text: string,
+    history: RaggedHistoryItem[],
     options?: PredictStreamOptions<RequestOpts>
-  ): Subject<RaggedLlmStreamEvent>;
+  ): RaggedSubject;
 
-  abstract chat(
-    text: string,
-    options?: PredictOptions<RequestOpts>
-  ): Promise<RaggedLlmPromisableEvent[]>;
+  // abstract chat(
+  //   history: RaggedHistoryItem[],
+  //   options?: PredictOptions<RequestOpts>
+  // ): Promise<RaggedLlmPromisableEvent[]>;
 
   isValid(): boolean {
     return !!this.config;

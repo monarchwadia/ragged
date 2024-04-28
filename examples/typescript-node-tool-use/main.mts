@@ -1,4 +1,3 @@
-import { RaggedToolUseResultEvent } from "ragged/src/driver/types";
 import { Ragged, t } from "../../ragged/main";
 import dotenv from "dotenv";
 dotenv.config();
@@ -26,18 +25,16 @@ async function main() {
 
   const prompt = "add 66 and 66";
   console.log("prompt:", prompt);
-  const result = await ragged.chat("add 66 and 66", {
-    requestOverrides: {
-      model: "gpt-4",
-    },
-    tools: [adder],
-  });
+  const result = await ragged
+    .chat("add 66 and 66", {
+      requestOverrides: {
+        model: "gpt-4",
+      },
+      tools: [adder],
+    })
+    .first("tool.finished");
 
-  const toolUseResult = result.find((r) => r.type === "tool.finished") as
-    | RaggedToolUseResultEvent
-    | undefined;
-
-  console.log("answer:", toolUseResult?.data.result);
+  console.log("answer:", result?.data.result);
 }
 
 // console output:

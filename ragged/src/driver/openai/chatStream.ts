@@ -1,17 +1,17 @@
-import { Subject } from "rxjs";
 import type { OpenAI } from "openai";
 import { OpenAiChatCompletionDetector } from "./detector/OpenAiChatCompletionDetector";
-import { RaggedLlmStreamEvent } from "../types";
+import { RaggedHistoryItem } from "../types";
 import { NewToolHolder } from "../../tool-use/types";
 import { mapToolToOpenAi } from "./mapToolToOpenAi";
+import { RaggedSubject } from "../../RaggedSubject";
 
 export const chatStream = (
   o: OpenAI,
-  prompt: string,
+  history: RaggedHistoryItem[],
   requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>,
   tools: NewToolHolder[]
 ) => {
-  const operationEvents = new Subject<RaggedLlmStreamEvent>();
+  const operationEvents = new RaggedSubject();
 
   const chatCompletionDetector = new OpenAiChatCompletionDetector();
 
@@ -112,14 +112,49 @@ export const chatStream = (
     }
   });
 
+  const openaiHistory: OpenAI.Chat.ChatCompletionMessageParam[] = history.map(
+    (item): OpenAI.Chat.ChatCompletionMessageParam => {
+      if (item.type === "history.text") {
+        let role: OpenAI.Chat.ChatCompletionMessageParam["role"];
+        if (item.role === "human") {
+          role = "user";
+        } else if (item.role === "ai") {
+          role = "assistant";
+        } else if (item.role === "system") {
+          role = "system";
+        } else {
+          throw new Error(
+            `Error while mapping Ragged history to OpenAI history: Unknown role: ${item.role}. Valid roles for a Ragged "history.text" item are are human, ai, system`
+          );
+        }
+
+        return {
+          role,
+          content: item.data.text,
+        };
+      } else if (item.type === "history.tool.request") {
+        return {
+          role: "tool",
+          tool_call_id: item.toolRequestId,
+          content: JSON.stringify(item.inputs),
+        };
+      } else if (item.type === "history.tool.result") {
+        return {
+          role: "tool",
+          tool_call_id: item.toolRequestId,
+          content: JSON.stringify(item.result),
+        };
+      } else {
+        throw new Error(
+          `Error while mapping Ragged history to OpenAI history: Unknown type: ${(item as any).type}. Valid types are "history.text", "history.tool.request", "history.tool.response"`
+        );
+      }
+    }
+  );
+
   const body: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
     model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
+    messages: openaiHistory,
     stream: true,
     ...(requestOverrides || {}),
   };

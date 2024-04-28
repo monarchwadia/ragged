@@ -9,7 +9,9 @@ const r = new Ragged({
         apiKey: process.env.OPENAI_API_KEY,
     }
 });
+
 r.chat("What is Toronto?")
-    .then(console.log)
+    .first("finished")
+    .then(x => console.log(x.data))
     .catch(console.error)
 
