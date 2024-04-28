@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SearchResult } from '$lib/types';
 	import { onMount } from 'svelte';
-	import { Ragged, t } from '../../../../ragged';
+	import { Ragged, t } from '../../../../ragged/main';
 	import { searchWiki } from '$lib/api/wiki';
 	import type { EventHistory } from '$lib/components/Console.types';
 	import Console from '$lib/components/Console.svelte';
@@ -60,7 +60,7 @@
 		input += `# User Command\n\n${command}\n\n`;
 		input += `# Currently Displayed Results\n\n${JSON.stringify(results)}\n\n`;
 
-		const p$ = r.chatStream(input, {
+		const p$ = r.chat(input, {
 			tools,
 			requestOverrides: {
 				model: 'gpt-4-turbo'

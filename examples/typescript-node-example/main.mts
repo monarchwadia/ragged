@@ -9,4 +9,9 @@ const ragged = new Ragged({
   },
 });
 
-ragged.chat("What is Toronto?").then(console.log).catch(console.error);
+console.log("started");
+ragged
+  .chat("What is Toronto?")
+  .firstText()
+  .then(console.log)
+  .catch(console.error);

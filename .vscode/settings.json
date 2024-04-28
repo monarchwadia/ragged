@@ -7,5 +7,6 @@
         "**/Thumbs.db": true,
         "**/node_modules": true,
         "**/pnpm-lock.yaml": true,
+        "**/build/": true
     }
 }

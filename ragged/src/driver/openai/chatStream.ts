@@ -11,6 +11,7 @@ export const chatStream = (
   requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>,
   tools: NewToolHolder[]
 ) => {
+  const responseHistory: RaggedHistoryItem[] = [];
   const operationEvents = new RaggedSubject();
 
   const chatCompletionDetector = new OpenAiChatCompletionDetector();
@@ -20,28 +21,44 @@ export const chatStream = (
     const { type, index } = evt;
 
     switch (type) {
-      case "CHAT_COMPLETION_START":
-        operationEvents.next({ type: "started", index });
+      case "CHAT_COMPLETION_START": {
+        operationEvents.next({ type: "ragged.started" });
         break;
-      case "CHAT_COMPLETION_CHUNK":
+      }
+      case "CHAT_COMPLETION_CHUNK": {
         operationEvents.next({
           type: "text.chunk",
           index,
           data: evt.content,
         });
         break;
-      case "CHAT_COMPLETION_COLLECT":
+      }
+      case "CHAT_COMPLETION_COLLECT": {
         operationEvents.next({
           type: "text.joined",
           index,
           data: evt.content,
         });
         break;
-      case "CHAT_COMPLETION_FINISH":
-        operationEvents.next({ type: "finished", index, data: evt.content });
-        operationEvents.complete();
+      }
+      case "CHAT_COMPLETION_FINISH": {
+        operationEvents.next({
+          type: "text.finished",
+          index,
+          data: evt.content,
+        });
+        const historyItem: RaggedHistoryItem = {
+          type: "history.text",
+          role: "ai",
+          data: {
+            text: evt.content,
+          },
+        };
+        responseHistory.push(historyItem);
+        operationEvents.next({ ...historyItem });
         break;
-      case "TOOL_USE_START":
+      }
+      case "TOOL_USE_START": {
         operationEvents.next({
           type: "tool.started",
           index: evt.index,
@@ -51,15 +68,17 @@ export const chatStream = (
           },
         });
         break;
-      case "TOOL_USE_FINISH":
+      }
+      case "TOOL_USE_FINISH": {
+        const toolUseRequestData = {
+          name: evt.toolCall.name,
+          arguments: evt.toolCall.arguments,
+        };
         operationEvents.next({
           type: "tool.inputs",
           index: evt.index,
           toolCallIndex: evt.toolCallIndex,
-          data: {
-            name: evt.toolCall.name,
-            arguments: evt.toolCall.arguments,
-          },
+          data: toolUseRequestData,
         });
 
         // call the handler and push up the result in the events.
@@ -84,6 +103,7 @@ export const chatStream = (
           }
 
           // TODO: need to do validation
+          // TODO: need to do try/catch around the handler
           const result = handler(evt.toolCall.arguments);
 
           // TODO: provide the result to the LLM in the openerationEvents
@@ -98,6 +118,15 @@ export const chatStream = (
             },
           });
 
+          const historyItem: RaggedHistoryItem = {
+            type: "history.tool.result",
+            toolName: evt.toolCall.name,
+            toolRequestId: evt.toolCall.id,
+            result,
+          };
+          operationEvents.next(historyItem);
+          responseHistory.push({ ...historyItem });
+
           return;
         }
 
@@ -109,6 +138,7 @@ export const chatStream = (
         // );
 
         break;
+      }
     }
   });
 
@@ -169,6 +199,14 @@ export const chatStream = (
   response
     .then((response) => {
       const reader = response.toReadableStream().getReader();
+
+      reader.closed.then(() => {
+        operationEvents.next({
+          type: "ragged.finished",
+          data: responseHistory,
+        });
+        operationEvents.complete();
+      });
 
       function read() {
         reader

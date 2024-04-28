@@ -1,16 +1,18 @@
 export type RaggedConfigValidationResult =
-  | { isValid: true }
-  | { isValid: false; errors: string[] };
-
-// General events
-export type RaggedStartedEvent = { type: "started"; index: number };
-export type RaggedFinishedEvent = {
-  type: "finished";
-  index: number;
-  data: string;
+  | {
+      isValid: true;
+    }
+  | {
+      isValid: false;
+      errors: string[];
+    };
+export type RaggedResponseStartedEvent = {
+  type: "ragged.started";
 };
-
-// Tool events
+export type RaggedResponseFinishedEvent = {
+  type: "ragged.finished";
+  data: RaggedHistoryItem[];
+};
 export type RaggedToolStartedEvent = {
   type: "tool.started";
   index: number;
@@ -38,8 +40,10 @@ export type RaggedToolFinishedEvent<Args = any, Result = any> = {
     result: Result;
   };
 };
-
-// Text events
+export type RaggedTextStartedEvent = {
+  type: "text.started";
+  index: number;
+};
 export type RaggedTextChunkEvent = {
   type: "text.chunk";
   index: number;
@@ -50,20 +54,11 @@ export type RaggedTextJoinedEvent = {
   index: number;
   data: string;
 };
-
-// export type RaggedLlmPromisableEvent =
-//   | RaggedFinishedEvent
-//   | RaggedToolInputsEvent
-//   | RaggedToolFinishedEvent;
-
-export type RaggedLlmStreamEvent =
-  | RaggedFinishedEvent
-  | RaggedToolInputsEvent
-  | RaggedToolFinishedEvent
-  | RaggedStartedEvent
-  | RaggedTextChunkEvent
-  | RaggedTextJoinedEvent
-  | RaggedToolStartedEvent;
+export type RaggedTextFinishedEvent = {
+  type: "text.finished";
+  index: number;
+  data: string;
+};
 
 export type TextHistoryItem = {
   type: "history.text";
@@ -72,14 +67,12 @@ export type TextHistoryItem = {
     text: string;
   };
 };
-
 export type ToolRequestHistoryItem = {
   type: "history.tool.request";
   toolRequestId: string;
   toolName: string;
   inputs: any;
 };
-
 export type ToolResultHistoryItem = {
   type: "history.tool.result";
   toolRequestId: string;
@@ -91,3 +84,15 @@ export type RaggedHistoryItem =
   | TextHistoryItem
   | ToolRequestHistoryItem
   | ToolResultHistoryItem;
+
+export type RaggedLlmStreamEvent =
+  | RaggedHistoryItem
+  | RaggedResponseStartedEvent
+  | RaggedToolStartedEvent
+  | RaggedToolInputsEvent
+  | RaggedToolFinishedEvent
+  | RaggedTextStartedEvent
+  | RaggedTextChunkEvent
+  | RaggedTextJoinedEvent
+  | RaggedTextFinishedEvent
+  | RaggedResponseFinishedEvent;

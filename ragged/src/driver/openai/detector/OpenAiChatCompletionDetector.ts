@@ -9,6 +9,7 @@ type DeltaCollection = {
 type DeltaCollectionToolCall = {
   name: string;
   arguments: string;
+  id: string;
 };
 
 export type OpenAiChatCompletionDetectorEvent =
@@ -37,6 +38,7 @@ export type OpenAiChatCompletionDetectorEvent =
       index: number;
       toolCallIndex: number;
       toolCall: {
+        id: string;
         name: string;
       };
     }
@@ -45,6 +47,7 @@ export type OpenAiChatCompletionDetectorEvent =
       index: number;
       toolCallIndex: number;
       toolCall: {
+        id: string;
         name: string;
         arguments: string;
       };
@@ -138,6 +141,7 @@ export class OpenAiChatCompletionDetector {
             dct = {
               name: "",
               arguments: "",
+              id: "",
             };
 
             dc.toolCalls[toolCallIndex] = dct;
@@ -145,6 +149,7 @@ export class OpenAiChatCompletionDetector {
 
           dct.arguments += _function?.arguments || "";
           dct.name += _function?.name || "";
+          dct.id += id || "";
 
           if (dctWasNewlyCreated) {
             this.emit({
@@ -153,6 +158,7 @@ export class OpenAiChatCompletionDetector {
               toolCallIndex,
               toolCall: {
                 name: dct.name,
+                id: dct.id,
               },
             });
           }
@@ -171,6 +177,7 @@ export class OpenAiChatCompletionDetector {
             const parsedToolCall = {
               name: dc.toolCalls[i].name,
               arguments: args,
+              id: dc.toolCalls[i].id,
             };
 
             parsedToolCalls.push(parsedToolCall);

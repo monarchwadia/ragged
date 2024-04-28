@@ -1,4 +1,4 @@
-import { Ragged, t } from "ragged";
+import { Ragged, t } from "../../../ragged/main";
 import { useState } from "react";
 
 type Room = {
@@ -60,7 +60,7 @@ function App() {
         });
       });
 
-    const stream = r.chatStream(
+    const stream = r.chat(
       `
     User: ${prompt}
     

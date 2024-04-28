@@ -85,7 +85,7 @@ const r = new Ragged({
 });
 
 r.chatStream("What is Toronto?").subscribe((e) => {
-  if (e.type === "started") {
+  if (e.type === "stream.started") {
     // no-op
   }
 
@@ -93,7 +93,7 @@ r.chatStream("What is Toronto?").subscribe((e) => {
     setPrediction(e.payload); // Outputs incrementally collected responses
   }
 
-  if (e.type === "finished") {
+  if (e.type === "stream.finished") {
     setPrediction(e.payload); // Outputs the complete response
   }
 });

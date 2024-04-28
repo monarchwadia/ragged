@@ -1,5 +1,5 @@
 // const Ragged = require('ragged');
-import { Ragged } from "ragged";
+import { Ragged } from "../../ragged/main";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -11,7 +11,7 @@ const r = new Ragged({
 });
 
 r.chat("What is Toronto?")
-    .first("finished")
-    .then(x => console.log(x.data))
+    .first("history.text")
+    .then(x => console.log(x?.data))
     .catch(console.error)
 

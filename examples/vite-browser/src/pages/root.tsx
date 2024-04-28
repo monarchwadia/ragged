@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Ragged } from "ragged";
+import { Ragged } from "../../../../ragged/main";
 
 // can also import unminified
 // import { Ragged } from "ragged/unminified";
@@ -23,13 +23,13 @@ function App() {
   };
 
   const doPredictionEventDriven = async () => {
-    const p = l.chatStream("What is toronto?");
+    const p = l.chat("What is toronto?");
 
     p.subscribe((e) => {
       console.log("EVENT", e);
       // console.log(e);
-      // the "started" event is emitted when the prediction starts
-      if (e.type === "started") {
+      // the response.started event is emitted when the prediction starts
+      if (e.type === "ragged.started") {
         // no-op
       }
 
@@ -37,8 +37,8 @@ function App() {
       // doesn't get emitted yet, but will in the future
       // the "text.joined" event is emitted with the partially complete prediction as it streams down
       if (e.type === "text.joined") {
-        console.log("SET PREDICTION", e.payload);
-        setPrediction(e.payload);
+        console.log("SET PREDICTION", e.data);
+        setPrediction(e.data);
         // Toronto
         // Toronto is
         // Toronto is a
@@ -49,7 +49,7 @@ function App() {
 
       // the "completed" event is emitted with the fully complete prediction
       if (e.type === "finished") {
-        setPrediction(e.payload);
+        setPrediction(e.data);
         // Toronto is a city in Canada.
       }
     });
