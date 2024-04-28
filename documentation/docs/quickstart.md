@@ -38,7 +38,7 @@ const r = new Ragged({
   },
 });
 
-r.predict("What is Toronto?")
+r.chat("What is Toronto?")
   .then(console.log)
   .catch(console.error)
 // { ..., payload: 'Toronto is a city in Canada. It has a population of...'}
@@ -61,7 +61,7 @@ const r = new Ragged({
   },
 });
 
-r.predict("What is Toronto?")
+r.chat("What is Toronto?")
   .then(console.log)
   .catch(console.error);
 // { ..., payload: 'Toronto is a city in Canada. It has a population of...'}
@@ -84,7 +84,7 @@ const r = new Ragged({
   },
 });
 
-r.predictStream("What is Toronto?").subscribe((e) => {
+r.chatStream("What is Toronto?").subscribe((e) => {
   if (e.type === "started") {
     // no-op
   }
@@ -142,7 +142,7 @@ async function main() {
 
   const prompt = "add 123 + 456";
   console.log("prompt:", prompt);
-  const p$ = r.predictStream(prompt, {
+  const p$ = r.chatStream(prompt, {
     tools: [adder, multiplier],
     requestOverrides: {
       model: "gpt-4",

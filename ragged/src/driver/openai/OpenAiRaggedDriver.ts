@@ -5,7 +5,7 @@ import {
   RaggedLlmPromisableEvent,
   RaggedLlmStreamEvent,
 } from "../types";
-import { predictStream } from "./predictStream";
+import { chatStream } from "./chatStream";
 import { Subject } from "rxjs";
 import { NewToolBuilder } from "../../tool-use/NewToolBuilder";
 import { buildTool } from "../../tool-use/buildTool";
@@ -51,24 +51,24 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
     };
   }
 
-  predictStream(
+  chatStream(
     text: string,
     options?: PredictOptions
   ): Subject<RaggedLlmStreamEvent> {
     const o = new OpenAI(this.config);
     const tools = options?.tools.map((tool) => tool.build()) || [];
 
-    const p$ = predictStream(o, text, options?.requestOverrides || {}, tools);
+    const p$ = chatStream(o, text, options?.requestOverrides || {}, tools);
     return p$;
   }
-  predict(
+  chat(
     text: string,
     options?: PredictOptions
   ): Promise<RaggedLlmPromisableEvent[]> {
     const o = new OpenAI(this.config);
     const tools = options?.tools.map((tool) => tool.build()) || [];
 
-    const p$ = predictStream(o, text, options?.requestOverrides || {}, tools);
+    const p$ = chatStream(o, text, options?.requestOverrides || {}, tools);
     return new Promise<RaggedLlmPromisableEvent[]>((resolve) => {
       let mostRecentlyCollected: RaggedLlmPromisableEvent | null = null;
       const events: RaggedLlmPromisableEvent[] = [];

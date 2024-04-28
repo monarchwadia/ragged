@@ -5,7 +5,7 @@ import { RaggedLlmStreamEvent } from "../types";
 import { NewToolHolder } from "../../tool-use/types";
 import { mapToolToOpenAi } from "./mapToolToOpenAi";
 
-export const predictStream = (
+export const chatStream = (
   o: OpenAI,
   prompt: string,
   requestOverrides: Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>,

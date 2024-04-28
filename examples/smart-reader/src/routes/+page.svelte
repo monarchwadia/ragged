@@ -60,7 +60,7 @@
 		input += `# User Command\n\n${command}\n\n`;
 		input += `# Currently Displayed Results\n\n${JSON.stringify(results)}\n\n`;
 
-		const p$ = r.predictStream(input, {
+		const p$ = r.chatStream(input, {
 			tools,
 			requestOverrides: {
 				model: 'gpt-4-turbo'

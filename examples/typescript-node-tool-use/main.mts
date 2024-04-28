@@ -26,7 +26,7 @@ async function main() {
 
   const prompt = "add 66 and 66";
   console.log("prompt:", prompt);
-  const result = await ragged.predict("add 66 and 66", {
+  const result = await ragged.chat("add 66 and 66", {
     requestOverrides: {
       model: "gpt-4",
     },

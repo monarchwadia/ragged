@@ -19,15 +19,15 @@ export class InvalidConfigurationError extends Error {
 export class Ragged {
   constructor(private config: RaggedConfiguration) {}
 
-  predictStream(text: string, options?: PredictOptions) {
+  chatStream(text: string, options?: PredictOptions) {
     const driver = this.getValidatedDriver();
-    const p$ = driver.predictStream(text, options);
+    const p$ = driver.chatStream(text, options);
     return p$;
   }
 
-  predict(text: string, options?: PredictOptions) {
+  chat(text: string, options?: PredictOptions) {
     const driver = this.getValidatedDriver();
-    return driver.predict(text, options);
+    return driver.chat(text, options);
   }
 
   private getValidatedDriver() {

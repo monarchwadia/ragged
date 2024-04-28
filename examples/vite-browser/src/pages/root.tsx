@@ -18,12 +18,12 @@ function App() {
   const [prediction, setPrediction] = useState("");
 
   const doPredictionPromiseBased = async () => {
-    const p = await l.predict("What is toronto?");
+    const p = await l.chat("What is toronto?");
     setPrediction(p);
   };
 
   const doPredictionEventDriven = async () => {
-    const p = l.predictStream("What is toronto?");
+    const p = l.chatStream("What is toronto?");
 
     p.subscribe((e) => {
       console.log("EVENT", e);

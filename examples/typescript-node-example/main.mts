@@ -9,4 +9,4 @@ const ragged = new Ragged({
   },
 });
 
-ragged.predict("What is Toronto?").then(console.log).catch(console.error);
+ragged.chat("What is Toronto?").then(console.log).catch(console.error);

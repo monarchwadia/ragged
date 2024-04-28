@@ -60,7 +60,7 @@ function App() {
         });
       });
 
-    const stream = r.predictStream(
+    const stream = r.chatStream(
       `
     User: ${prompt}
     

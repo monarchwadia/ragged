@@ -29,12 +29,12 @@ export abstract class AbstractRaggedDriver<ConstructorConfig, RequestOpts> {
     opts: Object
   ): RaggedConfigValidationResult;
 
-  abstract predictStream(
+  abstract chatStream(
     text: string,
     options?: PredictStreamOptions<RequestOpts>
   ): Subject<RaggedLlmStreamEvent>;
 
-  abstract predict(
+  abstract chat(
     text: string,
     options?: PredictOptions<RequestOpts>
   ): Promise<RaggedLlmPromisableEvent[]>;
