@@ -61,37 +61,4 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
     const p$ = chatStream(o, history, options?.requestOverrides || {}, tools);
     return p$;
   }
-  // chat(
-  //   text: string,
-  //   options?: PredictOptions
-  // ): Promise<RaggedLlmPromisableEvent[]> {
-  //   const o = new OpenAI(this.config);
-  //   const tools = options?.tools.map((tool) => tool.build()) || [];
-
-  //   const p$ = chatStream(o, text, options?.requestOverrides || {}, tools);
-  //   return new Promise<RaggedLlmPromisableEvent[]>((resolve) => {
-  //     let mostRecentlyCollected: RaggedLlmPromisableEvent | null = null;
-  //     const events: RaggedLlmPromisableEvent[] = [];
-
-  //     p$.subscribe((event) => {
-  //       // for certain events, we don't want to include them in the final result because they're more relevant for streaming
-  //       switch (event.type) {
-  //         case "started":
-  //         case "tool.started":
-  //         case "text.chunk":
-  //         case "text.joined":
-  //           return;
-  //         case "finished":
-  //           events.push(event);
-  //           resolve(events);
-  //           return;
-  //         case "tool.inputs":
-  //         case "tool.finished":
-  //           events.push(event);
-  //           return;
-  //         // TODO: error case
-  //       }
-  //     });
-  //   });
-  // }
 }

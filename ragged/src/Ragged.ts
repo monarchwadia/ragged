@@ -41,25 +41,6 @@ export class Ragged {
     return p$;
   }
 
-  // chat(
-  //   history: RaggedHistoryItem[] | string,
-  //   options?: PredictOptions
-  // ): Promise<RaggedLlmStreamEvent[]> {
-  //   if (typeof history === "string") {
-  //     history = [
-  //       {
-  //         type: "history.text",
-  //         role: "human",
-  //         data: {
-  //           text: history,
-  //         },
-  //       },
-  //     ];
-  //   }
-  //   const driver = this.getValidatedDriver();
-  //   return driver.chat(history, options);
-  // }
-
   private getValidatedDriver() {
     const driver = resolveDriver(this.config);
     const validationResult = driver.initializeAndValidateConfiguration(
