@@ -2,13 +2,21 @@
 sidebar_position: 1
 ---
 
-# What is ragged?
+# Ragged: the easy, casual, full-stack LLM library.
 
-`ragged` is a set of streamlined functions aimed at simplifying the usage of Large Language Models (LLMs). It offers an easy-to-use interface supporting both promise-based and event-driven inference, allowing for quick integration into applications utilizing LLMs. Currently in development, `ragged` is designed to provide a unified facade for interacting with various LLM APIs, including OpenAI and Anthropic, supporting diverse interaction patterns like text-to-text, speech-to-text, text-to-speech, text-to-image, and image-to-text.
+`ragged` simplifies the usage of Large Language Models (LLMs). It offers an easy-to-use interface that supports both promise-based and event-driven inference.
 
-# Why ragged?
+## Why ragged?
 
-Developed from a need to address repetitive implementations across LLM APIs, `ragged` aims to simplify the use of streaming (and non-streaming) LLM APIs for developers in both frontend and backend environments. Its core philosophy is to eliminate the complexities commonly associated with managing and configuring multiple LLM services.
+LLMs currently offer non-standard APIs. `ragged` simplifies APIs for the frontend and backend by exposing a common interface that will eventually work across all LLMs.
+
+## Roadmap
+
+Currently in development, `ragged` is designed to provide a unified facade for interacting with various LLM APIs, including OpenAI, Cohere, and Anthropic, supporting diverse interaction patterns like text-to-text, speech-to-text, text-to-speech, text-to-image, and image-to-text.
+
+## Expect breaking API changes
+
+Ragged is in its early stages. Expect breaking API changes frequently at this point.
 
 # Quickstart
 
@@ -39,9 +47,8 @@ const r = new Ragged({
 });
 
 r.chat("What is Toronto?")
-  .then(console.log)
-  .catch(console.error)
-// { ..., payload: 'Toronto is a city in Canada. It has a population of...'}
+  .firstText()
+  .then(console.log) // Toronto is a city in Canada. It has a population of...
 ```
 
 ## Manually Configuring the OpenAI Object
@@ -62,9 +69,8 @@ const r = new Ragged({
 });
 
 r.chat("What is Toronto?")
-  .then(console.log)
-  .catch(console.error);
-// { ..., payload: 'Toronto is a city in Canada. It has a population of...'}
+  .firstText()
+  .then(console.log) // Toronto is a city in Canada. It has a population of...
 ```
 
 ## Streaming API
@@ -84,17 +90,23 @@ const r = new Ragged({
   },
 });
 
-r.chatStream("What is Toronto?").subscribe((e) => {
-  if (e.type === "stream.started") {
-    // no-op
+r.chat("What is Toronto?").subscribe((e) => {
+  if (e.type === "ragged.started") {
+    console.log("started!");
   }
 
   if (e.type === "text.joined") {
-    setPrediction(e.payload); // Outputs incrementally collected responses
+    console.log(e.data); // outputs the streaming response as it comes in
+    // Toronto
+    // Toronto is
+    // Toronto is a ci
+    // Toronto is a city in No
+    // Toronto is a city in North America.
+    // ...
   }
 
-  if (e.type === "stream.finished") {
-    setPrediction(e.payload); // Outputs the complete response
+  if (e.type === "ragged.finished") {
+    console.log("finished!");
   }
 });
 ```
@@ -142,7 +154,7 @@ async function main() {
 
   const prompt = "add 123 + 456";
   console.log("prompt:", prompt);
-  const p$ = r.chatStream(prompt, {
+  const p$ = r.chat(prompt, {
     tools: [adder, multiplier],
     requestOverrides: {
       model: "gpt-4",
@@ -150,15 +162,12 @@ async function main() {
   });
 
   p$.subscribe((event) => {
-    if (event.type === "text.joined") {
-      console.log(event.payload);
-    }
+				if (s.type === 'tool.finished') {
+          console.log(`${s.data.name} result ${s.data.result}`); // adder result 579
+				}
   });
 }
 
 main().catch(console.error);
-
-// prompt: add 123 + 456
-// answer: 578
 ```
 
