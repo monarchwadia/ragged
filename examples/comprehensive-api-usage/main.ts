@@ -16,9 +16,9 @@ const runExample = async (name: string, callable: () => Promise<any>) => {
 };
 
 const main = async () => {
-  // await runExample("hello-world", helloWorld);
-  // await runExample("streaming-poetry", streamingPoetry);
-  // await runExample("list-files", listFiles);
+  await runExample("hello-world", helloWorld);
+  await runExample("streaming-poetry", streamingPoetry);
+  await runExample("list-files", listFiles);
   await runExample("multi-tool-use", multiToolUse);
 };
 
