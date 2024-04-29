@@ -14,10 +14,10 @@ export const resolveDriver = (
   switch (config.provider) {
     case "openai":
       return new OpenAiRaggedDriver();
-    case "cohere":
-      throw new UnknownProviderError(
-        "cohere (not yet implemented, but on the roadmap!)"
-      );
+    // case "cohere":
+    //   throw new UnknownProviderError(
+    //     "cohere (not yet implemented, but on the roadmap!)"
+    //   );
     default:
       throw new UnknownProviderError((config as any).provider);
   }

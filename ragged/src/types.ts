@@ -5,9 +5,9 @@ type OpenAiConfig = {
   config: ClientOptions;
 };
 
-type CohereConfig = {
-  provider: "cohere";
-  config: any;
-};
+// type CohereConfig = {
+//   provider: "cohere";
+//   config: any;
+// };
 
-export type RaggedConfiguration = OpenAiConfig | CohereConfig;
+export type RaggedConfiguration = OpenAiConfig;
