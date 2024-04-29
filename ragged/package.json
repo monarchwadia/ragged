@@ -20,13 +20,15 @@
   "keywords": [],
   "author": "monarchwadia",
   "license": "MIT",
+  "peerDependencies": {
+    "rxjs": "^7.8.1",
+    "openai": "^4.0.0"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/json-schema": "^7.0.15",
     "esbuild": "0.20.2",
     "jest": "^29.7.0",
-    "openai": "^4.0.0",
-    "rxjs": "^7.8.1",
     "ts-jest": "^29.1.2",
     "tsx": "^4.7.1",
     "typescript": "^5.4.3"
