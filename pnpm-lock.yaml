@@ -110,6 +110,27 @@ importers:
         specifier: ^5.2.0
         version: 5.2.6
 
+  examples/comprehensive-api-usage:
+    dependencies:
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      openai:
+        specifier: ^4.0.0
+        version: 4.30.0
+      ragged:
+        specifier: workspace:*
+        version: link:../../ragged
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
+      typescript:
+        specifier: ^5.2.2
+        version: 5.4.3
+
   examples/smart-reader:
     dependencies:
       openai:
