@@ -125,6 +125,7 @@ describe("ChatCompletionDetector", () => {
       toolCallIndex: 0,
       type: "TOOL_USE_START",
       toolCall: {
+        id: "call_S3wghsJaOOO1BHLqx0vYSLhS",
         name: "adder",
       },
     });
@@ -151,6 +152,7 @@ describe("ChatCompletionDetector", () => {
       toolCallIndex: 0,
       type: "TOOL_USE_FINISH",
       toolCall: {
+        id: "call_S3wghsJaOOO1BHLqx0vYSLhS",
         name: "adder",
         arguments: {
           a: 1,
@@ -179,6 +181,7 @@ describe("ChatCompletionDetector", () => {
       toolCalls: [
         {
           name: "adder",
+          id: "call_S3wghsJaOOO1BHLqx0vYSLhS",
           arguments: {
             a: 1,
             b: 1,
