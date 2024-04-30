@@ -1,8 +1,5 @@
----
-sidebar_position: 1
----
 
-# Ragged: the easy, casual, full-stack LLM library.
+# Introduction
 
 `ragged` simplifies the usage of Large Language Models (LLMs). It offers an easy-to-use interface that supports both promise-based and event-driven inference.
 
