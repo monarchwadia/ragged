@@ -11,7 +11,7 @@ npm install --save openai rxjs ragged
 ```
 
 
-## Your first API call
+## Your first Ragged LLM call
 
 
 ```ts
