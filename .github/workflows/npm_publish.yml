@@ -40,7 +40,7 @@ jobs:
 
       - name: Copy Quickstart
         working-directory: .
-        run: cp "documentation/docs/Getting Started/*quickstart.md" README.md && cp "documentation/docs/Getting Started/*quickstart.md" ragged/README.md
+        run: cp documentation/docs/Getting\ Started/*quickstart.md README.md && cp documentation/docs/Getting\ Started/*quickstart.md ragged/README.md
 
       - name: Build
         working-directory: ragged
