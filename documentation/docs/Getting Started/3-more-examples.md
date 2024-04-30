@@ -1,16 +1,6 @@
-# Quickstart
+# More Examples
 
-This Quickstart should help new developers get started quickly with `ragged`, leveraging its features for efficient LLM integrations.
-
-## Installation
-
-You'll need to install `ragged` along with its peer dependencies, `openai` for LLM driver support (we only support openai right now) and `rxjs` for streaming. 
-
-```sh
-npm install --save openai rxjs ragged
-```
-
-## Your First Streaming API Call (we simplify it later)
+## Streaming API Calls
 
 `ragged` supports streaming responses, making real-time interaction feasible.
 
