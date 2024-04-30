@@ -32,3 +32,7 @@ r.chat("What is Toronto?")
   .firstText() // convert to promise
   .then(console.log) // Toronto is a city in Canada. It has a population of...
 ```
+
+## Explore the documentation
+
+You're now all set to start building really cool LLM apps! Ragged features very easy and fluent APIs for streaming, tool use, and more. You can see [More Examples](https://monarchwadia.github.io/ragged/Getting%20Started/more-examples) here for inspiration!
