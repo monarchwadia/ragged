@@ -3,25 +3,25 @@
 import * as esbuild from "esbuild";
 
 async function main() {
-  // esm minified
-  await esbuild.build({
-    entryPoints: ["./main.ts"],
-    bundle: true,
-    outfile: `./build/ragged.js`,
-    platform: "neutral",
-    logLevel: "info",
-    target: ["es6"],
-    format: "esm",
-    minify: false
-  });
+    // esm minified
+    await esbuild.build({
+        entryPoints: ["./main.ts"],
+        bundle: true,
+        outfile: `./build/ragged.js`,
+        platform: "neutral",
+        logLevel: "info",
+        target: ["es6"],
+        format: "esm",
+        minify: true
+    });
 }
 
 main()
-  .then(() => console.log("done"))
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
+    .then(() => console.log("done"))
+    .catch((e) => {
+        console.error(e);
+        process.exit(1);
+    });
 
 
 // temporarily here
