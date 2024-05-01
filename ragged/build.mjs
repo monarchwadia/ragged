@@ -12,7 +12,8 @@ async function main() {
         logLevel: "info",
         target: ["es6"],
         format: "esm",
-        minify: true
+        minify: true,
+        external: ['openai', 'rxjs']
     });
 }
 
