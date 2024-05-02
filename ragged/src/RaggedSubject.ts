@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { RaggedLlmStreamEvent } from "./driver/types";
+import { RaggedHistoryItem, RaggedLlmStreamEvent } from "./driver/types";
 
 export class RaggedSubject extends Subject<RaggedLlmStreamEvent> {
   first<T extends RaggedLlmStreamEvent["type"]>(
@@ -30,5 +30,18 @@ export class RaggedSubject extends Subject<RaggedLlmStreamEvent> {
   async firstToolResult(): Promise<any | undefined> {
     const e = await this.first("tool.finished");
     return e?.data;
+  }
+
+  async asHistory(): Promise<RaggedHistoryItem[]> {
+    return new Promise((resolve) => {
+      this.subscribe((e) => {
+        if (e.type === "ragged.finished") {
+          // if we ever get a "ragged.finished" event, then we know that the stream is done.
+          // since we haven't found the event we're looking for, we can resolve with undefined.
+          resolve(e.data);
+          return;
+        }
+      });
+    });
   }
 }

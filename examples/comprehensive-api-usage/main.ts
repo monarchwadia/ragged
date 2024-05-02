@@ -3,6 +3,7 @@ import { listFiles } from "./sub-examples/tool-use";
 import { helloWorld } from "./sub-examples/hello-world";
 import { streamingPoetry } from "./sub-examples/streaming-poetry";
 import { multiToolUse } from "./sub-examples/multi-tool-use";
+import { historyUsage } from "./sub-examples/history-usage";
 dotenv.config();
 
 const runExample = async (name: string, callable: () => Promise<any>) => {
@@ -20,6 +21,7 @@ const main = async () => {
   await runExample("streaming-poetry", streamingPoetry);
   await runExample("list-files", listFiles);
   await runExample("multi-tool-use", multiToolUse);
+  await runExample("history-usage", historyUsage);
 };
 
 main();
