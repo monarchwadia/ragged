@@ -25,6 +25,9 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
   initializeAndValidateConfiguration(
     opts: Object
   ): RaggedConfigValidationResult {
+    // set default options
+    opts = { dangerouslyAllowBrowser: true, ...opts };
+
     try {
       new OpenAI(opts);
     } catch (e: any) {
