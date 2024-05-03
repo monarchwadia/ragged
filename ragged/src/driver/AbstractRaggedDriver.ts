@@ -16,8 +16,22 @@ type PredictStreamOptions<RequestOpts> = {
   requestOverrides?: RequestOpts;
 };
 
-export abstract class AbstractRaggedDriver<ConstructorConfig, RequestOpts> {
-  protected config?: ConstructorConfig;
+export class InvalidConfigurationError extends Error {
+  constructor(errors: string[]) {
+    super(
+      "The configuration you provided to Ragged was invalid: " +
+        errors.join("\n")
+    );
+  }
+}
+
+export abstract class AbstractRaggedDriver<ConstructorConfig extends Object, RequestOpts> {
+  constructor(protected config: ConstructorConfig) {
+    const validationResult = this.initializeAndValidateConfiguration(config);
+    if (!validationResult.isValid) {
+      throw new InvalidConfigurationError(validationResult.errors);
+    }
+  }
 
   /**
    * This function should be responsible for validating the configuration options for the LLM provider. If the configuration options are invalid,

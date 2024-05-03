@@ -3,23 +3,23 @@ import { resolveDriver } from "./driver/resolveDriver";
 import { NewToolBuilder } from "./tool-use/NewToolBuilder";
 import { RaggedHistoryItem, RaggedLlmStreamEvent } from "./driver/types";
 import { RaggedSubject } from "./RaggedSubject";
+import { AbstractRaggedDriver } from "./driver/AbstractRaggedDriver";
 
 type PredictOptions<Overrides = any> = {
   tools: NewToolBuilder[];
   requestOverrides?: Overrides;
 };
 
-export class InvalidConfigurationError extends Error {
-  constructor(errors: string[]) {
-    super(
-      "The configuration you provided to Ragged was invalid: " +
-        errors.join("\n")
-    );
-  }
-}
+export class Ragged<DriverConfig extends Object> {
+  private driver: AbstractRaggedDriver<DriverConfig, unknown>;
 
-export class Ragged {
-  constructor(private config: RaggedConfiguration) {}
+  constructor(driver: RaggedConfiguration | AbstractRaggedDriver<any, unknown>) {
+    if (driver instanceof AbstractRaggedDriver) {
+      this.driver = driver;
+    } else {
+      this.driver = resolveDriver(driver);
+    }
+  }
 
   chat(
     history: RaggedHistoryItem[] | string,
@@ -36,19 +36,8 @@ export class Ragged {
         },
       ];
     }
-    const driver = this.getValidatedDriver();
-    const p$ = driver.chatStream(history, options);
-    return p$;
-  }
 
-  private getValidatedDriver() {
-    const driver = resolveDriver(this.config);
-    const validationResult = driver.initializeAndValidateConfiguration(
-      this.config.config
-    );
-    if (!validationResult.isValid) {
-      throw new InvalidConfigurationError(validationResult.errors);
-    }
-    return driver;
+    const p$ = this.driver.chatStream(history, options);
+    return p$;
   }
 }

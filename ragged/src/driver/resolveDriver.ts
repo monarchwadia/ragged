@@ -10,10 +10,10 @@ export class UnknownProviderError extends Error {
 
 export const resolveDriver = (
   config: RaggedConfiguration
-): AbstractRaggedDriver<unknown, unknown> => {
+): AbstractRaggedDriver<any, unknown> => {
   switch (config.provider) {
     case "openai":
-      return new OpenAiRaggedDriver();
+      return new OpenAiRaggedDriver(config.config);
     // case "cohere":
     //   throw new UnknownProviderError(
     //     "cohere (not yet implemented, but on the roadmap!)"

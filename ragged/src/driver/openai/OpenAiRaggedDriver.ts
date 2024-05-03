@@ -19,6 +19,9 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
   ClientOptions,
   Partial<OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming>
 > {
+  constructor(protected config: ClientOptions) {
+    super(config);
+  }
   initializeAndValidateConfiguration(
     opts: Object
   ): RaggedConfigValidationResult {
