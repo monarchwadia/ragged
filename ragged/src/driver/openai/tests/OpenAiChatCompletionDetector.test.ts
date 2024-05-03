@@ -1,7 +1,7 @@
 import {
   OpenAiChatCompletionDetector,
   OpenAiChatCompletionDetectorEvent,
-} from "./OpenAiChatCompletionDetector";
+} from "../detector/OpenAiChatCompletionDetector";
 // This is a test file for ChatCompletionDetector that contains the events streamed from a simple OpenAI gpt-3.5 call
 import chatStreamInput from "./OpenAiChatCompletionDetector.test.json";
 import toolUseStreamInput from "./OpenAiToolUseCompletionDetector.test.json";

@@ -11,15 +11,20 @@ type PredictOptions<Overrides = any> = {
 };
 
 export class Ragged<DriverConfig extends Object> {
-  private driver: AbstractRaggedDriver<DriverConfig, unknown>;
+  public _driver: AbstractRaggedDriver<DriverConfig, unknown>;
 
   constructor(driver: RaggedConfiguration | AbstractRaggedDriver<any, unknown>) {
     if (driver instanceof AbstractRaggedDriver) {
-      this.driver = driver;
+      this._driver = driver;
+    } else if (driver.provider) {
+      this._driver = resolveDriver(driver);
     } else {
-      this.driver = resolveDriver(driver);
+      throw new Error("Invalid driver configuration. Please see Ragged documentation for more instructions on how to instantiate the Ragged object.");
     }
   }
+
+
+
 
   chat(
     history: RaggedHistoryItem[] | string,
@@ -37,7 +42,7 @@ export class Ragged<DriverConfig extends Object> {
       ];
     }
 
-    const p$ = this.driver.chatStream(history, options);
+    const p$ = this._driver.chatStream(history, options);
     return p$;
   }
 }

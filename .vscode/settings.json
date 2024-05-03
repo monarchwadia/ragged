@@ -8,5 +8,12 @@
         "**/node_modules": true,
         "**/pnpm-lock.yaml": true,
         "**/build/": true
-    }
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modifications",
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "eslint.format.enable": true
 }
