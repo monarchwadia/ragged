@@ -84,7 +84,27 @@ export const chatStream = (
         // call the handler and push up the result in the events.
         // if the tool is not found, push up an error
 
-        if (tools?.length) {
+        // utility function to emit the tool use finish event
+        const emitToolUseFinish = (result: any) => {
+          operationEvents.next({
+            type: "tool.finished",
+            index: evt.index,
+            toolCallIndex: evt.toolCallIndex,
+            data: {
+              name: evt.toolCall.name,
+              arguments: evt.toolCall.arguments,
+              result
+            },
+          });
+        }
+
+        if (!tools?.length) {
+          console.error(
+            `LLM tried to call tool with name ${evt.toolCall.name} but no tools were provided.`
+          );
+          emitToolUseFinish(undefined);
+          return;
+        } else {
           const foundTool = tools.find(
             (tool) => tool.tool.title === evt.toolCall.name
           );
@@ -92,6 +112,7 @@ export const chatStream = (
             console.error(
               `LLM tried to call tool with name ${evt.toolCall.name} but no such tool was provided.`
             );
+            emitToolUseFinish(undefined);
             return;
           }
           const handler = foundTool.handler;
@@ -99,6 +120,7 @@ export const chatStream = (
             console.error(
               `LLM tried to call tool with name ${evt.toolCall.name} but no handler was set on the tool.`
             );
+            emitToolUseFinish(undefined);
             return;
           }
 
@@ -107,16 +129,7 @@ export const chatStream = (
           const result = handler(evt.toolCall.arguments);
 
           // TODO: provide the result to the LLM in the openerationEvents
-          operationEvents.next({
-            type: "tool.finished",
-            index: evt.index,
-            toolCallIndex: evt.toolCallIndex,
-            data: {
-              name: evt.toolCall.name,
-              arguments: evt.toolCall.arguments,
-              result,
-            },
-          });
+          emitToolUseFinish(result);
 
           const historyItem: RaggedHistoryItem = {
             type: "history.tool.result",

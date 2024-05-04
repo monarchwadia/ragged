@@ -1,11 +1,11 @@
 export type RaggedConfigValidationResult =
   | {
-      isValid: true;
-    }
+    isValid: true;
+  }
   | {
-      isValid: false;
-      errors: string[];
-    };
+    isValid: false;
+    errors: string[];
+  };
 export type RaggedResponseStartedEvent = {
   type: "ragged.started";
 };
@@ -37,7 +37,7 @@ export type RaggedToolFinishedEvent<Args = any, Result = any> = {
   data: {
     name: string;
     arguments: Args;
-    result: Result;
+    result: Result | undefined;
   };
 };
 export type RaggedTextStartedEvent = {
