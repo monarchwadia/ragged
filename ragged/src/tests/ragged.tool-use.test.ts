@@ -1,38 +1,23 @@
 import { MockOpenAI } from "./MockOpenAi";
-import { Ragged } from "../../main";
-
+import openaiToolUseJson from "./openai.tool-use.json";
 
 describe("ragged.tool-use", () => {
     it("correctly handles tool use", async () => {
-        jest.mock('openai', () => {
-            return {
-                OpenAI: MockOpenAI.withChoices([]) // TODO: add choices
-            }
+        jest.mock("openai", () => {
+            return MockOpenAI.withChoices(openaiToolUseJson);
         });
+
+        const { Ragged } = await import("../../main");
 
         const r = new Ragged({
             provider: "openai",
             config: {
-                apiKey: "fake-api-key"
-            }
-        })
+                apiKey: "fake-api-key",
+            },
+        });
 
-        const { OpenAI } = (await import("openai"));
+        const toolFinished = await r.chat("").first("tool.finished");
 
-        const o = new OpenAI({ apiKey: "fake-api-key" });
-        const stream = await o.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [
-                {
-                    role: "user",
-                    content: "Hello, AI"
-                }
-            ],
-            stream: true
-        })
-
-        for await (const event of stream) {
-            console.log(event);
-        }
-    })
-})
+        expect(toolFinished).toMatchInlineSnapshot(`undefined`);
+    });
+});
