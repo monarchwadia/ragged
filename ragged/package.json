@@ -1,6 +1,6 @@
 {
   "name": "ragged",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "A simple library for easy LLM access.",
   "type": "module",
   "types": "./build/main.d.ts",
