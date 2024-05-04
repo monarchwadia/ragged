@@ -212,7 +212,7 @@ p$.subscribe((event) => {
 
 The `tool.finished` event is emitted when a tool has completed its execution. It provides the `index` and `toolCallIndex` (see `tool.started` for more information on these), and the `data` object containing the `name` of the tool, the `arguments` passed to the tool, and the `result` returned by the tool.
 
-The `result` will only be populated if the `handler()` was defined.
+**Note**: If no tool has been provided, or if the tool does not have a handler, the result will be `undefined`
 
 ```ts
 type RaggedToolFinishedEvent<Args = any, Result = any> = {
@@ -222,7 +222,7 @@ type RaggedToolFinishedEvent<Args = any, Result = any> = {
   data: {
     name: string;
     arguments: Args;
-    result: Result;
+    result: Result | undefined;
   };
 };
 ```
