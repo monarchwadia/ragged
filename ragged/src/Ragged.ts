@@ -13,7 +13,9 @@ type PredictOptions<Overrides = any> = {
 export class Ragged<DriverConfig extends Object> {
   public _driver: AbstractRaggedDriver<DriverConfig, unknown>;
 
-  constructor(driver: RaggedConfiguration | AbstractRaggedDriver<any, unknown>) {
+  constructor(driver: RaggedConfiguration);
+  constructor(driver: AbstractRaggedDriver<any, unknown>);
+  constructor(driver: any) {
     if (driver instanceof AbstractRaggedDriver) {
       this._driver = driver;
     } else if (driver.provider) {
@@ -22,9 +24,6 @@ export class Ragged<DriverConfig extends Object> {
       throw new Error("Invalid driver configuration. Please see Ragged documentation for more instructions on how to instantiate the Ragged object.");
     }
   }
-
-
-
 
   chat(
     history: RaggedHistoryItem[] | string,
