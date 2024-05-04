@@ -14,3 +14,5 @@ export type {
   RaggedTextFinishedEvent,
   RaggedResponseFinishedEvent,
 } from "./src/driver/types";
+
+export { RaggedSubject } from "./src/RaggedSubject";
