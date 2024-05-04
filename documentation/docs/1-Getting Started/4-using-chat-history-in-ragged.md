@@ -1,6 +1,6 @@
-# Using History in Ragged
+# Using Chat History in Ragged
 
-Ragged is a powerful library for interacting with Language Models (LLMs) and building conversational AI applications. One of the key features of Ragged is the ability to maintain a conversation history across multiple chat interactions. This tutorial will guide you through the process of using the `history` feature in Ragged to create a persistent conversation history.
+One of the key features of Ragged is low-level control over conversation history. This tutorial will guide you through the process of using the `history` feature in Ragged to create a persistent conversation history.
 
 ## Prerequisites
 

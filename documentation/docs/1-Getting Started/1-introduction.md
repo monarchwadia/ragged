@@ -2,6 +2,12 @@
 slug: /
 ---
 
+:::warning
+
+Ragged is actively under development. It is working and can be used, but we do not yet consider it production ready because its API is still rapidly changing. We expect Ragged to be production ready by some time in July 2024.
+
+:::
+
 # Introduction
 
 `ragged` simplifies the usage of Large Language Models (LLMs). It offers an easy-to-use interface that supports both promise-based and event-driven inference.
