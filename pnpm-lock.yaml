@@ -298,6 +298,9 @@ importers:
       '@types/json-schema':
         specifier: ^7.0.15
         version: 7.0.15
+      '@types/react':
+        specifier: ^18.2.66
+        version: 18.2.73
       esbuild:
         specifier: 0.20.2
         version: 0.20.2
@@ -319,6 +322,9 @@ importers:
       prettier-2:
         specifier: npm:prettier@^2
         version: prettier@2.8.8
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
       ts-jest:
         specifier: ^29.1.2
         version: 29.1.2(@babel/core@7.24.3)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.3))(esbuild@0.20.2)(jest@29.7.0(@types/node@20.12.2))(typescript@5.4.3)
@@ -5821,6 +5827,10 @@ packages:
 
   react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
+    engines: {node: '>=0.10.0'}
+
+  react@18.3.1:
+    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
@@ -14056,6 +14066,10 @@ snapshots:
       react: 18.2.0
 
   react@18.2.0:
+    dependencies:
+      loose-envify: 1.4.0
+
+  react@18.3.1:
     dependencies:
       loose-envify: 1.4.0
 
