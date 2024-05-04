@@ -5,16 +5,16 @@ import { RaggedHistoryItem, RaggedLlmStreamEvent } from "./driver/types";
 import { RaggedSubject } from "./RaggedSubject";
 import { AbstractRaggedDriver } from "./driver/AbstractRaggedDriver";
 
-type PredictOptions<Overrides = any> = {
+type PredictOptions = {
   tools: NewToolBuilder[];
-  requestOverrides?: Overrides;
+  requestOverrides?: any;
 };
 
-export class Ragged<DriverConfig extends Object> {
-  public _driver: AbstractRaggedDriver<DriverConfig, unknown>;
+export class Ragged {
+  public _driver: AbstractRaggedDriver;
 
   constructor(driver: RaggedConfiguration);
-  constructor(driver: AbstractRaggedDriver<any, unknown>);
+  constructor(driver: AbstractRaggedDriver);
   constructor(driver: any) {
     if (driver instanceof AbstractRaggedDriver) {
       this._driver = driver;

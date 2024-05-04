@@ -20,12 +20,12 @@ export class InvalidConfigurationError extends Error {
   constructor(errors: string[]) {
     super(
       "The configuration you provided to Ragged was invalid: " +
-        errors.join("\n")
+      errors.join("\n")
     );
   }
 }
 
-export abstract class AbstractRaggedDriver<ConstructorConfig extends Object, RequestOpts> {
+export abstract class AbstractRaggedDriver<ConstructorConfig extends Object = any, RequestOpts = any> {
   constructor(protected config: ConstructorConfig) {
     const validationResult = this.initializeAndValidateConfiguration(config);
     if (!validationResult.isValid) {
