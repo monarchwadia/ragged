@@ -14,7 +14,8 @@ type StreamTrackerMap = Record<symbol, StreamTracker>;
 type Props = {
     openaiApiKey: string;
 }
-export const useRagged = (props: Props) => {
+
+export const useRaggedMulti = (props: Props) => {
     const ragged = useRef<Ragged | null>(null);
     const [streams, setStreams] = useState<StreamTrackerMap>({});
 

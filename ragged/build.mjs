@@ -13,7 +13,7 @@ async function main() {
         target: ["es6"],
         format: "esm",
         minify: true,
-        external: ['openai', 'rxjs']
+        external: ['openai', 'rxjs', 'react']
     });
 }
 

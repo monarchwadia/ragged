@@ -16,3 +16,6 @@ export type {
 } from "./src/driver/types";
 
 export { RaggedSubject } from "./src/RaggedSubject";
+
+export { useRaggedMono } from "./src/react/useRaggedMono";
+export { useRaggedMulti } from "./src/react/useRaggedMulti";
