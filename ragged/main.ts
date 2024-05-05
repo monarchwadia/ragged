@@ -17,5 +17,5 @@ export type {
 
 export { RaggedSubject } from "./src/RaggedSubject";
 
-export { useRaggedMono } from "./src/react/useRaggedMono";
-export { useRaggedMulti } from "./src/react/useRaggedMulti";
+export { useRagged } from "./src/react/useRagged";
+export { useRaggedMultisession } from "./src/react/useRaggedMultisession";

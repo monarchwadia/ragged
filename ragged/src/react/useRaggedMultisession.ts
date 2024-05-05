@@ -2,22 +2,22 @@ import { Ragged } from "../Ragged";
 import { RaggedHistoryItem } from "../driver/types";
 import { useEffect, useRef, useState } from "react";
 
-type StreamTracker = {
+type SessionTracker = {
     subject: ReturnType<Ragged["chat"]>;
     history: RaggedHistoryItem[];
     latestJoined: string;
     status: "streaming" | "idle.fresh" | "idle.error" | "idle.complete";
 }
 
-type StreamTrackerMap = Record<symbol, StreamTracker>;
+type SessionTrackerMap = Record<symbol, SessionTracker>;
 
 type Props = {
     openaiApiKey: string;
 }
 
-export const useRaggedMulti = (props: Props) => {
+export const useRaggedMultisession = (props: Props) => {
     const ragged = useRef<Ragged | null>(null);
-    const [streams, setStreams] = useState<StreamTrackerMap>({});
+    const [sessions, setSessions] = useState<SessionTrackerMap>({});
 
     useEffect(() => {
         ragged.current = new Ragged({
@@ -30,28 +30,28 @@ export const useRaggedMulti = (props: Props) => {
     }, [props.openaiApiKey]);
 
     return {
-        streams,
+        sessions,
 
-        getHistory(id: symbol) {
-            const stream = streams[id];
-            return stream.history;
+        getChatHistory(sessionId: symbol) {
+            const session = sessions[sessionId];
+            return session.history;
         },
-        getStreamingResponseJoined(id: symbol): string | null {
-            const stream = streams[id];
-            if (stream.status === "streaming") {
-                return stream.latestJoined;
+        getLiveResponse(sessionId: symbol): string | null {
+            const session = sessions[sessionId];
+            if (session.status === "streaming") {
+                return session.latestJoined;
             } else {
                 return null;
             }
         },
-        chat: (input: string | RaggedHistoryItem[], id: symbol = Symbol()): symbol | undefined => {
+        chat: (input: string | RaggedHistoryItem[], sessionId: symbol = Symbol()): symbol | undefined => {
             if (!ragged.current) {
                 console.error("Can't chat yet. Ragged not yet initialized.");
                 return;
             }
 
-            const existingStream: StreamTracker | undefined = streams[id];
-            const history: RaggedHistoryItem[] = existingStream ? [...existingStream.history] : [];
+            const existingSession: SessionTracker | undefined = sessions[sessionId];
+            const history: RaggedHistoryItem[] = existingSession ? [...existingSession.history] : [];
             if (typeof input === "string") {
                 history.push({
                     type: "history.text",
@@ -66,18 +66,18 @@ export const useRaggedMulti = (props: Props) => {
 
             const s$ = ragged.current?.chat(history);
 
-            if (existingStream) {
-                setStreams((streams) => ({
-                    ...streams,
-                    [id]: {
-                        ...streams[id],
+            if (existingSession) {
+                setSessions((sessions) => ({
+                    ...sessions,
+                    [sessionId]: {
+                        ...sessions[sessionId],
                         history
                     }
                 }));
             } else {
-                setStreams((streams) => ({
-                    ...streams,
-                    [id]: {
+                setSessions((sessions) => ({
+                    ...sessions,
+                    [sessionId]: {
                         subject: s$,
                         history: history,
                         latestJoined: "",
@@ -88,13 +88,13 @@ export const useRaggedMulti = (props: Props) => {
 
             s$.subscribe({
                 next: (value) => {
-                    setStreams((streams) => {
-                        const stream = streams[id];
+                    setSessions((sessions) => {
+                        const stream = sessions[sessionId];
 
                         // clone the stream object
-                        const returnObj: StreamTrackerMap = {
-                            ...streams,
-                            [id]: {
+                        const returnObj: SessionTrackerMap = {
+                            ...sessions,
+                            [sessionId]: {
                                 ...stream,
                                 history: [...stream.history],
                                 status: "streaming"
@@ -103,32 +103,32 @@ export const useRaggedMulti = (props: Props) => {
 
                         // if the value is a history item, push it to the history array
                         if (value.type === "history.text" || value.type === "history.tool.request" || value.type === "history.tool.result") {
-                            returnObj[id].history.push(value);
+                            returnObj[sessionId].history.push(value);
                         }
 
                         // if the value is a chunk of text, set it to the latestJoined string
                         if (value.type === "text.joined") {
-                            returnObj[id].latestJoined = value.data;
+                            returnObj[sessionId].latestJoined = value.data;
                         }
 
                         return returnObj;
                     });
                 },
                 complete: () => {
-                    setStreams((streams) => ({
-                        ...streams,
-                        [id]: {
-                            ...streams[id],
+                    setSessions((sessions) => ({
+                        ...sessions,
+                        [sessionId]: {
+                            ...sessions[sessionId],
                             status: "idle.complete"
                         }
                     }));
                 },
                 error: (error) => {
                     console.error(error);
-                    setStreams((streams) => ({
-                        ...streams,
-                        [id]: {
-                            ...streams[id],
+                    setSessions((sessions) => ({
+                        ...sessions,
+                        [sessionId]: {
+                            ...sessions[sessionId],
                             status: "idle.error"
                         }
                     }));
@@ -136,7 +136,7 @@ export const useRaggedMulti = (props: Props) => {
 
             })
 
-            return id;
+            return sessionId;
         }
     };
 }
