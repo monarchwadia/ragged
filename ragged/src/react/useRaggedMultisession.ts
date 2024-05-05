@@ -1,7 +1,11 @@
 import { Ragged } from "../Ragged";
 import { RaggedHistoryItem } from "../driver/types";
 import { useEffect, useRef, useState } from "react";
+import { RaggedConfiguration } from "../types";
+import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
 
+// internal state types 
+type SessionTrackerMap = Record<symbol, SessionTracker>;
 type SessionTracker = {
     subject: ReturnType<Ragged["chat"]>;
     history: RaggedHistoryItem[];
@@ -9,24 +13,22 @@ type SessionTracker = {
     status: "streaming" | "idle.fresh" | "idle.error" | "idle.complete";
 }
 
-type SessionTrackerMap = Record<symbol, SessionTracker>;
-
-type Props = {
-    openaiApiKey: string;
+// return object type
+type ReturnObj = {
+    sessions: SessionTrackerMap;
+    getChatHistory(sessionId: symbol): RaggedHistoryItem[];
+    getLiveResponse(sessionId: symbol): string | null;
+    chat: (input: string | RaggedHistoryItem[], sessionId?: symbol) => symbol | undefined;
 }
 
-export const useRaggedMultisession = (props: Props) => {
+export function useRaggedMultisession(props: RaggedConfiguration): ReturnObj;
+export function useRaggedMultisession(props: AbstractRaggedDriver): ReturnObj;
+export function useRaggedMultisession(props: any): ReturnObj {
     const ragged = useRef<Ragged | null>(null);
     const [sessions, setSessions] = useState<SessionTrackerMap>({});
 
     useEffect(() => {
-        ragged.current = new Ragged({
-            provider: "openai",
-            config: {
-                apiKey: props.openaiApiKey,
-                dangerouslyAllowBrowser: true
-            }
-        });
+        ragged.current = new Ragged(props);
     }, [props.openaiApiKey]);
 
     return {

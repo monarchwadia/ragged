@@ -1,11 +1,18 @@
 import { RaggedHistoryItem } from "../driver/types";
 import { useRef } from "react";
 import { useRaggedMultisession } from "./useRaggedMultisession";
+import { RaggedConfiguration } from "../types";
+import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
 
-type Props = {
-    openaiApiKey: string;
-}
-export const useRagged = (props: Props) => {
+type ReturnObj = {
+    chat: (input: string | RaggedHistoryItem[]) => void;
+    getChatHistory(): RaggedHistoryItem[];
+    getLiveResponse(): string | null;
+};
+
+export function useRagged(props: RaggedConfiguration): ReturnObj;
+export function useRagged(props: AbstractRaggedDriver): ReturnObj;
+export function useRagged(props: any) {
     const sessionId = useRef<symbol | undefined>(undefined);
     const r = useRaggedMultisession(props);
 

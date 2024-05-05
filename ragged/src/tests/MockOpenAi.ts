@@ -9,6 +9,8 @@
 export class MockOpenAI {
     _choices: any[] = [];
 
+    private constructor() { }
+
     chat = {
         completions: {
             create: jest.fn().mockImplementation(async () => {
