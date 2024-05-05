@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "build": "pnpm test && rm -rf ./build && node build.mjs && tsc --emitDeclarationOnly",
-    "test": "jest"
+    "test": "jest",
+    "tdd": "jest --watch"
   },
   "keywords": [],
   "author": "monarchwadia",

@@ -14,44 +14,44 @@ type DeltaCollectionToolCall = {
 
 export type OpenAiChatCompletionDetectorEvent =
   | {
-      type: "CHAT_COMPLETION_START";
-      index: number;
-    }
+    type: "CHAT_COMPLETION_START";
+    index: number;
+  }
   | {
-      type: "CHAT_COMPLETION_CHUNK";
-      index: number;
-      content: string;
-    }
+    type: "CHAT_COMPLETION_CHUNK";
+    index: number;
+    content: string;
+  }
   | {
-      type: "CHAT_COMPLETION_COLLECT";
-      index: number;
-      content: string;
-    }
+    type: "CHAT_COMPLETION_COLLECT";
+    index: number;
+    content: string;
+  }
   | {
-      type: "CHAT_COMPLETION_FINISH";
-      index: number;
-      content: string;
-      toolCalls?: DeltaCollectionToolCall[];
-    }
+    type: "CHAT_COMPLETION_FINISH";
+    index: number;
+    content: string;
+    toolCalls?: DeltaCollectionToolCall[];
+  }
   | {
-      type: "TOOL_USE_START";
-      index: number;
-      toolCallIndex: number;
-      toolCall: {
-        id: string;
-        name: string;
-      };
-    }
-  | {
-      type: "TOOL_USE_FINISH";
-      index: number;
-      toolCallIndex: number;
-      toolCall: {
-        id: string;
-        name: string;
-        arguments: string;
-      };
+    type: "TOOL_USE_START";
+    index: number;
+    toolCallIndex: number;
+    toolCall: {
+      id: string;
+      name: string;
     };
+  }
+  | {
+    type: "TOOL_USE_FINISH";
+    index: number;
+    toolCallIndex: number;
+    toolCall: {
+      id: string;
+      name: string;
+      arguments: string;
+    };
+  };
 
 type Listener = (obj: OpenAiChatCompletionDetectorEvent) => void;
 
@@ -102,6 +102,8 @@ export class OpenAiChatCompletionDetector {
       if (delta.role) {
         dc.role = delta.role;
       }
+
+      console.log("DELTA", JSON.stringify(delta));
 
       this.emit({
         type: "CHAT_COMPLETION_CHUNK",

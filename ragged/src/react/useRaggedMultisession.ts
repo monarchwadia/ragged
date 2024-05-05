@@ -3,11 +3,13 @@ import { RaggedHistoryItem } from "../driver/types";
 import { useEffect, useRef, useState } from "react";
 import { RaggedConfiguration } from "../types";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
+import { deepClone } from "./utils";
+import { RaggedSubject } from "../RaggedSubject";
 
 // internal state types 
-type SessionTrackerMap = Record<symbol, SessionTracker>;
+type SessionTrackerMap = Record<symbol, SessionTracker | undefined>;
 type SessionTracker = {
-    subject: ReturnType<Ragged["chat"]>;
+    subject?: ReturnType<Ragged["chat"]>;
     history: RaggedHistoryItem[];
     latestJoined: string;
     status: "streaming" | "idle.fresh" | "idle.error" | "idle.complete";
@@ -34,19 +36,20 @@ export function useRaggedMultisession(props: any): ReturnObj {
     return {
         sessions,
 
-        getChatHistory(sessionId: symbol) {
-            const session = sessions[sessionId];
-            return session.history;
+        getChatHistory(sessionId: symbol): RaggedHistoryItem[] {
+            return getOrCreateSessionTracker(sessions, sessionId).history;
         },
         getLiveResponse(sessionId: symbol): string | null {
             const session = sessions[sessionId];
-            if (session.status === "streaming") {
+
+            if (session?.status === "streaming") {
                 return session.latestJoined;
-            } else {
-                return null;
             }
+
+            return null;
         },
         chat: (input: string | RaggedHistoryItem[], sessionId: symbol = Symbol()): symbol | undefined => {
+
             if (!ragged.current) {
                 console.error("Can't chat yet. Ragged not yet initialized.");
                 return;
@@ -66,13 +69,14 @@ export function useRaggedMultisession(props: any): ReturnObj {
                 history.push(...input);
             }
 
+            console.log("DEBUG: chatting with history", history);
             const s$ = ragged.current?.chat(history);
 
             if (existingSession) {
                 setSessions((sessions) => ({
                     ...sessions,
                     [sessionId]: {
-                        ...sessions[sessionId],
+                        ...existingSession,
                         history
                     }
                 }));
@@ -90,50 +94,42 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
             s$.subscribe({
                 next: (value) => {
+                    console.log("DEBUG: next", value);
                     setSessions((sessions) => {
-                        const stream = sessions[sessionId];
-
-                        // clone the stream object
-                        const returnObj: SessionTrackerMap = {
-                            ...sessions,
-                            [sessionId]: {
-                                ...stream,
-                                history: [...stream.history],
-                                status: "streaming"
-                            }
-                        }
+                        const returnObj = deepClone(sessions);
+                        let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
+                        thisSession.subject = s$;
+                        thisSession.status = "streaming";
 
                         // if the value is a history item, push it to the history array
                         if (value.type === "history.text" || value.type === "history.tool.request" || value.type === "history.tool.result") {
-                            returnObj[sessionId].history.push(value);
+                            thisSession.history.push(value);
                         }
 
                         // if the value is a chunk of text, set it to the latestJoined string
                         if (value.type === "text.joined") {
-                            returnObj[sessionId].latestJoined = value.data;
+                            thisSession.latestJoined = value.data;
                         }
 
                         return returnObj;
                     });
                 },
                 complete: () => {
-                    setSessions((sessions) => ({
-                        ...sessions,
-                        [sessionId]: {
-                            ...sessions[sessionId],
-                            status: "idle.complete"
-                        }
-                    }));
+                    setSessions((sessions) => {
+                        const returnObj = deepClone(sessions);
+                        let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
+                        thisSession.subject = s$;
+                        thisSession.status = "idle.complete";
+                        return returnObj;
+                    });
                 },
                 error: (error) => {
                     console.error(error);
-                    setSessions((sessions) => ({
-                        ...sessions,
-                        [sessionId]: {
-                            ...sessions[sessionId],
-                            status: "idle.error"
-                        }
-                    }));
+                    const returnObj = deepClone(sessions);
+                    let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
+                    thisSession.subject = s$;
+                    thisSession.status = "idle.error";
+                    return returnObj;
                 }
 
             })
@@ -141,4 +137,25 @@ export function useRaggedMultisession(props: any): ReturnObj {
             return sessionId;
         }
     };
+}
+
+// Utilities
+
+const getOrCreateSessionTracker = (map: SessionTrackerMap, sessionId: symbol): SessionTracker => {
+    let thisSession = map[sessionId];
+
+    if (thisSession) {
+        return thisSession;
+    }
+
+    thisSession = {
+        subject: undefined,
+        history: [],
+        latestJoined: "",
+        status: "idle.fresh"
+    }
+
+    map[sessionId] = thisSession;
+
+    return thisSession;
 }
