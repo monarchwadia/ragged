@@ -1,91 +1,4 @@
-# More Examples
-
-## Streaming API Calls
-
-`ragged` supports streaming responses, making real-time interaction feasible.
-
-```ts
-import { Ragged } from "ragged";
-
-const OPENAI_API_KEY = "your api key";
-
-const r = new Ragged({
-  provider: "openai",
-  config: {
-    apiKey: OPENAI_API_KEY,
-    // You need the following line if you're in a browser. See OpenAI client docs.
-    dangerouslyAllowBrowser: true,
-  },
-});
-
-r.chat("What is Toronto?").subscribe((e) => {
-  if (e.type === "ragged.started") {
-    console.log("started!");
-  }
-
-  if (e.type === "text.joined") {
-    console.log(e.data); // outputs the streaming response as it comes in
-    // Toronto
-    // Toronto is
-    // Toronto is a ci
-    // Toronto is a city in No
-    // Toronto is a city in North America.
-    // ...
-  }
-
-  if (e.type === "ragged.finished") {
-    console.log("finished!");
-  }
-});
-```
-
-## A simpler approach: firstText()
-
-The streaming API can be onerous for simpler use cases, where you might not want to take advantage of streaming.
-
-For cases like this, you can simplify the API call by using utilties like `firstText()`.
-
-`firstText()` turns the stream into a `Promise` that contains a string.
-
-```ts
-import { Ragged } from "ragged";
-
-const OPENAI_API_KEY = "your api key";
-
-const r = new Ragged({
-  provider: "openai",
-  config: {
-    apiKey: OPENAI_API_KEY,
-    // You need the following line if you're in a browser. See OpenAI client docs.
-    dangerouslyAllowBrowser: true,
-  },
-});
-
-r.chat("What is Toronto?").firstText().then(console.log); // Toronto is a city in Canada. It has a population of...
-```
-
-## Manually Configuring the OpenAI Object
-
-The Ragged object's constructor allows for detailed configuration of each AI API.
-
-```ts
-import { Ragged } from "ragged";
-
-const OPENAI_API_KEY = "your api key";
-
-const r = new Ragged({
-  provider: "openai",
-  config: {
-    apiKey: OPENAI_API_KEY,
-    // You need the following line if you're in a browser. See OpenAI client docs.
-    dangerouslyAllowBrowser: true,
-  },
-});
-
-r.chat("What is Toronto?").firstText().then(console.log); // Toronto is a city in Canada. It has a population of...
-```
-
-## Tool Integration Example
+# Tool Use
 
 Integrating tools with ragged allows for the extension of its capabilities.
 
@@ -152,6 +65,7 @@ async function main() {
 
 main().catch(console.error);
 ```
+
 
 ## Simpler tool integration: firstToolResult()
 
