@@ -16,5 +16,8 @@
     "[typescript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features",
     },
-    "eslint.format.enable": true
+    "eslint.format.enable": true,
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    }
 }
