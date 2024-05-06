@@ -103,8 +103,6 @@ export class OpenAiChatCompletionDetector {
         dc.role = delta.role;
       }
 
-      // console.log("DELTA", JSON.stringify(delta));
-
       this.emit({
         type: "CHAT_COMPLETION_CHUNK",
         // if the content is falsey (such as null or undefined), then we send an empty string

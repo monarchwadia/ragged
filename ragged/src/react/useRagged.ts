@@ -1,6 +1,6 @@
 import { RaggedHistoryItem } from "../driver/types";
 import { useRef } from "react";
-import { useRaggedMultisession } from "./useRaggedMultisession";
+import { UniqueSessionId, useRaggedMultisession } from "./useRaggedMultisession";
 import { RaggedConfiguration } from "../types";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
 
@@ -10,10 +10,12 @@ type ReturnObj = {
     getLiveResponse(): string | null;
 };
 
+let prevSymbol: any = null;
+
 export function useRagged(props: RaggedConfiguration): ReturnObj;
 export function useRagged(props: AbstractRaggedDriver): ReturnObj;
 export function useRagged(props: any) {
-    const sessionId = useRef<symbol | undefined>(undefined);
+    const sessionId = useRef<UniqueSessionId | undefined>(undefined);
     const r = useRaggedMultisession(props);
 
     return {
@@ -25,17 +27,20 @@ export function useRagged(props: any) {
             }
         },
         getChatHistory() {
-            if (!sessionId.current) {
-                return [];
+            if (sessionId.current) {
+                prevSymbol = sessionId.current;
+                const history = r.getChatHistory(sessionId.current);
+                return history;
             } else {
-                return r.getChatHistory(sessionId.current);
+                return [];
             }
         },
         getLiveResponse() {
-            if (!sessionId.current) {
-                return null;
+            if (sessionId.current) {
+                const response = r.getLiveResponse(sessionId.current);
+                return response;
             } else {
-                return r.getLiveResponse(sessionId.current);
+                return null;
             }
         }
     }
