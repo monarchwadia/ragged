@@ -18,7 +18,6 @@ export const chatStream = (
 
   // set up the listener. the events are pushed to the listener elsewhere in this file.
   chatCompletionDetector.listen((evt) => {
-    console.log("chatCompletionDetector event listen", evt);
     const { type, index } = evt;
 
     switch (type) {

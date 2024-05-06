@@ -7,7 +7,6 @@ export class RaggedSubject extends Subject<RaggedLlmStreamEvent> {
   ): Promise<Extract<RaggedLlmStreamEvent, { type: T }> | undefined> {
     return new Promise((resolve) => {
       this.subscribe((e) => {
-        // console.log("first:: event", e.type)
         if (e.type === eventType) {
           resolve(e as unknown as Extract<RaggedLlmStreamEvent, { type: T }>);
           return;

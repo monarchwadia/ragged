@@ -69,7 +69,6 @@ export function useRaggedMultisession(props: any): ReturnObj {
                 history.push(...input);
             }
 
-            console.log("DEBUG: chatting with history", history);
             const s$ = ragged.current?.chat(history);
 
             if (existingSession) {
@@ -94,7 +93,6 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
             s$.subscribe({
                 next: (value) => {
-                    console.log("DEBUG: next", value);
                     setSessions((sessions) => {
                         const returnObj = deepClone(sessions);
                         let thisSession = getOrCreateSessionTracker(returnObj, sessionId);

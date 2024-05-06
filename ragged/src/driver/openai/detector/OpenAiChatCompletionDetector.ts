@@ -103,7 +103,7 @@ export class OpenAiChatCompletionDetector {
         dc.role = delta.role;
       }
 
-      console.log("DELTA", JSON.stringify(delta));
+      // console.log("DELTA", JSON.stringify(delta));
 
       this.emit({
         type: "CHAT_COMPLETION_CHUNK",

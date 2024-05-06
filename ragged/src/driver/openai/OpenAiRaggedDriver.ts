@@ -65,7 +65,6 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
     const tools = options?.tools.map((tool) => tool.build()) || [];
 
     const p$ = chatStream(o, history, options?.requestOverrides || {}, tools);
-    console.log("p$", p$);
     return p$;
   }
 }
