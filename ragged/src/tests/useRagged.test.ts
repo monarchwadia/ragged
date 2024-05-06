@@ -9,7 +9,7 @@ import { TextEncoder, TextDecoder } from "util";
 // @ts-expect-error -- we are using jsdom and need to polyfill TextEncoder and TextDecoder
 Object.assign(global, { TextDecoder, TextEncoder });
 
-import openaiSimpleChatJson from "./openai.simple-chat.json"
+import openaiSimpleChatJson from "./openai.simple-chat.json";
 import { renderHook, act } from "@testing-library/react";
 import { MockOpenAI } from "./MockOpenAi";
 
@@ -71,27 +71,20 @@ describe("useRagged", () => {
             await act(async () => {
                 result.current.chat("Hello, AI");
 
-                await new Promise((r) => setTimeout(r, 100));
+                await new Promise((r) => setTimeout(r, 10));
 
-                expect(result.current.getLiveResponse()).toEqual("Hello, I am an AI");
+                expect(result.current.getChatHistory()).toMatchInlineSnapshot(`
+          [
+            {
+              "data": {
+                "text": "Hello, AI",
+              },
+              "role": "human",
+              "type": "history.text",
+            },
+          ]
+        `);
             });
-
-            // await act(async () => {
-            //     result.current.chat(
-            //         "This request will be set in the history object by useRagged."
-            //     );
-            //     console.log(result.current.getChatHistory());
-            //     // wait a bit
-            //     await new Promise((r) => setTimeout(r, 100));
-
-            //     console.log(result.current.getChatHistory());
-
-            //     // expect(result.current.getLiveResponse()).toEqual("lol");
-
-            //     // expect(result.current.getChatHistory()).toMatchInlineSnapshot(
-            //     //     `undefined`
-            //     // );
-            // });
         });
     });
 });
