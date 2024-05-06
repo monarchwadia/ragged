@@ -1,4 +1,4 @@
-## firstText(): a simpler approach
+# firstText(): a simpler approach
 
 The streaming API can be onerous for simpler use cases, where you might not want to take advantage of streaming.
 

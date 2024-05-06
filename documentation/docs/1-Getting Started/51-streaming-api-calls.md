@@ -1,5 +1,4 @@
-
-## Streaming API Calls
+# Streaming API Calls
 
 `ragged` supports streaming responses, making real-time interaction feasible.
 
