@@ -4,7 +4,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "ragged",
-  tagline: "a simple library for easy LLM access",
+  tagline: "The universal LLM client for JavaScript",
   // favicon: "img/favicon.ico",
 
   // Set the production url of your site here
@@ -56,7 +56,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: "img/docusaurus-social-card.jpg",
+    image: "img/ragged-social-card.jpeg",
     colorMode: {
       defaultMode: "dark",
       disableSwitch: true,
@@ -85,48 +85,48 @@ const config: Config = {
     },
     footer: {
       style: "dark",
-      links: [
-        {
-          title: "Docs",
-          items: [
-            {
-              label: "Quickstart",
-              to: "/Getting Started/quickstart",
-            },
-          ],
-        },
-        {
-          title: "Community",
-          items: [
-            {
-              label: "Stack Overflow",
-              href: "https://stackoverflow.com/questions/tagged/docusaurus",
-            },
-            {
-              label: "Discord",
-              href: "https://discordapp.com/invite/docusaurus",
-            },
-            {
-              label: "Twitter",
-              href: "https://twitter.com/docusaurus",
-            },
-          ],
-        },
-        {
-          title: "More",
-          items: [
-            // {
-            //   label: "Blog",
-            //   to: "/blog",
-            // },
-            {
-              label: "GitHub",
-              href: "https://github.com/monarchwadia/ragged",
-            },
-          ],
-        },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      // links: [
+      //   {
+      //     title: "Docs",
+      //     items: [
+      //       {
+      //         label: "Quickstart",
+      //         to: "/Getting Started/quickstart",
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     title: "Community",
+      //     items: [
+      //       {
+      //         label: "Stack Overflow",
+      //         href: "https://stackoverflow.com/questions/tagged/docusaurus",
+      //       },
+      //       {
+      //         label: "Discord",
+      //         href: "https://discordapp.com/invite/docusaurus",
+      //       },
+      //       {
+      //         label: "Twitter",
+      //         href: "https://twitter.com/docusaurus",
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     title: "More",
+      //     items: [
+      //       // {
+      //       //   label: "Blog",
+      //       //   to: "/blog",
+      //       // },
+      //       {
+      //         label: "GitHub",
+      //         href: "https://github.com/monarchwadia/ragged",
+      //       },
+      //     ],
+      //   },
+      // ],
+      copyright: `Copyright © ${new Date().getFullYear()} Monarch Wadia. Provided under the MIT License.`,
     },
     prism: {
       theme: prismThemes.github,
