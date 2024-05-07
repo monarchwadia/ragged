@@ -45,7 +45,11 @@ export class MockOpenAI {
                                         if (this._choices.length > 0) {
                                             const encoder = new TextEncoder();
                                             const encoded = encoder.encode(JSON.stringify(this._choices.shift()));
-                                            return { done: false, value: encoded };
+                                            return new Promise((resolve) => {
+                                                setTimeout(() => {
+                                                    resolve({ done: false, value: encoded });
+                                                }, 1);
+                                            })
                                         }
 
                                         setTimeout(() => {

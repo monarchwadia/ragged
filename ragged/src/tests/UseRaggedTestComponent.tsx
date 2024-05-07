@@ -1,5 +1,5 @@
 
-import { FC, forwardRef, useImperativeHandle } from "react";
+import { FC, FormEvent, SyntheticEvent, forwardRef, useImperativeHandle, useState } from "react";
 import { useRagged } from "../react/useRagged"
 import { RaggedConfiguration } from "../types";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
@@ -13,14 +13,28 @@ type Props = {
     useRaggedProps: any;
 }
 
-export const UseRaggedTestComponent: FC<Props> = forwardRef((props, ref) => {
+export const UseRaggedTestComponent: FC<Props> = (props, ref) => {
     const r = useRagged(props.useRaggedProps as any);
+    const [input, setInput] = useState('');
 
-    useImperativeHandle(ref, () => {
-        return r;
-    }, [props.useRaggedProps])
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        r.chat(input);
+    }
 
+    return (
+        <div>
+            <form onSubmit={(e) => handleSubmit(e)}>
+                <label htmlFor="user-input">User Input</label>
+                <input data-testid="user-input" type="text" id="user-input" name="user-input" value={input} onChange={e => setInput(e.target.value)} />
+                <button type="submit">Submit</button>
+            </form>
 
+            <div data-testid="chat-history">
+                {JSON.stringify(r.getChatHistory())}
+            </div>
 
-    return (<></>)
-});
+            <div data-testid="live-response">{r.getLiveResponse()}</div>
+        </div>
+    )
+};

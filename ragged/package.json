@@ -30,6 +30,7 @@
   "devDependencies": {
     "@eslint/js": "^9.1.1",
     "@testing-library/react": "^15.0.6",
+    "@testing-library/user-event": "^14.5.2",
     "@types/jest": "^29.5.12",
     "@types/json-schema": "^7.0.15",
     "esbuild": "0.20.2",
