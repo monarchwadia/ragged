@@ -26,7 +26,7 @@ type ReturnObj = {
     sessions: SessionTrackerMap;
     getChatHistory(sessionId: UniqueSessionId): RaggedHistoryItem[];
     getLiveResponse(sessionId: UniqueSessionId): string | null;
-    chat: (input: string | RaggedHistoryItem[], sessionId?: UniqueSessionId) => UniqueSessionId | undefined;
+    chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem[]) => UniqueSessionId | undefined;
 }
 
 export function useRaggedMultisession(props: RaggedConfiguration): ReturnObj;
@@ -37,7 +37,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
     useEffect(() => {
         ragged.current = new Ragged(props);
-    }, [props.openaiApiKey]);
+    }, [props]);
 
     return {
         sessions,
@@ -54,7 +54,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
             return null;
         },
-        chat: (input: string | RaggedHistoryItem[], sessionId: number | undefined): UniqueSessionId | undefined => {
+        chat: (sessionId: number | undefined, input: string | RaggedHistoryItem[]): UniqueSessionId | undefined => {
             // If Ragged hasn't been initialized yet, return an error
             if (!ragged.current) {
                 console.error("Can't chat yet. Ragged not yet initialized.");
@@ -118,6 +118,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
                         const returnObj = deepClone(sessions);
                         let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
                         thisSession.status = "idle.complete";
+                        thisSession.latestJoined = "";
                         return returnObj;
                     });
                 },

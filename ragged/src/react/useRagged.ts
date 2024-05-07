@@ -21,9 +21,9 @@ export function useRagged(props: any) {
     return {
         chat: (input: string | RaggedHistoryItem[]) => {
             if (sessionId.current) {
-                r.chat(input, sessionId.current)
+                r.chat(sessionId.current, input)
             } else {
-                sessionId.current = r.chat(input);
+                sessionId.current = r.chat(undefined, input);
             }
         },
         getChatHistory() {
