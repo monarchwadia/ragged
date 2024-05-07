@@ -5,7 +5,7 @@ import { RaggedHistoryItem, RaggedLlmStreamEvent } from "./driver/types";
 import { RaggedSubject } from "./RaggedSubject";
 import { AbstractRaggedDriver } from "./driver/AbstractRaggedDriver";
 
-type PredictOptions = {
+export type ChatOptions = {
   tools: NewToolBuilder[];
   requestOverrides?: any;
 };
@@ -27,7 +27,7 @@ export class Ragged {
 
   chat(
     history: RaggedHistoryItem[] | string,
-    options?: PredictOptions
+    options?: ChatOptions
   ): RaggedSubject {
     if (typeof history === "string") {
       history = [

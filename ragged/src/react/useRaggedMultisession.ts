@@ -1,4 +1,4 @@
-import { Ragged } from "../Ragged";
+import { ChatOptions, Ragged } from "../Ragged";
 import { RaggedHistoryItem } from "../driver/types";
 import { useEffect, useRef, useState } from "react";
 import { RaggedConfiguration } from "../types";
@@ -26,7 +26,7 @@ type ReturnObj = {
     sessions: SessionTrackerMap;
     getChatHistory(sessionId: UniqueSessionId): RaggedHistoryItem[];
     getLiveResponse(sessionId: UniqueSessionId): string | null;
-    chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem[]) => UniqueSessionId | undefined;
+    chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem[], options?: ChatOptions | undefined) => UniqueSessionId | undefined;
 }
 
 export function useRaggedMultisession(props: RaggedConfiguration): ReturnObj;
@@ -54,7 +54,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
             return null;
         },
-        chat: (sessionId: number | undefined, input: string | RaggedHistoryItem[]): UniqueSessionId | undefined => {
+        chat: (sessionId: number | undefined, input: string | RaggedHistoryItem[], options?: ChatOptions | undefined): UniqueSessionId | undefined => {
             // If Ragged hasn't been initialized yet, return an error
             if (!ragged.current) {
                 console.error("Can't chat yet. Ragged not yet initialized.");
@@ -82,7 +82,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
                 existingSession.history.push(...input);
             }
 
-            const s$ = ragged.current?.chat(existingSession.history);
+            const s$ = ragged.current?.chat(existingSession.history, options);
 
             setSessions((sessions) => {
                 // create and set the session

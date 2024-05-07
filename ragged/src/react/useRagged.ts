@@ -3,9 +3,10 @@ import { useRef } from "react";
 import { UniqueSessionId, useRaggedMultisession } from "./useRaggedMultisession";
 import { RaggedConfiguration } from "../types";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
+import { ChatOptions } from "../Ragged";
 
 type ReturnObj = {
-    chat: (input: string | RaggedHistoryItem[]) => void;
+    chat: (input: string | RaggedHistoryItem[], options?: ChatOptions | undefined) => void;
     getChatHistory(): RaggedHistoryItem[];
     getLiveResponse(): string | null;
 };
@@ -19,12 +20,8 @@ export function useRagged(props: any) {
     const r = useRaggedMultisession(props);
 
     return {
-        chat: (input: string | RaggedHistoryItem[]) => {
-            if (sessionId.current) {
-                r.chat(sessionId.current, input)
-            } else {
-                sessionId.current = r.chat(undefined, input);
-            }
+        chat: (input: string | RaggedHistoryItem[], options?: ChatOptions | undefined) => {
+            sessionId.current = r.chat(sessionId.current, input, options)
         },
         getChatHistory() {
             if (sessionId.current) {
