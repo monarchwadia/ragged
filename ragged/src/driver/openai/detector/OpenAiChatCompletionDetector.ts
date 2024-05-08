@@ -31,7 +31,6 @@ export type OpenAiChatCompletionDetectorEvent =
     type: "CHAT_COMPLETION_FINISH";
     index: number;
     content: string;
-    toolCalls?: DeltaCollectionToolCall[];
   }
   | {
     type: "TOOL_USE_START";
@@ -74,7 +73,9 @@ export class OpenAiChatCompletionDetector {
     // it is a chat completion chunk. now, collect it.
 
     const chunk = obj as OpenAI.Chat.ChatCompletionChunk;
+
     for (const choice of chunk.choices) {
+      console.log("choice", choice);
       const { index: choiceIndex, delta, logprobs, finish_reason } = choice;
 
       let dc: DeltaCollection;
@@ -180,28 +181,29 @@ export class OpenAiChatCompletionDetector {
               id: dc.toolCalls[i].id,
             };
 
-            parsedToolCalls.push(parsedToolCall);
-
-            this.emit({
-              type: "TOOL_USE_FINISH",
-              index: choiceIndex,
-              toolCallIndex: i,
-              toolCall: parsedToolCall,
-            });
+            parsedToolCalls.push({ toolCallIndex: i, parsedToolCall });
           }
         }
 
-        const chatCompletionEvt: OpenAiChatCompletionDetectorEvent = {
-          type: "CHAT_COMPLETION_FINISH",
-          index: choiceIndex,
-          content: dc.content,
-        };
-
         if (parsedToolCalls.length) {
-          chatCompletionEvt.toolCalls = parsedToolCalls;
+          parsedToolCalls.forEach(({ parsedToolCall, toolCallIndex }) => {
+            this.emit({
+              type: "TOOL_USE_FINISH",
+              index: choiceIndex,
+              toolCallIndex,
+              toolCall: parsedToolCall,
+            });
+          });
+
+        } else {
+          const chatCompletionEvt: OpenAiChatCompletionDetectorEvent = {
+            type: "CHAT_COMPLETION_FINISH",
+            index: choiceIndex,
+            content: dc.content,
+          };
+          this.emit(chatCompletionEvt);
         }
 
-        this.emit(chatCompletionEvt);
       }
     }
   }

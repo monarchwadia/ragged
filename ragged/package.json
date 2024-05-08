@@ -14,7 +14,9 @@
     "build"
   ],
   "scripts": {
-    "build": "pnpm test && rm -rf ./build && node build.mjs && tsc --emitDeclarationOnly",
+    "build": "pnpm test && pnpm build:base",
+    "build-skiptests": "pnpm build:base",
+    "build:base": "rm -rf ./build && node build.mjs && tsc --emitDeclarationOnly",
     "test": "jest",
     "tdd": "jest --watch"
   },
