@@ -162,32 +162,30 @@ describe("ChatCompletionDetector", () => {
     });
   });
 
-  it("CHAT_COMPLETION_FINISH, with tool use, should be accurate", () => {
-    let completedEvent;
+  it("with tool use, should be accurate", () => {
+    let lastEvent;
     const detector = new OpenAiChatCompletionDetector();
     detector.listen((evt) => {
-      if (evt.type === "CHAT_COMPLETION_FINISH") {
-        completedEvent = evt;
-      }
+      lastEvent = evt;
     });
     for (const obj of toolUseStreamInput) {
       detector.scan(obj);
     }
 
-    expect(completedEvent).toEqual({
-      type: "CHAT_COMPLETION_FINISH",
-      index: 0,
-      content: "",
-      toolCalls: [
-        {
-          name: "adder",
-          id: "call_S3wghsJaOOO1BHLqx0vYSLhS",
-          arguments: {
-            a: 1,
-            b: 1,
+    expect(lastEvent).toMatchInlineSnapshot(`
+      {
+        "index": 0,
+        "toolCall": {
+          "arguments": {
+            "a": 1,
+            "b": 1,
           },
+          "id": "call_S3wghsJaOOO1BHLqx0vYSLhS",
+          "name": "adder",
         },
-      ],
-    });
+        "toolCallIndex": 0,
+        "type": "TOOL_USE_FINISH",
+      }
+    `);
   });
 });

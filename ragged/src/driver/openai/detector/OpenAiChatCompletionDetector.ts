@@ -75,7 +75,6 @@ export class OpenAiChatCompletionDetector {
     const chunk = obj as OpenAI.Chat.ChatCompletionChunk;
 
     for (const choice of chunk.choices) {
-      console.log("choice", choice);
       const { index: choiceIndex, delta, logprobs, finish_reason } = choice;
 
       let dc: DeltaCollection;

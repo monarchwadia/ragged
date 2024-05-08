@@ -169,7 +169,6 @@ export const chatStream = (
       toolCallHolder = null;
     }
     const rhi = raggedHistory[ix];
-    console.log("history.map ::: item", rhi)
     if (rhi.type === "history.text") {
       let role: OpenAI.Chat.ChatCompletionMessageParam["role"];
       if (rhi.role === "human") {

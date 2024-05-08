@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { RaggedConfiguration } from "../types";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
 import { deepClone } from "./utils";
+import { RaggedSubject } from "../RaggedSubject";
 
 export type UniqueSessionId = number;
 let nextUniqueSessionId = 1;
@@ -26,7 +27,13 @@ type ReturnObj = {
     sessions: SessionTrackerMap;
     getChatHistory(sessionId: UniqueSessionId): RaggedHistoryItem[];
     getLiveResponse(sessionId: UniqueSessionId): string | null;
-    chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem[], options?: ChatOptions | undefined) => UniqueSessionId | undefined;
+    chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem[], options?: ChatOptions | undefined) => ChatReturnObject;
+}
+
+// chat() response object
+export type ChatReturnObject = {
+    subject: RaggedSubject;
+    sessionId: UniqueSessionId;
 }
 
 export function useRaggedMultisession(props: RaggedConfiguration): ReturnObj;
@@ -54,11 +61,10 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
             return null;
         },
-        chat: (sessionId: number | undefined, input: string | RaggedHistoryItem[], options?: ChatOptions | undefined): UniqueSessionId | undefined => {
+        chat: (sessionId: number | undefined, input: string | RaggedHistoryItem[], options?: ChatOptions | undefined): ChatReturnObject => {
             // If Ragged hasn't been initialized yet, return an error
             if (!ragged.current) {
-                console.error("Can't chat yet. Ragged not yet initialized.");
-                return;
+                throw new Error("Can't chat yet. Ragged not yet initialized.");
             }
 
             if (!sessionId) {
@@ -135,7 +141,10 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
             })
 
-            return sessionId;
+            return {
+                subject: s$,
+                sessionId: sessionId
+            };
         }
     };
 }
