@@ -27,7 +27,7 @@ type ReturnObj = {
     sessions: SessionTrackerMap;
     getChatHistory(sessionId: UniqueSessionId): RaggedHistoryItem[];
     getLiveResponse(sessionId: UniqueSessionId): string | null;
-    chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem[], options?: ChatOptions | undefined) => ChatReturnObject;
+    chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined) => ChatReturnObject;
 }
 
 // chat() response object
@@ -61,7 +61,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
             return null;
         },
-        chat: (sessionId: number | undefined, input: string | RaggedHistoryItem[], options?: ChatOptions | undefined): ChatReturnObject => {
+        chat: (sessionId: number | undefined, input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined): ChatReturnObject => {
             // If Ragged hasn't been initialized yet, return an error
             if (!ragged.current) {
                 throw new Error("Can't chat yet. Ragged not yet initialized.");
@@ -83,9 +83,11 @@ export function useRaggedMultisession(props: any): ReturnObj {
                         text: input
                     }
                 })
+            } else if (input instanceof Array) {
+                existingSession.history = deepClone(input);
             } else {
                 // it's a history item
-                existingSession.history.push(...input);
+                existingSession.history.push(deepClone(input));
             }
 
             const s$ = ragged.current?.chat(existingSession.history, options);

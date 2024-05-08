@@ -32,6 +32,10 @@ export class RaggedSubject extends Subject<RaggedLlmStreamEvent> {
     return e?.data;
   }
 
+  /**
+   * 
+   * @deprecated use `asHistory` instead
+   */
   async asHistory(): Promise<RaggedHistoryItem[]> {
     return new Promise((resolve) => {
       this.subscribe((e) => {
@@ -43,5 +47,12 @@ export class RaggedSubject extends Subject<RaggedLlmStreamEvent> {
         }
       });
     });
+  }
+
+  /**
+   * I don't like the aliasing
+   */
+  async waitForFinish(): Promise<RaggedHistoryItem[]> {
+    return await this.asHistory();
   }
 }
