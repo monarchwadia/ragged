@@ -9,7 +9,14 @@ Ragged is actively under development. It is working and can be used, but we do n
 You can install Ragged directly from [npm](https://www.npmjs.com/package/ragged).
 
 ```sh
-npm install --save openai rxjs ragged
+# npm
+npm install --save --save-exact openai rxjs ragged
+
+#pnpm
+pnpm install --save --save-exact openai rxjs ragged
+
+#yarn
+yarn add -E openai rxjs ragged
 ```
 
 Ragged has 2 peer dependencies:

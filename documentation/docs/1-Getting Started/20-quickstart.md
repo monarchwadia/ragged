@@ -7,7 +7,14 @@ This Quickstart should help new developers get started quickly with `ragged`, le
 You'll need to install `ragged` along with its peer dependencies, `openai` for LLM driver support (we only support openai right now) and `rxjs` for streaming. 
 
 ```sh
-npm install --save openai rxjs ragged
+# npm
+npm install --save --save-exact openai rxjs ragged
+
+#pnpm
+pnpm install --save --save-exact openai rxjs ragged
+
+#yarn
+yarn add -E openai rxjs ragged
 ```
 
 
