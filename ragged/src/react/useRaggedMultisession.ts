@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { RaggedConfiguration } from "../types";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
 import { deepClone } from "./utils";
-import { RaggedSubject } from "../RaggedSubject";
+import { RaggedObservable } from "../RaggedObservable";
 
 export type UniqueSessionId = number;
 let nextUniqueSessionId = 1;
@@ -32,7 +32,7 @@ type ReturnObj = {
 
 // chat() response object
 export type ChatReturnObject = {
-    subject: RaggedSubject;
+    subject: RaggedObservable;
     sessionId: UniqueSessionId;
 }
 

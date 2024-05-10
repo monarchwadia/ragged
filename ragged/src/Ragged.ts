@@ -2,7 +2,7 @@ import { RaggedConfiguration } from "./types";
 import { resolveDriver } from "./driver/resolveDriver";
 import { NewToolBuilder } from "./tool-use/NewToolBuilder";
 import { RaggedHistoryItem, RaggedLlmStreamEvent } from "./driver/types";
-import { RaggedSubject } from "./RaggedSubject";
+import { RaggedObservable } from "./RaggedObservable";
 import { AbstractRaggedDriver } from "./driver/AbstractRaggedDriver";
 
 export type ChatOptions = {
@@ -28,7 +28,7 @@ export class Ragged {
   chat(
     history: RaggedHistoryItem[] | string,
     options?: ChatOptions
-  ): RaggedSubject {
+  ): RaggedObservable {
     if (typeof history === "string") {
       history = [
         {

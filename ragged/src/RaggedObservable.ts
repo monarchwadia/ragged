@@ -1,7 +1,7 @@
-import { Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { RaggedHistoryItem, RaggedLlmStreamEvent } from "./driver/types";
 
-export class RaggedSubject extends Subject<RaggedLlmStreamEvent> {
+export class RaggedObservable extends Observable<RaggedLlmStreamEvent> {
   first<T extends RaggedLlmStreamEvent["type"]>(
     eventType: T
   ): Promise<Extract<RaggedLlmStreamEvent, { type: T }> | undefined> {

@@ -15,7 +15,7 @@ export type {
   RaggedResponseFinishedEvent,
 } from "./src/driver/types";
 
-export { RaggedSubject } from "./src/RaggedSubject";
+export { RaggedObservable } from "./src/RaggedObservable";
 
 export { useRagged } from "./src/react/useRagged";
 export { useRaggedMultisession } from "./src/react/useRaggedMultisession";

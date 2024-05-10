@@ -4,10 +4,10 @@ import { UniqueSessionId, useRaggedMultisession } from "./useRaggedMultisession"
 import { RaggedConfiguration } from "../types";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
 import { ChatOptions } from "../Ragged";
-import { RaggedSubject } from "../RaggedSubject";
+import { RaggedObservable } from "../RaggedObservable";
 
 type ReturnObj = {
-    chat: (input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined) => RaggedSubject;
+    chat: (input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined) => RaggedObservable;
     getChatHistory(): RaggedHistoryItem[];
     getLiveResponse(): string | null;
 };
@@ -21,7 +21,7 @@ export function useRagged(props: any): ReturnObj {
     const r = useRaggedMultisession(props);
 
     return {
-        chat: (input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined): RaggedSubject => {
+        chat: (input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined): RaggedObservable => {
             const { sessionId: receivedSessionId, subject } = r.chat(sessionId.current, input, options)
             sessionId.current = receivedSessionId;
             return subject;

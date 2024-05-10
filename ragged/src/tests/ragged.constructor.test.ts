@@ -1,5 +1,5 @@
 import { Ragged } from "../Ragged";
-import { RaggedSubject } from "../RaggedSubject";
+import { RaggedObservable } from "../RaggedObservable";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
 import { OpenAiRaggedDriver } from "../driver/openai/OpenAiRaggedDriver";
 import { RaggedConfigValidationResult } from "../driver/types";
@@ -45,7 +45,7 @@ describe("ragged.constructor", () => {
           return { isValid: true };
         }
         chatStream() {
-          return new RaggedSubject();
+          return new RaggedObservable();
         }
 
       }

@@ -8,7 +8,7 @@ import {
 import { chatStream } from "./chatStream";
 import { NewToolBuilder } from "../../tool-use/NewToolBuilder";
 import { buildTool } from "../../tool-use/buildTool";
-import { RaggedSubject } from "../../RaggedSubject";
+import { RaggedObservable } from "../../RaggedObservable";
 
 type PredictOptions = {
   tools: NewToolBuilder[];
@@ -60,7 +60,7 @@ export class OpenAiRaggedDriver extends AbstractRaggedDriver<
   chatStream(
     history: RaggedHistoryItem[],
     options?: PredictOptions
-  ): RaggedSubject {
+  ): RaggedObservable {
     const o = new OpenAI(this.config);
     const tools = options?.tools.map((tool) => tool.build()) || [];
 

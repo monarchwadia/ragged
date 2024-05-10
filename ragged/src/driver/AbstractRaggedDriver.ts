@@ -4,7 +4,7 @@ import {
   RaggedLlmStreamEvent,
 } from "./types";
 import { NewToolBuilder } from "../tool-use/NewToolBuilder";
-import { RaggedSubject } from "../RaggedSubject";
+import { RaggedObservable } from "../RaggedObservable";
 
 type PredictOptions<RequestOpts> = {
   tools: NewToolBuilder[];
@@ -46,7 +46,7 @@ export abstract class AbstractRaggedDriver<ConstructorConfig extends Object = an
   abstract chatStream(
     history: RaggedHistoryItem[],
     options?: PredictStreamOptions<RequestOpts>
-  ): RaggedSubject;
+  ): RaggedObservable;
 
   // abstract chat(
   //   history: RaggedHistoryItem[],

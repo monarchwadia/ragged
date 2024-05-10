@@ -1,4 +1,4 @@
-import { RaggedSubject } from "../RaggedSubject";
+import { RaggedObservable } from "../RaggedObservable";
 import { AbstractRaggedDriver } from "../driver/AbstractRaggedDriver";
 import { RaggedConfigValidationResult, RaggedLlmStreamEvent } from "../driver/types";
 
@@ -12,14 +12,14 @@ export class TestDriver extends AbstractRaggedDriver<any, any> {
     }
 
     chatStream() {
-        const subject = new RaggedSubject();
-
-        setTimeout(() => {
-            this._responseStream.forEach((e) => {
-                subject.next(e);
-            });
-            subject.complete();
-        }, 1)
+        const subject = new RaggedObservable((subscriber) => {
+            setTimeout(() => {
+                this._responseStream.forEach((e) => {
+                    subscriber.next(e);
+                });
+                subscriber.complete();
+            }, 1)
+        });
 
         return subject;
     }
