@@ -2,6 +2,16 @@ import { Observable, Subject } from "rxjs";
 import { RaggedHistoryItem, RaggedLlmStreamEvent } from "./driver/types";
 
 export class RaggedObservable extends Observable<RaggedLlmStreamEvent> {
+  /**
+   * Attempts to abort the stream.
+   */
+  public abortStream: () => void = () => { };
+
+  constructor(...args: ConstructorParameters<typeof Observable<RaggedLlmStreamEvent>>) {
+    super(...args);
+    console.log("this.abortStream", this.abortStream);
+  }
+
   first<T extends RaggedLlmStreamEvent["type"]>(
     eventType: T
   ): Promise<Extract<RaggedLlmStreamEvent, { type: T }> | undefined> {

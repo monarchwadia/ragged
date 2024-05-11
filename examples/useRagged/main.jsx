@@ -2,8 +2,19 @@ import { useRagged } from "../../ragged/main";
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+const ControlButton = ({ status }) => {
+    console.log("ControlButton::status", status);
+    if (status === "streaming") {
+        return (<input type="submit" value="Stop" />)
+    }
+    if (status === "aborting") {
+        return (<input type="submit" value="Stopping..." />)
+    }
+    return (<input type="submit" value="Send" />);
+}
+
 const App = () => {
-    const { chat, getChatHistory, getLiveResponse } = useRagged({
+    const { chat, getChatHistory, getLiveResponse, abort, getStatus } = useRagged({
         provider: "openai",
         config: {
             apiKey: import.meta.env.VITE_OPENAI_CREDS,
@@ -13,9 +24,19 @@ const App = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const prompt = e.target.prompt.value;
-        chat(prompt)
-        console.log(prompt);
+
+        if (getStatus() === "streaming") {
+            abort();
+            return;
+        }
+
+        if (getStatus() === "aborting") {
+            // no-op;
+            return;
+        }
+
+        // chat
+        chat(e.target.prompt.value)
     }
 
     return (
@@ -28,6 +49,7 @@ const App = () => {
             <form onSubmit={handleSubmit}>
                 <label htmlFor="prompt">Prompt:</label>
                 <input type="text" name="prompt" id="prompt" placeholder="Enter your prompt here" />
+                <ControlButton status={getStatus()} />
             </form>
 
             <div>

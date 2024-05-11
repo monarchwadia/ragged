@@ -15,6 +15,8 @@ export type {
   RaggedResponseFinishedEvent,
 } from "./src/driver/types";
 
+export type { SessionTrackerStatus } from "./src/react/useRaggedMultisession";
+
 export { RaggedObservable } from "./src/RaggedObservable";
 
 export { useRagged } from "./src/react/useRagged";

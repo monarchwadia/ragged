@@ -13,21 +13,25 @@ const generateUniqueSessionId = (): UniqueSessionId => {
     nextUniqueSessionId++;
     return newId;
 };
+export type SessionTrackerStatus = "streaming" | "aborting" | "idle.fresh" | "idle.error" | "idle.complete";
 
 // internal state types 
 type SessionTrackerMap = Record<UniqueSessionId, SessionTracker | undefined>;
 type SessionTracker = {
     history: RaggedHistoryItem[];
     latestJoined: string;
-    status: "streaming" | "idle.fresh" | "idle.error" | "idle.complete";
+    status: SessionTrackerStatus
 }
+type ObservableTrackerMap = Record<UniqueSessionId, RaggedObservable | undefined>;
 
 // return object type
 type ReturnObj = {
     sessions: SessionTrackerMap;
     getChatHistory(sessionId: UniqueSessionId): RaggedHistoryItem[];
     getLiveResponse(sessionId: UniqueSessionId): string | null;
+    getStatus(sessionId: UniqueSessionId): SessionTrackerStatus;
     chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined) => ChatReturnObject;
+    abort: (sessionId: UniqueSessionId) => void;
 }
 
 // chat() response object
@@ -41,6 +45,7 @@ export function useRaggedMultisession(props: AbstractRaggedDriver): ReturnObj;
 export function useRaggedMultisession(props: any): ReturnObj {
     const ragged = useRef<Ragged | null>(null);
     const [sessions, setSessions] = useState<SessionTrackerMap>({});
+    const [observables, setObservables] = useState<ObservableTrackerMap>({});
 
     useEffect(() => {
         ragged.current = new Ragged(props);
@@ -48,18 +53,34 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
     return {
         sessions,
-
+        getStatus(sessionId) {
+            return getOrCreateSessionTracker_IS_MUTABLE(sessions, sessionId).status;
+        },
         getChatHistory(sessionId: UniqueSessionId): RaggedHistoryItem[] {
-            return getOrCreateSessionTracker(sessions, sessionId).history;
+            return getOrCreateSessionTracker_IS_MUTABLE(sessions, sessionId).history;
         },
         getLiveResponse(sessionId: UniqueSessionId): string | null {
-            const session = getOrCreateSessionTracker(sessions, sessionId);
+            const session = getOrCreateSessionTracker_IS_MUTABLE(sessions, sessionId);
 
             if (session?.status === "streaming") {
                 return session.latestJoined;
             }
 
             return null;
+        },
+        abort(sessionId: UniqueSessionId): void {
+            const session = getOrCreateSessionTracker_IS_MUTABLE(sessions, sessionId);
+            const observable = observables[sessionId];
+            if (observable) {
+                console.log("session.observable.abortStream", observable?.abortStream)
+                observable.abortStream();
+                setSessions((sessions) => {
+                    const returnObj = deepClone(sessions);
+                    let thisSession = getOrCreateSessionTracker_IS_MUTABLE(returnObj, sessionId);
+                    thisSession.status = "aborting";
+                    return returnObj;
+                });
+            }
         },
         chat: (sessionId: number | undefined, input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined): ChatReturnObject => {
             // If Ragged hasn't been initialized yet, return an error
@@ -73,7 +94,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
 
             // Ensure that a session with this ID exists.
-            const existingSession: SessionTracker = getOrCreateSessionTracker(sessions, sessionId);
+            const existingSession: SessionTracker = getOrCreateSessionTracker_IS_MUTABLE(sessions, sessionId);
 
             if (typeof input === "string") {
                 existingSession.history.push({
@@ -91,25 +112,32 @@ export function useRaggedMultisession(props: any): ReturnObj {
             }
 
             const s$ = ragged.current?.chat(existingSession.history, options);
+            observables[sessionId] = s$;
+            setObservables({ ...observables });
+            existingSession.status = "streaming";
+            setSessions(deepClone(sessions));
 
-            setSessions((sessions) => {
-                // create and set the session
-                const returnObj = deepClone(sessions);
-                let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
-                thisSession.status = "streaming";
+            // setSessions((sessions) => {
+            //     // create and set the session
+            //     const returnObj = deepClone(sessions);
+            //     let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
+            //     thisSession.status = "streaming";
 
-                return returnObj;
-            });
+            //     return returnObj;
+            // });
 
             s$.subscribe({
                 next: (value) => {
                     setSessions((sessions) => {
                         const returnObj = deepClone(sessions);
-                        let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
-                        thisSession.status = "streaming";
+                        let thisSession = getOrCreateSessionTracker_IS_MUTABLE(returnObj, sessionId);
+                        if (thisSession.status !== "aborting") {
+                            thisSession.status = "streaming";
+                        }
 
                         // if the value is a history item, push it to the history array
                         if (value.type === "history.text" || value.type === "history.tool.request" || value.type === "history.tool.result") {
+                            console.log("Pushing to history", value)
                             thisSession.history.push(value);
                         }
 
@@ -124,7 +152,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
                 complete: () => {
                     setSessions((sessions) => {
                         const returnObj = deepClone(sessions);
-                        let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
+                        let thisSession = getOrCreateSessionTracker_IS_MUTABLE(returnObj, sessionId);
                         thisSession.status = "idle.complete";
                         thisSession.latestJoined = "";
                         return returnObj;
@@ -135,7 +163,7 @@ export function useRaggedMultisession(props: any): ReturnObj {
                         // TODO: Set the error message in the session
                         console.error("Error in session", sessionId, error)
                         const returnObj = deepClone(sessions);
-                        let thisSession = getOrCreateSessionTracker(returnObj, sessionId);
+                        let thisSession = getOrCreateSessionTracker_IS_MUTABLE(returnObj, sessionId);
                         thisSession.status = "idle.error";
                         return returnObj;
                     });
@@ -151,8 +179,18 @@ export function useRaggedMultisession(props: any): ReturnObj {
     };
 }
 
-// Utilities
-const getOrCreateSessionTracker = (map: SessionTrackerMap, sessionId: UniqueSessionId): SessionTracker => {
+/**
+ * 
+ * Creates a new session tracker if one does not exist for the given session ID.
+ * The new session tracker is added to the map and is intended to be mutated by the code.
+ * Note that the original map is mutated, and the returned object is also intended to be mutable.
+ * After mutation, the client should call setSessions() and deepClone() to update the state.
+ * 
+ * @param map 
+ * @param sessionId 
+ * @returns 
+ */
+const getOrCreateSessionTracker_IS_MUTABLE = (map: SessionTrackerMap, sessionId: UniqueSessionId): SessionTracker => {
     let thisSession = map[sessionId];
 
     if (thisSession) {

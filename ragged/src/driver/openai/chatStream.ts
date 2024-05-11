@@ -4,6 +4,7 @@ import { RaggedHistoryItem } from "../types";
 import { NewToolHolder } from "../../tool-use/types";
 import { mapToolToOpenAi } from "./mapToolToOpenAi";
 import { RaggedObservable } from "../../RaggedObservable";
+import { Stream } from "openai/streaming.mjs";
 
 export const chatStream = (
   o: OpenAI,
@@ -15,8 +16,7 @@ export const chatStream = (
 
   const chatCompletionDetector = new OpenAiChatCompletionDetector();
 
-  const operationEvents = new RaggedObservable((subscriber) => {
-
+  const observable = new RaggedObservable((subscriber) => {
     // set up the listener. the events are pushed to the listener elsewhere in this file.
     chatCompletionDetector.listen((evt) => {
       const { type, index } = evt;
@@ -43,6 +43,7 @@ export const chatStream = (
           break;
         }
         case "CHAT_COMPLETION_FINISH": {
+          debugger;
           subscriber.next({
             type: "text.finished",
             index,
@@ -241,13 +242,21 @@ export const chatStream = (
       body.tools = tools.map((toolHolder) => mapToolToOpenAi(toolHolder.tool));
     }
 
-    const response = o.chat.completions.create(body);
+    const createPromise = o.chat.completions.create(body);
 
     const decoder = new TextDecoder();
-    response
+    createPromise
       .then((response) => {
-        const reader = response.toReadableStream().getReader();
+        observable.abortStream = () => {
+          response.controller.signal.addEventListener("abort", (e) => {
+            // this sends a scan down the detector to let it know that the stream was aborted.
+            // this is necessary so that the final CHAT_COMPLATION events can be accurately emitted.
+            chatCompletionDetector.scan("DO_ABORT");
+          })
+          response.controller.abort();
+        }
 
+        const reader = response.toReadableStream().getReader();
         reader.closed.then(() => {
           subscriber.next({
             type: "ragged.finished",
@@ -295,5 +304,7 @@ export const chatStream = (
       });
   })
 
-  return operationEvents;
+  observable.abortStream = () => { };
+
+  return observable;
 };

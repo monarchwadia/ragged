@@ -57,6 +57,7 @@ type Listener = (obj: OpenAiChatCompletionDetectorEvent) => void;
 export class OpenAiChatCompletionDetector {
   private listeners: Listener[] = [];
   private deltaCollections: DeltaCollection[] = [];
+  private abortSignalReceived = false;
 
   scan(obj: unknown) {
     // check if the object is a chat completion chunk
@@ -66,7 +67,26 @@ export class OpenAiChatCompletionDetector {
       // @ts-expect-error
       obj["object"] === "chat.completion.chunk";
 
-    if (!isChatCompletionChunk) {
+    const isAbortSignal = obj === "DO_ABORT";
+
+    if (!isChatCompletionChunk && !isAbortSignal) {
+      return;
+    }
+
+    if (isAbortSignal) {
+      if (this.abortSignalReceived) {
+        return;
+      }
+
+      this.deltaCollections.forEach((dc, choiceIndex) => {
+        const chatCompletionEvt: OpenAiChatCompletionDetectorEvent = {
+          type: "CHAT_COMPLETION_FINISH",
+          index: choiceIndex,
+          content: dc.content
+        };
+        this.emit(chatCompletionEvt);
+      });
+      this.abortSignalReceived = true;
       return;
     }
 
@@ -198,11 +218,10 @@ export class OpenAiChatCompletionDetector {
           const chatCompletionEvt: OpenAiChatCompletionDetectorEvent = {
             type: "CHAT_COMPLETION_FINISH",
             index: choiceIndex,
-            content: dc.content,
+            content: dc.content
           };
           this.emit(chatCompletionEvt);
         }
-
       }
     }
   }
