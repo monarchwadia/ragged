@@ -9,6 +9,7 @@ import { RaggedObservable } from "../RaggedObservable";
 type ReturnObj = {
     chat: (input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined) => RaggedObservable;
     getChatHistory(): RaggedHistoryItem[];
+    setChatHistory(history: RaggedHistoryItem[]): void;
     abort(): void;
     getLiveResponse(): string | null;
     getStatus(): SessionTrackerStatus;
@@ -45,6 +46,13 @@ export function useRagged(props: any): ReturnObj {
                 return history;
             } else {
                 return [];
+            }
+        },
+        setChatHistory(history: RaggedHistoryItem[]) {
+            if (sessionId) {
+                r.setChatHistory(sessionId, history);
+            } else {
+                return r.startSession(history);
             }
         },
         getLiveResponse() {

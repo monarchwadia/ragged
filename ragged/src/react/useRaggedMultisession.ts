@@ -28,6 +28,8 @@ type ObservableTrackerMap = Record<UniqueSessionId, RaggedObservable | undefined
 type ReturnObj = {
     sessions: SessionTrackerMap;
     getChatHistory(sessionId: UniqueSessionId): RaggedHistoryItem[];
+    setChatHistory(sessionId: UniqueSessionId, history: RaggedHistoryItem[]): void;
+    startSession(history?: RaggedHistoryItem[]): UniqueSessionId;
     getLiveResponse(sessionId: UniqueSessionId): string | null;
     getStatus(sessionId: UniqueSessionId): SessionTrackerStatus;
     chat: (sessionId: UniqueSessionId | undefined, input: string | RaggedHistoryItem | RaggedHistoryItem[], options?: ChatOptions | undefined) => ChatReturnObject;
@@ -55,6 +57,27 @@ export function useRaggedMultisession(props: any): ReturnObj {
         sessions,
         getStatus(sessionId) {
             return getOrCreateSessionTracker_IS_MUTABLE(sessions, sessionId).status;
+        },
+        startSession(history: RaggedHistoryItem[] = []): UniqueSessionId {
+            const newSessionId = generateUniqueSessionId();
+            // getOrCreateSessionTracker_IS_MUTABLE(sessions, newSessionId);
+            // return newSessionId;
+            setSessions((sessions) => {
+                const returnObj = deepClone(sessions);
+                const thisSession = getOrCreateSessionTracker_IS_MUTABLE(returnObj, newSessionId);
+                thisSession.history = deepClone(history);
+                return returnObj;
+            });
+
+            return newSessionId;
+        },
+        setChatHistory(sessionId: UniqueSessionId, history: RaggedHistoryItem[]): void {
+            setSessions((sessions) => {
+                const returnObj = deepClone(sessions);
+                const thisSession = getOrCreateSessionTracker_IS_MUTABLE(returnObj, sessionId);
+                thisSession.history = deepClone(history);
+                return returnObj;
+            });
         },
         getChatHistory(sessionId: UniqueSessionId): RaggedHistoryItem[] {
             return getOrCreateSessionTracker_IS_MUTABLE(sessions, sessionId).history;
