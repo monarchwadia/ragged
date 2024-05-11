@@ -9,7 +9,6 @@ export class RaggedObservable extends Observable<RaggedLlmStreamEvent> {
 
   constructor(...args: ConstructorParameters<typeof Observable<RaggedLlmStreamEvent>>) {
     super(...args);
-    console.log("this.abortStream", this.abortStream);
   }
 
   first<T extends RaggedLlmStreamEvent["type"]>(

@@ -43,7 +43,6 @@ export const chatStream = (
           break;
         }
         case "CHAT_COMPLETION_FINISH": {
-          debugger;
           subscriber.next({
             type: "text.finished",
             index,

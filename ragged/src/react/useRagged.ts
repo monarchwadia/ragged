@@ -24,7 +24,6 @@ export function useRagged(props: any): ReturnObj {
     return {
         getStatus: () => {
             if (sessionId) {
-                console.log("Getting status for session: ", sessionId)
                 return r.getStatus(sessionId);
             } else {
                 return "idle.fresh";

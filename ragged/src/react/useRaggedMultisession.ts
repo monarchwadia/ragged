@@ -72,7 +72,6 @@ export function useRaggedMultisession(props: any): ReturnObj {
             const session = getOrCreateSessionTracker_IS_MUTABLE(sessions, sessionId);
             const observable = observables[sessionId];
             if (observable) {
-                console.log("session.observable.abortStream", observable?.abortStream)
                 observable.abortStream();
                 setSessions((sessions) => {
                     const returnObj = deepClone(sessions);
@@ -137,7 +136,6 @@ export function useRaggedMultisession(props: any): ReturnObj {
 
                         // if the value is a history item, push it to the history array
                         if (value.type === "history.text" || value.type === "history.tool.request" || value.type === "history.tool.result") {
-                            console.log("Pushing to history", value)
                             thisSession.history.push(value);
                         }
 
