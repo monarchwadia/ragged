@@ -15,6 +15,19 @@ async function main() {
         minify: true,
         external: ['openai', 'rxjs', 'react']
     });
+
+    // Build CommonJS minified
+    await esbuild.build({
+        entryPoints: ["./main.ts"],
+        bundle: true,
+        outfile: `./build/ragged.cjs`,
+        platform: "neutral",
+        logLevel: "info",
+        target: ["es6"],
+        format: "cjs",
+        minify: true,
+        external: ['openai', 'rxjs', 'react']
+    });
 }
 
 main()
