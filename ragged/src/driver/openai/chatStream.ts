@@ -138,14 +138,23 @@ export const chatStream = (
             // TODO: provide the result to the LLM in the openerationEvents
             emitToolUseFinish(result);
 
-            const historyItem: RaggedHistoryItem = {
+            const toolUseRequestItem: RaggedHistoryItem = {
+              type: "history.tool.request",
+              toolName: evt.toolCall.name,
+              toolRequestId: evt.toolCall.id,
+              inputs: evt.toolCall.arguments,
+            };
+            subscriber.next(toolUseRequestItem);
+            responseHistory.push({ ...toolUseRequestItem });
+
+            const toolUseResultItem: RaggedHistoryItem = {
               type: "history.tool.result",
               toolName: evt.toolCall.name,
               toolRequestId: evt.toolCall.id,
               result,
             };
-            subscriber.next(historyItem);
-            responseHistory.push({ ...historyItem });
+            subscriber.next(toolUseResultItem);
+            responseHistory.push({ ...toolUseResultItem });
 
             return;
           }

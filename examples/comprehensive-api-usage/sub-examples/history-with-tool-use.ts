@@ -27,12 +27,12 @@ export const historyWithToolUse = async () => {
   let history: RaggedHistoryItem[] = [];
 
   // first response
-  const PROMPT_1 = "Current value is 0. increment by 250 using the adder tool!'";
+  const PROMPT_1 = "Current value is 123415135. increment by 123413636236 using the provided adder tool!'";
   console.log(`[prompt]: ${PROMPT_1}`);
-  const firstResponseHistory = await r.chat(PROMPT_1, { tools }).asHistory();
+  const chatStream = await r.chat(PROMPT_1, { tools });
+  const firstResponseHistory = await chatStream.asHistory();
   history = [...history, ...firstResponseHistory];
-  console.log("HISTORY AFTER FIRST CALL ===============\n", history, "\n====================");
-  const toolUseResponse = await r.chat(history, { tools }).asHistory();
-  history = [...history, ...toolUseResponse];
-  console.log("HISTORY AFTER SECOND CALL ===============\n", history, "\n====================");
+  const chatStream2 = await r.chat(history, { tools });
+  const toolUseResponse = await chatStream2.firstText();
+  console.log("TOOL USE RESPONSE", toolUseResponse);
 };
