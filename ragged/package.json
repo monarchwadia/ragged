@@ -24,16 +24,8 @@
   "keywords": [],
   "author": "monarchwadia",
   "license": "MIT",
-  "peerDependencies": {
-    "@types/react": "^18.2.66",
-    "openai": "^4.0.0",
-    "react": "^18.3.1",
-    "rxjs": "^7.8.1"
-  },
   "devDependencies": {
     "@eslint/js": "^9.1.1",
-    "@testing-library/react": "^15.0.6",
-    "@testing-library/user-event": "^14.5.2",
     "@types/jest": "^29.5.12",
     "@types/json-schema": "^7.0.15",
     "esbuild": "0.20.2",

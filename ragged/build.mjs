@@ -12,8 +12,7 @@ async function main() {
         logLevel: "info",
         target: ["es6"],
         format: "esm",
-        minify: true,
-        external: ['openai', 'rxjs', 'react']
+        minify: true
     });
 
     // Build CommonJS minified
@@ -25,8 +24,7 @@ async function main() {
         logLevel: "info",
         target: ["es6"],
         format: "cjs",
-        minify: true,
-        external: ['openai', 'rxjs', 'react']
+        minify: true
     });
 }
 
