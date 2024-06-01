@@ -1,6 +1,7 @@
 import { Logger } from "../../logger/Logger";
 import { DriverApiClient } from "../DriverApiClient";
 import { JsonParseError, FetchRequestFailedError } from "../DriverErrors";
+import { ChatCompletionResponse } from "./OpenAiApiTypes";
 
 // ============ types ============
 
@@ -40,7 +41,7 @@ export class OpenAiChatDriver {
         this.config = { ...buildDefaultConfig(), ...config };
     }
 
-    async chatCompletion(params: ChatCompletionParams) {
+    async chatCompletion(params: ChatCompletionParams): Promise<ChatCompletionResponse> {
         let body: string;
 
         try {
