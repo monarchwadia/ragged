@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OpenAiChatDriver should perform a chat completion 1`] = `
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "content": "I am a chatbot designed to assist you with information and answer your questions to the best of my abilities. How can I help you today?",
+        "role": "assistant",
+      },
+    },
+  ],
+  "created": 1717283755,
+  "id": "chatcmpl-9VSF1LRQZj65RIITve1CqGB9VGALo",
+  "model": "gpt-3.5-turbo-0125",
+  "object": "chat.completion",
+  "system_fingerprint": null,
+  "usage": {
+    "completion_tokens": 29,
+    "prompt_tokens": 21,
+    "total_tokens": 50,
+  },
+}
+`;
