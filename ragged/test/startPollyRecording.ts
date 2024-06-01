@@ -20,6 +20,7 @@ export const startPollyRecording = (recordingName: string) => {
                 body: false,
                 order: false,
             },
+            logLevel: "ERROR"
         }
     );
     polly.server.any().on("beforeResponse", (req) => {
