@@ -1,4 +1,13 @@
-export type ChatCompletionResponse = {
+
+export type OpenAiChatCompletionRequestBody = {
+  model: string;
+  messages: {
+    role: string;
+    content: string;
+  }[]
+}
+
+export type OpenAiChatCompletionResponseBody = {
   choices: Choice[];
   created: number;
   id: string;

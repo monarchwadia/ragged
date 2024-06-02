@@ -1,23 +1,14 @@
 import { Logger } from "../../logger/Logger";
 import { DriverApiClient } from "../DriverApiClient";
 import { JsonParseError, FetchRequestFailedError } from "../DriverErrors";
-import { ChatCompletionResponse } from "./OpenAiApiTypes";
+import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody as OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
 
 // ============ types ============
 
-type OpenAiChatDriverConfig = {
+export type OpenAiChatDriverConfig = {
     apiKey: string | undefined;
     rootUrl: string;
 }
-
-type ChatCompletionParams = {
-    model: string;
-    messages: {
-        role: string;
-        content: string;
-    }[]
-}
-
 
 // ============ utils ============
 
@@ -41,11 +32,11 @@ export class OpenAiChatDriver {
         this.config = { ...buildDefaultConfig(), ...config };
     }
 
-    async chatCompletion(params: ChatCompletionParams): Promise<ChatCompletionResponse> {
+    async chatCompletion(requestBody: OpenAiChatCompletionRequestBody): Promise<OpenAiChatCompletionResponseBody> {
         let body: string;
 
         try {
-            body = JSON.stringify(params);
+            body = JSON.stringify(requestBody);
         } catch (e) {
             const message = "Failed to stringify request JSON for OpenAI API.";
             this.logger.error(message, e);
