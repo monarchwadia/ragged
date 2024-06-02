@@ -2,7 +2,7 @@
  * Custom errors for drivers. Drivers can throw these errors to indicate
  * that something went wrong.
  */
-class BaseDriverError extends Error {
+class BaseCustomError extends Error {
     constructor(message: string) {
         super(message);
         this.name = "BaseError";
@@ -12,7 +12,7 @@ class BaseDriverError extends Error {
 /**
  * Thrown when a driver fails to parse JSON.
  */
-export class JsonParseError extends BaseDriverError {
+export class JsonParseError extends BaseCustomError {
     constructor(message: string, public cause: unknown) {
         super(message);
         this.name = "JsonParseError";
@@ -22,11 +22,18 @@ export class JsonParseError extends BaseDriverError {
 /**
  * Throw when a request fails with a non-2xx status code.
  */
-export class FetchRequestFailedError extends BaseDriverError {
+export class FetchRequestFailedError extends BaseCustomError {
     response: Response;
     constructor(message: string, response: Response) {
         super(message);
         this.name = "FetchRequestFailedError";
         this.response = response;
+    }
+}
+
+export class MappingError extends BaseCustomError {
+    constructor(message: string, public cause: unknown) {
+        super(message);
+        this.name = "MappingError";
     }
 }

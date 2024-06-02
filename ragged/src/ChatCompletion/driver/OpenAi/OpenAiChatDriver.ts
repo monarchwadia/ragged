@@ -1,6 +1,6 @@
-import { Logger } from "../../logger/Logger";
-import { DriverApiClient } from "../DriverApiClient";
-import { JsonParseError, FetchRequestFailedError } from "../DriverErrors";
+import { Logger } from "../../../support/logger/Logger";
+import { ApiClient } from "../../../support/ApiClient";
+import { JsonParseError, FetchRequestFailedError } from "../../../support/CustomErrors";
 import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody as OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
 
 // ============ types ============
@@ -28,7 +28,7 @@ export class OpenAiChatDriver {
     private logger: Logger = new Logger('OpenAiChatDriver');
     private config: OpenAiChatDriverConfig;
 
-    constructor(private driverApiClient: DriverApiClient, config: Partial<OpenAiChatDriverConfig> = {}) {
+    constructor(private driverApiClient: ApiClient, config: Partial<OpenAiChatDriverConfig> = {}) {
         this.config = { ...buildDefaultConfig(), ...config };
     }
 

@@ -1,5 +1,5 @@
-import { startPollyRecording } from "../../../test/startPollyRecording";
-import { DriverApiClient } from "../DriverApiClient";
+import { startPollyRecording } from "../../../../test/startPollyRecording";
+import { ApiClient } from "../../../support/ApiClient";
 import { OpenAiChatDriver } from "./OpenAiChatDriver";
 
 describe("OpenAiChatDriver", () => {
@@ -10,7 +10,7 @@ describe("OpenAiChatDriver", () => {
             // apiKey: process.env.OPENAI_API_KEY
         };
 
-        const driverApiClient = new DriverApiClient();
+        const driverApiClient = new ApiClient();
         driver = new OpenAiChatDriver(driverApiClient, config);
     });
 
