@@ -23,11 +23,9 @@ export class JsonParseError extends BaseCustomError {
  * Throw when a request fails with a non-2xx status code.
  */
 export class FetchRequestFailedError extends BaseCustomError {
-    response: Response;
-    constructor(message: string, response: Response) {
+    constructor(message: string) {
         super(message);
         this.name = "FetchRequestFailedError";
-        this.response = response;
     }
 }
 

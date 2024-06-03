@@ -59,14 +59,15 @@ export class OpenAiChatDriver {
 
             try {
                 const reason = await response.text();
-                err = new FetchRequestFailedError(`Request to OpenAI failed with status code ${response.status}. Reason: ${reason}`, response)
+                err = new FetchRequestFailedError(`Request to OpenAI failed with status code ${response.status}. Reason: ${reason}`)
             } catch (e) {
                 err = new FetchRequestFailedError("Request to OpenAI failed with status code " + response.status + ". "
                     + "Then, we failed to parse response text from OpenAI API, so we don't have more information to share. "
-                    + "You might want to debug this using other methods such as the network console, console.log or breakpoints.", response);
+                    + "You might want to debug this using other methods such as the network console, console.log or breakpoints.");
             }
 
             this.logger.error(err);
+            this.logger.debug("Failed response:", response);
             throw err;
         }
 

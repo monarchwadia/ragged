@@ -1,1 +1,1 @@
-export type { BaseChatAdapter, ChatRequest, ChatResponse } from "../../../chat/provider/index.types";
+export type { BaseChatAdapter, ChatRequest, ChatResponse } from "../../../chat/provider/index.types.d.ts";
