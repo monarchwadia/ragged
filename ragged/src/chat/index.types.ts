@@ -1,4 +1,4 @@
-export type MessageType = "user" | "bot" | "system" | "error";
+
 
 export type Message =
     | {
@@ -17,3 +17,5 @@ export type Message =
         type: "error";
         text: string;
     }
+
+export type MessageType = Message["type"];

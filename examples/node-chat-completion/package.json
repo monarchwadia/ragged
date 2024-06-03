@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "tsx index.ts"
+    "dev": "echo \"Try 'pnpm tsx simple.ts' or 'pnpm tsx recording.tsx'\""
   },
   "type": "module",
   "keywords": [],

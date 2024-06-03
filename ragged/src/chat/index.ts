@@ -5,38 +5,37 @@ import { provideOpenAiChatAdapter } from "./provider/openai";
 import { OpenAiChatDriverConfig } from "./provider/openai/driver";
 
 export class Chat {
-    private logger = new Logger("Chat");
+    public logger = new Logger("Chat");
     private _history: Message[] = [];
 
     private _isRecording: boolean = false;
     constructor(private adapter: BaseChatAdapter) { }
 
     async chat(userMessage: string, history: Message[] = []): Promise<Message[]> {
-
-        // prepare the request
-
-        let requestHistory = [];
         if (this._isRecording) {
-            // if recording, we ignore the history passed in and use the internal history
-            requestHistory = Chat.cloneMessages(this._history);
+            this.logger.debug("Recording is on. Using the internal history.");
+
+            if (history.length > 0) {
+                this.logger.warn("Received a history object in params, but ignoring it because recording is on.");
+            }
+
+            history = Chat.cloneMessages(this._history);
+            history.push({
+                type: "user",
+                text: userMessage
+            });
         } else {
-            requestHistory = Chat.cloneMessages(history);
+            this.logger.debug("Recording is off. Using the history object passed in.");
+            history = Chat.cloneMessages(history);
+            history.push({
+                type: "user",
+                text: userMessage
+            });
         }
 
-        requestHistory.push({
-            type: "user",
-            text: userMessage
-        });
-
-        // execute the request
-
-        const request: ChatRequest = {
-            history: requestHistory
-        }
-
-        // handle response
-
-        let response: ChatResponse = { history: [] };
+        const request: ChatRequest = { history };
+        this.logger.debug("Chat request: ", JSON.stringify(request));
+        let response: ChatResponse = { history: [] }; // will be replaced soon
         try {
             response = await this.adapter.chat(request);
         } catch (e: unknown) {
@@ -49,14 +48,14 @@ export class Chat {
             }
         }
 
-        let historyToReturn: Message[] = [];
         if (this._isRecording) {
-            historyToReturn = request.history;
+            this._history = Chat.cloneMessages([...request.history, ...response.history]);
+            this.logger.debug("Recorded Response: ", JSON.stringify(this._history));
+            return this._history;
+        } else {
+            this.logger.debug("Response:", JSON.stringify(response.history));
+            return Chat.cloneMessages(response.history);
         }
-
-        historyToReturn.push(...response.history);
-
-        return Chat.cloneMessages(historyToReturn);
     }
 
     public record(record: boolean) {

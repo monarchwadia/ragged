@@ -106,7 +106,7 @@ describe("Chat", () => {
                 ]
             });
 
-            const messages = await c.chat(`This is a test message to the adapter`);
+            let messages = await c.chat(`This is a test message to the adapter`);
 
             expect(messages).toMatchObject([
                 {
@@ -118,6 +118,41 @@ describe("Chat", () => {
                     text: "This is a test response from the adapter"
                 }
             ] as Message[]);
+
+            // and one more try
+
+            adapter.chat.mockResolvedValue({
+                history: [
+                    {
+                        type: "bot",
+                        text: "This is the last test response from the adapter"
+                    }
+                ]
+            });
+
+            messages = await c.chat(`This is another test message to the adapter`);
+
+            const expectedValue = [
+                {
+                    type: "user",
+                    text: `This is a test message to the adapter`
+                },
+                {
+                    type: "bot",
+                    text: "This is a test response from the adapter"
+                },
+                {
+                    type: "user",
+                    text: `This is another test message to the adapter`
+                },
+                {
+                    type: "bot",
+                    text: "This is the last test response from the adapter"
+                }
+            ] as Message[];
+
+            expect(messages).toMatchObject(expectedValue);
+            expect(c.history).toMatchObject(expectedValue);
         });
 
         it("should ignore the history passed in", async () => {
@@ -170,7 +205,6 @@ describe("Chat", () => {
                 }
             ] as Message[]);
         });
-
 
         it("includes unknown errors in the response", async () => {
             c.record(true);

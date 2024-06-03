@@ -14,9 +14,10 @@ interface LoggerOptions {
  * logger.info('Application has started');
  */
 export class Logger {
-    private static level: LogLevel = 'info';
+    private static level: LogLevel = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
 
-    constructor(private namespace: string, private level?: LogLevel) { }
+    constructor(private namespace: string, private level?: LogLevel) {
+    }
 
     private shouldLog(level: LogLevel): boolean {
         const levels: LogLevel[] = ['debug', 'info', 'warn', 'error', 'none'];
