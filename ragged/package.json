@@ -1,6 +1,6 @@
 {
   "name": "ragged",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "A simple library for easy LLM access.",
   "type": "module",
   "exports": {
@@ -62,5 +62,5 @@
   "bugs": {
     "url": "https://github.com/monarchwadia/ragged/issues"
   },
-  "homepage": "https://monarchwadia.github.io/ragged/"
+  "homepage": "https://github.com/monarchwadia/ragged"
 }
