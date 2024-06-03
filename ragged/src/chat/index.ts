@@ -12,28 +12,17 @@ export class Chat {
     constructor(private adapter: BaseChatAdapter) { }
 
     async chat(userMessage: string, history: Message[] = []): Promise<Message[]> {
-        if (this._isRecording) {
-            this.logger.debug("Recording is on. Using the internal history.");
+        let workingHistory = [...this.history, ...history];
 
-            if (history.length > 0) {
-                this.logger.warn("Received a history object in params, but ignoring it because recording is on.");
-            }
-
-            history = Chat.cloneMessages(this._history);
-            history.push({
-                type: "user",
-                text: userMessage
-            });
-        } else {
-            this.logger.debug("Recording is off. Using the history object passed in.");
-            history = Chat.cloneMessages(history);
-            history.push({
-                type: "user",
-                text: userMessage
-            });
+        const userMessageObj: Message = {
+            type: "user",
+            text: userMessage
         }
 
-        const request: ChatRequest = { history };
+        workingHistory.push(userMessageObj);
+
+        const request: ChatRequest = { history: Chat.cloneMessages(workingHistory) };
+
         this.logger.debug("Chat request: ", JSON.stringify(request));
         let response: ChatResponse = { history: [] }; // will be replaced soon
         try {
@@ -48,13 +37,15 @@ export class Chat {
             }
         }
 
-        if (this._isRecording) {
-            this._history = Chat.cloneMessages([...request.history, ...response.history]);
-            this.logger.debug("Recorded Response: ", JSON.stringify(this._history));
-            return this._history;
+        if (this.isRecording) {
+            workingHistory = [...workingHistory, ...response.history]; // this.history setter will clone the messages
+            this.logger.debug("Recorded Response: ", JSON.stringify(workingHistory));
+            this.history = workingHistory;
+            return this.history;
         } else {
-            this.logger.debug("Response:", JSON.stringify(response.history));
-            return Chat.cloneMessages(response.history);
+            const returnable = Chat.cloneMessages([...workingHistory, ...response.history]);
+            this.logger.debug("Response:", JSON.stringify(returnable));
+            return returnable;
         }
     }
 
