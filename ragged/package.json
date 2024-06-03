@@ -4,22 +4,25 @@
   "description": "A simple library for easy LLM access.",
   "type": "module",
   "exports": {
-    "./chat": {
-      "require": "./build/cjs/chat/index.js",
-      "import": "./build/esm/chat/index.js",
-      "types": "./build/src/public/chat/index.d.ts"
-    },
     "./chat/adapter": {
+      "import": "./build/esm/chat/adapter/index.js",
+      "require": "./build/cjs/chat/adapter/index.js",
       "types": "./build/src/public/chat/adapter/index.d.ts"
+    },
+    "./chat": {
+      "import": "./build/esm/chat/index.js",
+      "require": "./build/cjs/chat/index.js",
+      "types": "./build/src/public/chat/index.d.ts"
     }
   },
   "files": [
-    "build"
+    "build",
+    "src/**/*.d.ts"
   ],
   "scripts": {
     "build": "pnpm test && pnpm build:base",
     "build-skiptests": "pnpm build:base",
-    "build:base": "rm -rf ./build && node build.mjs && tsc --emitDeclarationOnly",
+    "build:base": "rm -rf ./build && tsx build.ts && tsc --emitDeclarationOnly",
     "test": "jest",
     "tdd": "jest --watch"
   },
@@ -28,6 +31,7 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.1.1",
+    "@npmcli/package-json": "^5.1.1",
     "@pollyjs/adapter-fetch": "^6.0.6",
     "@pollyjs/adapter-node-http": "^6.0.6",
     "@pollyjs/core": "^6.0.6",
@@ -35,6 +39,7 @@
     "@types/jest": "^29.5.12",
     "@types/json-schema": "^7.0.15",
     "@types/node": "^20.13.0",
+    "@types/npmcli__package-json": "^4.0.4",
     "dotenv": "^16.4.5",
     "esbuild": "0.20.2",
     "eslint": "^9.1.1",

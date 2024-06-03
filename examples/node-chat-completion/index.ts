@@ -1,4 +1,4 @@
-import { Chat } from "ragged/chat";
+import { Chat } from "ragged/chat"
 
 const c = Chat.with("openai", {
     apiKey: "sk-whatever"

@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+        // CommonJS + Node-8 + ES5 (Early Support)
+        "target": "ES5",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        // STRUCTURE
+        "outDir": "builds/CommonJS",
+        "declarationDir": "types",
+        "rootDir": "src",
+        "sourceRoot": "src",
+        "composite": true,
+        // EMISSIONS
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "inlineSources": true,
+        "noEmitOnError": true,
+        "noEmit": false,
+  }
+}

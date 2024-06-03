@@ -1,16 +1,29 @@
 // @ts-check
 
 import * as esbuild from "esbuild";
+import fs from "fs";
 
-const entryPoints = {
-    'chat/index': './src/public/chat/index.ts',
-    // 'chat/adapter/index': './src/public/chat/adapter/index.ts',
-}
+import { buildPublicInterface } from "./buildConfig/buildPublicInterface";
+import { updatePackageJsonEntrypoints } from "./buildConfig/updatePackageJsonEntrypoints";
+
+// const entryPoints = {
+//     'chat/index': './src/public/chat/index.ts',
+//     // 'chat/adapter/index': './src/public/chat/adapter/index.ts',
+// }
+
+const __dirname = new URL(".", import.meta.url).pathname;
 
 async function main() {
+    // update packagejson
+    updatePackageJsonEntrypoints({
+        pathToRaggedDir: __dirname
+    });
+
+
+    const { esbuildEntryPoints } = buildPublicInterface('./src/public');
     // esm minified
     await esbuild.build({
-        entryPoints,
+        entryPoints: esbuildEntryPoints,
         outdir: 'build/esm',
         bundle: true,
         // outfile: `./build/src/index.js`,
@@ -18,20 +31,27 @@ async function main() {
         logLevel: "info",
         target: ["es6"],
         format: "esm",
-        minify: true
+        minify: true,
+        tsconfig: "./buildConfig/tsconfig.esm.json"
     });
 
     // Build CommonJS minified
     await esbuild.build({
-        entryPoints,
+        entryPoints: esbuildEntryPoints,
         outdir: 'build/cjs',
         bundle: true,
         platform: "neutral",
         logLevel: "info",
         target: ["es6"],
         format: "cjs",
-        minify: true
+        minify: true,
+        tsconfig: "./buildConfig/tsconfig.cjs.json"
     });
+
+    fs.copyFileSync('./buildConfig/cjs.package.json', './build/cjs/package.json');
+
+    // and same for esm
+    fs.copyFileSync('./buildConfig/esm.package.json', './build/esm/package.json');
 }
 
 main()
