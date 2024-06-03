@@ -3,7 +3,7 @@ import fs from "fs";
 import { buildPublicInterface } from "./buildPublicInterface";
 
 describe("buildPublicInterface", () => {
-  it.only("should build the public interface", () => {
+  it("should build the public interface", () => {
     // make a temporary directory
     // create a few files in the directory
 
