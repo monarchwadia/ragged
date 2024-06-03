@@ -17,6 +17,3 @@ history.push({
 history = await c.chat(history);
 
 console.log(history);
-
-// let history: Message[] = [];
-// c.chat(history)
