@@ -46,39 +46,14 @@ const messages = await c.chat('What is a rickroll?');
 console.log(messages.at(-1)?.text); // A rickroll is a prank...
 ```
 
-### Recording chat history (a.k.a. memory)
 
-The simplest way to work with history is to use the `.record` functionality. This will cause Ragged to retain a history of the conversation thus far. You can turn recording on and off by passing a boolean to the `.record` method.
+### Recording chat history
+
+Ragged can record the history of the conversation. This is useful when you want to keep track of the conversation history and use it later. You can turn recording on and off by passing a boolean to the `.record` method.
 
 ```ts
 c.record(true);
 ```
-
-This will cause Ragged to record the conversation history. 
-
-#### Accessing chat history
-
-You can access the history using the `.history` property.
-
-```ts
-console.log(c.history); // [ { text: 'What is a rickroll?' ... ]
-```
-
-You can also access the last message in the history using the `.at` method.
-
-```ts
-console.log(c.history.at(-1)?.text); // A rickroll is a prank...
-```
-
-You can clear the history by setting the `.history` property to an empty array.
-
-```ts
-c.history = [];
-```
-
-Note that all chat history is immutable at a shallow level. Don't try to modify the history directly. Instead, set the `.history` property to a new array.
-
-#### Recording chat history
 
 Here's a basic example of how to use the `.record` functionality. You can access the history of the conversation using the `.history` property.
 
@@ -105,6 +80,49 @@ console.log(c.history.at(-1)?.text); // The Rickroll meme originated in the...
 await c.chat('What is the purpose?');
 console.log(c.history.at(-1)?.text); // The purpose of a rickroll is to...
 ```
+
+This will cause Ragged to record the conversation history. 
+
+### Manually managing chat history
+
+Instead of using recorded chat history, it is possible to manage chat history manually. 
+
+#### Accessing chat history
+
+You can access the history using the `.history` property.
+
+```ts
+console.log(c.history); // [ { text: 'What is a rickroll?' ... ]
+```
+
+You can also access the last message in the history using the `.at` method.
+
+```ts
+console.log(c.history.at(-1)?.text); // A rickroll is a prank...
+```
+
+#### Setting chat history
+
+You can set the history by setting the `.history` property to an array of messages.
+
+```ts
+c.history = [
+    { type: "user", text: "What is a rickroll?" },
+    { type: "bot", text: "A rickroll is a prank..." }
+];
+```
+
+You can clear the history by setting the `.history` property to an empty array.
+
+```ts
+c.history = [];
+```
+
+#### History is immutable
+
+Note that all chat history is immutable. A new copy of the history array is created on write as well as on read. 
+
+Don't try to modify the history directly. Instead, set the `.history` property to a new array.
 
 ### Advanced techniques
 
