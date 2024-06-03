@@ -1,4 +1,4 @@
-import { Message } from "../ChatCompletion.types";
+import { Message } from "../index.types";
 
 export type ChatRequest = {
     history: Message[];

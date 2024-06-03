@@ -1,6 +1,6 @@
-import { MappingError } from "../../../support/CustomErrors";
-import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "../../driver/OpenAi/OpenAiApiTypes";
-import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
+import { MappingError } from "../../../../support/CustomErrors";
+import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "../driver/OpenAiApiTypes";
+import { ChatRequest, ChatResponse } from "../../index.types";
 import { mapFromOpenAi, mapToOpenAi } from "./mappers";
 
 describe("OpenAiChatAdapter Mappers", () => {

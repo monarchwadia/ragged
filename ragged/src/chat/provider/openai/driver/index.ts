@@ -1,6 +1,6 @@
-import { Logger } from "../../../support/logger/Logger";
-import { ApiClient } from "../../../support/ApiClient";
-import { JsonParseError, FetchRequestFailedError } from "../../../support/CustomErrors";
+import { Logger } from "../../../../support/logger/Logger";
+import { ApiClient } from "../../../../support/ApiClient";
+import { JsonParseError, FetchRequestFailedError } from "../../../../support/CustomErrors";
 import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody as OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
 
 // ============ types ============

@@ -1,7 +1,7 @@
-import { MappingError } from "../../../support/CustomErrors";
-import { MessageType } from "../../ChatCompletion.types";
-import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "../../driver/OpenAi/OpenAiApiTypes";
-import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
+import { MappingError } from "../../../../support/CustomErrors";
+import { MessageType } from "../../../index.types";
+import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "../driver/OpenAiApiTypes";
+import { ChatRequest, ChatResponse } from "../../index.types";
 
 export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBody => {
     try {

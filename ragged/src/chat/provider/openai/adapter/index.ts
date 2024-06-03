@@ -1,5 +1,5 @@
-import { BaseChatAdapter, ChatRequest } from "../BaseChatAdapter.types";
-import { OpenAiChatDriver } from "../../../ChatCompletion/driver/OpenAi/OpenAiChatDriver";
+import { BaseChatAdapter, ChatRequest } from "../../index.types";
+import { OpenAiChatDriver } from "../driver";
 import { mapFromOpenAi, mapToOpenAi } from "./mappers";
 
 export class OpenAiChatAdapter implements BaseChatAdapter {
