@@ -17,5 +17,16 @@ export type Message =
         type: "error";
         text: string;
     }
+    | {
+        type: "tool.request";
+        toolRequestId: string;
+        toolId: string;
+        props: any;
+    }
+    | {
+        type: "tool.response";
+        toolRequestId: string;
+        data: string;
+    };
 
 export type MessageType = Message["type"];

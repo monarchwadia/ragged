@@ -2,7 +2,7 @@
  * Custom errors for drivers. Drivers can throw these errors to indicate
  * that something went wrong.
  */
-class BaseCustomError extends Error {
+export class BaseCustomError extends Error {
     constructor(message: string) {
         super(message);
         this.name = "BaseError";
