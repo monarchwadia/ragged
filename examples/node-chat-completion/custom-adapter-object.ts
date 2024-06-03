@@ -7,7 +7,12 @@ import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/ada
 
 const countingAdapter: BaseChatAdapter = {
     chat: async (request: ChatRequest): Promise<ChatResponse> => {
-        const totalCharacters = request.history.reduce((acc, message) => acc + message.text.length, 0);
+        let totalCharacters = 0;
+
+        for (const message of request.history) {
+            totalCharacters += message.text.length;
+        }
+
         return {
             history: [
                 { type: "bot", text: "Your request had a total of " + totalCharacters + " characters in it." }

@@ -167,12 +167,94 @@ const c = Chat.with('openai', {
 ```
 
 
-#### `new Chat(adapter)`
+#### `new Chat(adapter)` and custom adapters
 
 This is the constructor for the `Chat` class. It takes an adapter as an argument. The adapter is an object that contains the methods and properties that the `Chat` class uses to interact with the model.
 
 Using this constructor directly allows you to use your own custom adapters with the `Chat` class. This is useful if you want to use a different model or if you want to use a different API that is not supported by the built-in adapters. It is also useful if you want to mock the adapter for testing purposes.
 
+##### Inline adapter
+
 ```ts
 
-// Create a new instance of the Chat class with a custom adapter
+import { Chat } from "ragged/chat"
+import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+
+const countingAdapter: BaseChatAdapter = {
+    chat: async (request: ChatRequest): Promise<ChatResponse> => {
+        let totalCharacters = 0;
+
+        for (const message of request.history) {
+            totalCharacters += message.text.length;
+        }
+
+        return {
+            history: [
+                { type: "bot", text: "Your request had a total of " + totalCharacters + " characters in it." }
+            ]
+        };
+    }
+}
+
+const count = new Chat(countingAdapter);
+
+const countResponse = await count.chat("This is a test message.");
+console.log(countResponse.at(-1)?.text); // Your request had a total of 23 characters in it.
+
+```
+
+##### Object adapter
+
+You could also create a custom adapter as an object and pass it to the constructor. This is useful if you want to store the adapter in a separate variable or if you want to reuse the adapter in multiple places.
+
+```ts
+import { Chat } from "ragged/chat"
+
+// You can also put your adapter in a separate variable, like so:
+
+const countingAdapter: BaseChatAdapter = {
+    chat: async (request: ChatRequest): Promise<ChatResponse> => {
+        const totalCharacters = request.history.reduce((acc, message) => acc + message.text.length, 0);
+        return {
+            history: [
+                { type: "bot", text: "Your request had a total of " + totalCharacters + " characters in it." }
+            ]
+        };
+    }
+}
+
+const countResponse = await count.chat("This is a test message.");
+console.log(countResponse.at(-1)?.text); // Your request had a total of 23 characters in it.
+```
+
+##### Class adapter
+
+You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
+
+```ts
+
+import { Chat } from "ragged/chat"
+import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+
+class AppendingAdapter implements BaseChatAdapter {
+    constructor(private history: string = "") { }
+
+    async chat(request: ChatRequest): Promise<ChatResponse> {
+
+        this.history += "\n" + request.history.map(message => message.text).join("n");
+
+        return {
+            history: [
+                { type: "bot", text: this.history }
+            ]
+        };
+    }
+}
+
+const appending = new Chat(new AppendingAdapter("This is the start of the file."));
+
+const appendResponse = await appending.chat("Hello, world!");
+console.log(appendResponse.at(-1)?.text); // This is the start of the file.\nHello, world!
+const appendResponse2 = await appending.chat("This is a test message.");
+console.log(appendResponse2.at(-1)?.text); // This is the start of the file.\nHello, world!\nThis is a test message.
+```
