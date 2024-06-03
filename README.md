@@ -22,9 +22,7 @@ yarn install ragged
 
 That's it.
 
-## Examples
-
-### Simple chat
+## Simple chat
 
 Ragged is very easy to use. Here is a complete application that shows chat completion.
 
@@ -47,7 +45,7 @@ console.log(messages.at(-1)?.text); // A rickroll is a prank...
 ```
 
 
-### Recording chat history
+## Recording chat history
 
 Ragged can record the history of the conversation. This is useful when you want to keep track of the conversation history and use it later. You can turn recording on and off by passing a boolean to the `.record` method.
 
@@ -83,11 +81,11 @@ console.log(c.history.at(-1)?.text); // The purpose of a rickroll is to...
 
 This will cause Ragged to record the conversation history. 
 
-### Manually managing chat history
+## Manually managing chat history
 
 Instead of using recorded chat history, it is possible to manage chat history manually. 
 
-#### Accessing chat history
+### Accessing chat history
 
 You can access the history using the `.history` property.
 
@@ -101,7 +99,7 @@ You can also access the last message in the history using the `.at` method.
 console.log(c.history.at(-1)?.text); // A rickroll is a prank...
 ```
 
-#### Setting chat history
+### Setting chat history
 
 You can set the history by setting the `.history` property to an array of messages.
 
@@ -118,15 +116,13 @@ You can clear the history by setting the `.history` property to an empty array.
 c.history = [];
 ```
 
-#### History is immutable
+### History is immutable
 
 Note that all chat history is immutable. A new copy of the history array is created on write as well as on read. 
 
 Don't try to modify the history directly. Instead, set the `.history` property to a new array.
 
-### Advanced techniques
-
-#### Prompt freezing
+## Prompt freezing
 
 Sometimes, you may want to freeze a conversation. This is useful when you want to create multiple responses to a single prompt. You can freeze the recording by passing a `false` to the `.record` method. Then, you can prompt the model multiple times. Each time, the model will respond as if it were the first time, and the history will not be updated with each call.
 
@@ -154,9 +150,9 @@ const analysis2 = await c.chat('Analyze this code snippet using the framework: `
 console.log(analysis2.at(-1)?.text); // 1. Summary: This code snippet is a for loop that iterates...
 ```
 
-### API
+## API
 
-#### `Chat.with(name, options)`
+### `Chat.with(name, options)`
 
 The `Chat.with()` method is used to create a new instance of the `Chat` class with any one of several built-in adapters. (NOTE: right now, we only support openai). It takes two arguments: the provider name and the provider options. The provider name is a string that specifies the provider to use. The provider options is an object that contains the options for the provider.
 
@@ -167,7 +163,7 @@ Under the hood, the `Chat.with()` method creates a new instance of the `Chat` cl
 const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
 ```
 
-##### `Chat.with('openai')`
+### `Chat.with('openai')`
 
 The `Chat.with('openai')` method is a shorthand for creating a new instance of the `Chat` class with the OpenAI provider. Its configuration allows you to pass the OpenAI API key as an environment variable.
 
@@ -185,13 +181,13 @@ const c = Chat.with('openai', {
 ```
 
 
-#### `new Chat(adapter)` and custom adapters
+### `new Chat(adapter)` and custom adapters
 
 This is the constructor for the `Chat` class. It takes an adapter as an argument. The adapter is an object that contains the methods and properties that the `Chat` class uses to interact with the model.
 
 Using this constructor directly allows you to use your own custom adapters with the `Chat` class. This is useful if you want to use a different model or if you want to use a different API that is not supported by the built-in adapters. It is also useful if you want to mock the adapter for testing purposes.
 
-##### Inline adapter
+#### Inline adapter
 
 ```ts
 
@@ -221,7 +217,7 @@ console.log(countResponse.at(-1)?.text); // Your request had a total of 23 chara
 
 ```
 
-##### Object adapter
+#### Object adapter
 
 You could also create a custom adapter as an object and pass it to the constructor. This is useful if you want to store the adapter in a separate variable or if you want to reuse the adapter in multiple places.
 
@@ -245,7 +241,7 @@ const countResponse = await count.chat("This is a test message.");
 console.log(countResponse.at(-1)?.text); // Your request had a total of 23 characters in it.
 ```
 
-##### Class adapter
+#### Class adapter
 
 You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
 
