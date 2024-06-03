@@ -64,6 +64,32 @@ describe("Chat", () => {
                 ...expectedOutput
             ] as Message[]);
         });
+
+        it("includes errors in the response", async () => {
+            adapter.chat.mockRejectedValue(new Error("This is an error"));
+
+            const history = await c.chat(`This is a test message to the adapter`);
+
+            expect(history).toMatchObject([
+                {
+                    type: "error",
+                    text: "This is an error"
+                }
+            ] as Message[]);
+        });
+
+        it("includes unknown errors in the response", async () => {
+            adapter.chat.mockRejectedValue({});
+
+            const history = await c.chat(`This is a test message to the adapter`);
+
+            expect(history).toMatchObject([
+                {
+                    type: "error",
+                    text: "An unknown error occurred"
+                }
+            ] as Message[]);
+        });
     });
 
     describe("with recording", () => {
@@ -125,5 +151,44 @@ describe("Chat", () => {
                 }
             ] as Message[]);
         });
+
+        it("includes errors in the response", async () => {
+            c.record(true);
+
+            adapter.chat.mockRejectedValue(new Error("This is an error"));
+
+            const history = await c.chat(`This is a test message to the adapter`);
+
+            expect(history).toMatchObject([
+                {
+                    type: "user",
+                    text: `This is a test message to the adapter`
+                },
+                {
+                    type: "error",
+                    text: "This is an error"
+                }
+            ] as Message[]);
+        });
+
+
+        it("includes unknown errors in the response", async () => {
+            c.record(true);
+
+            adapter.chat.mockRejectedValue({});
+
+            const messages = await c.chat(`This is a test message to the adapter`);
+
+            expect(messages).toMatchObject([
+                {
+                    type: "user",
+                    text: `This is a test message to the adapter`
+                },
+                {
+                    type: "error",
+                    text: "An unknown error occurred"
+                }
+            ] as Message[]);
+        });
     })
-})
+});

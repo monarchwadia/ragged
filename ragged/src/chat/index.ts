@@ -1,9 +1,11 @@
+import { Logger } from "../support/logger/Logger";
 import { Message } from "./index.types";
-import { BaseChatAdapter, ChatRequest } from "./provider/index.types";
+import { BaseChatAdapter, ChatRequest, ChatResponse } from "./provider/index.types";
 import { provideOpenAiChatAdapter } from "./provider/openai";
 import { OpenAiChatDriverConfig } from "./provider/openai/driver";
 
 export class Chat {
+    private logger = new Logger("Chat");
     private _history: Message[] = [];
 
     private _isRecording: boolean = false;
@@ -34,16 +36,27 @@ export class Chat {
 
         // handle response
 
-        const response = await this.adapter.chat(request);
+        let response: ChatResponse = { history: [] };
+        try {
+            response = await this.adapter.chat(request);
+        } catch (e: unknown) {
+            this.logger.error("Failed to chat", e);
 
-        let responseHistory: Message[] = [];
-        if (this._isRecording) {
-            responseHistory = request.history;
+            if (e instanceof Error) {
+                response = { history: [{ type: "error", text: e.message }] };
+            } else {
+                response = { history: [{ type: "error", text: "An unknown error occurred" }] };
+            }
         }
 
-        responseHistory.push(...response.history);
+        let historyToReturn: Message[] = [];
+        if (this._isRecording) {
+            historyToReturn = request.history;
+        }
 
-        return Chat.cloneMessages(responseHistory);
+        historyToReturn.push(...response.history);
+
+        return Chat.cloneMessages(historyToReturn);
     }
 
     public record(record: boolean) {
