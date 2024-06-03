@@ -1,5 +1,5 @@
 import { Chat } from ".";
-import { Message } from "./index.types";
+import { Message, UserMessage } from "./index.types";
 import { BaseChatAdapter } from "./provider/index.types";
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 
@@ -396,7 +396,7 @@ describe("Chat", () => {
                 const response = await c.chat(`This is a test message to the adapter`);
 
                 // sneakily manipulate the user's message in response
-                response[0].text = "This is a new message";
+                (response[0] as UserMessage).text = "This is a new message";
 
                 expect(c.history[0]).not.toEqual(response[0]);
             });

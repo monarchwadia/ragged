@@ -1,10 +1,33 @@
 
+type OpenAiUserMessage = {
+  role: "user";
+  content: string;
+}
+
+type OpenAiAssistantMessage = {
+  role: "assistant";
+  content: string;
+}
+
+type OpenAiSystemMessage = {
+  role: "system";
+  content: string;
+}
+
+type OpenAiToolMessage = {
+  role: "tool";
+  content: string;
+}
+
+type OpenAiMessage = OpenAiUserMessage | OpenAiAssistantMessage | OpenAiSystemMessage | OpenAiToolMessage;
+
 export type OpenAiChatCompletionRequestBody = {
   model: string;
   messages: {
     role: string;
     content: string;
-  }[]
+  }[];
+  tools?: any[];
 }
 
 export type OpenAiChatCompletionResponseBody = {

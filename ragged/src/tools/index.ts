@@ -20,14 +20,14 @@ type ObjectProp = {
     type: "object";
     description: string;
     required?: boolean;
-    props: Array<StringProp | NumberProp | BooleanProp | ObjectProp>;
+    props: Record<string, ToolProp>;
 };
 
 type ArrayProp = {
     type: "array";
     description: string;
     required?: boolean;
-    children: StringProp | NumberProp | BooleanProp | ObjectProp;
+    children: ToolProp;
 };
 
 export type ToolProp = StringProp | NumberProp | BooleanProp | ObjectProp | ArrayProp;

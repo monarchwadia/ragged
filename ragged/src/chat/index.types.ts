@@ -1,32 +1,36 @@
+export type UserMessage = {
+    type: "user";
+    text: string;
+};
 
+export type BotMessage = {
+    type: "bot";
+    text: string;
+};
 
-export type Message =
-    | {
-        type: "user";
-        text: string;
-    }
-    | {
-        type: "bot";
-        text: string;
-    }
-    | {
-        type: "system";
-        text: string;
-    }
-    | {
-        type: "error";
-        text: string;
-    }
-    | {
-        type: "tool.request";
-        toolRequestId: string;
-        toolId: string;
-        props: any;
-    }
-    | {
-        type: "tool.response";
-        toolRequestId: string;
-        data: string;
-    };
+export type SystemMessage = {
+    type: "system";
+    text: string;
+};
+
+export type ErrorMessage = {
+    type: "error";
+    text: string;
+};
+
+export type ToolRequestMessage = {
+    type: "tool.request";
+    toolRequestId: string;
+    toolId: string;
+    props: any;
+};
+
+export type ToolResponseMessage = {
+    type: "tool.response";
+    toolRequestId: string;
+    data: string;
+};
+
+export type Message = UserMessage | BotMessage | SystemMessage | ErrorMessage | ToolRequestMessage | ToolResponseMessage;
 
 export type MessageType = Message["type"];
