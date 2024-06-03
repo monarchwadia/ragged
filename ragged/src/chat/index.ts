@@ -16,6 +16,7 @@ export class Chat {
     }
 
     static with(provider: "openai", config: Partial<OpenAiChatDriverConfig> = {}) {
-        return provideOpenAiChatAdapter({ config })
+        const adapter = provideOpenAiChatAdapter({ config })
+        return new Chat(adapter);
     }
 }

@@ -3,12 +3,14 @@
   "version": "0.3.7",
   "description": "A simple library for easy LLM access.",
   "type": "module",
-  "types": "./build/main.d.ts",
   "exports": {
-    ".": {
-      "require": "./build/ragged.cjs",
-      "types": "./build/main.d.ts",
-      "import": "./build/ragged.js"
+    "./chat": {
+      "require": "./build/cjs/chat/index.js",
+      "import": "./build/esm/chat/index.js",
+      "types": "./build/src/public/chat/index.d.ts"
+    },
+    "./chat/adapter": {
+      "types": "./build/src/public/chat/adapter/index.d.ts"
     }
   },
   "files": [

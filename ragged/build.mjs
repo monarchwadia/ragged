@@ -2,12 +2,18 @@
 
 import * as esbuild from "esbuild";
 
+const entryPoints = {
+    'chat/index': './src/public/chat/index.ts',
+    // 'chat/adapter/index': './src/public/chat/adapter/index.ts',
+}
+
 async function main() {
     // esm minified
     await esbuild.build({
-        entryPoints: ["./main.ts"],
+        entryPoints,
+        outdir: 'build/esm',
         bundle: true,
-        outfile: `./build/ragged.js`,
+        // outfile: `./build/src/index.js`,
         platform: "neutral",
         logLevel: "info",
         target: ["es6"],
@@ -17,9 +23,9 @@ async function main() {
 
     // Build CommonJS minified
     await esbuild.build({
-        entryPoints: ["./main.ts"],
+        entryPoints,
+        outdir: 'build/cjs',
         bundle: true,
-        outfile: `./build/ragged.cjs`,
         platform: "neutral",
         logLevel: "info",
         target: ["es6"],
