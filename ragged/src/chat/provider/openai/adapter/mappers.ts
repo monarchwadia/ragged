@@ -1,6 +1,6 @@
 import { MappingError } from "../../../../support/CustomErrors";
-import { MessageType } from "../../../index.types";
-import { OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "../driver/OpenAiApiTypes";
+import { BotMessage, MessageType } from "../../../index.types";
+import { OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage } from "../driver/OpenAiApiTypes";
 import { ChatRequest, ChatResponse } from "../../index.types";
 import { Logger } from "../../../../support/logger/Logger";
 import { OpenAiToolMapper } from "./ToolMapper";
@@ -23,29 +23,63 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
                     });
                     break
                 case "bot":
-                    messages.push({
+                    const asstMessage: OpenAiMessage = {
                         role: "assistant",
                         content: message.text
-                    });
+                    }
+
+                    if (message.toolCalls?.length) {
+                        asstMessage.tool_calls = [];
+
+                        TOOL_CALLS_LOOP: for (let j = 0; j < message.toolCalls.length; j++) {
+                            const toolCall = message.toolCalls[j];
+
+                            switch (toolCall.type) {
+                                case "tool.request":
+                                    if (!toolCall.meta?.toolRequestId) {
+                                        logger.warn(`Tool request is missing a toolRequestId. No tool calls for this message will get sent to OpenAI. Here is the faulty tool request object: `, toolCall);
+                                        delete asstMessage.tool_calls;
+                                        break TOOL_CALLS_LOOP;
+                                    }
+
+                                    asstMessage.tool_calls.push({
+                                        id: toolCall.meta.toolRequestId,
+                                        type: "function",
+                                        function: {
+                                            name: toolCall.toolName,
+                                            arguments: toolCall.props
+                                        }
+                                    });
+                                    break;
+                                case "tool.response":
+                                    if (!toolCall.meta?.toolRequestId) {
+                                        logger.warn(`Tool response is missing a toolRequestId. No tool calls for this message will get sent to OpenAI. Here is the faulty tool response object: `, toolCall);
+                                        delete asstMessage.tool_calls;
+                                        break TOOL_CALLS_LOOP;
+                                    }
+
+                                    asstMessage.tool_calls.push({
+                                        id: toolCall.meta.toolRequestId,
+                                        type: "function",
+                                        function: {
+                                            name: toolCall.toolName,
+                                            arguments: toolCall.data
+                                        },
+                                    });
+                                    break;
+                                default:
+                                    logger.warn(`Unknown and unhandled tool call type: ${(toolCall as any)?.type}. This will not get sent to OpenAI. Here is the full tool call: `, toolCall);
+                                    break;
+                            }
+                        }
+                    }
+
+                    messages.push(asstMessage);
                     break
                 case "system":
                     messages.push({
                         role: "system",
                         content: message.text
-                    });
-                    break
-                case "tool.request":
-                    // TODO: see if this is actually a nested property of a bot message
-                    messages.push({
-                        role: "tool",
-                        content: "TODO"
-                    });
-                    break
-                case "tool.response":
-                    // TODO: see if this is actually a nested property of a bot message
-                    messages.push({
-                        role: "tool",
-                        content: "TODO"
                     });
                     break
                 case "error":
@@ -99,10 +133,29 @@ export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatR
                     });
                     break
                 case "assistant":
-                    history.push({
+                    const botMessage: BotMessage = {
                         type: "bot",
                         text: choice.message.content
-                    });
+                    }
+
+                    if (choice.message.tool_calls?.length) {
+                        botMessage.toolCalls = [];
+
+                        for (let j = 0; j < choice.message.tool_calls.length; j++) {
+                            const toolCall = choice.message.tool_calls[j];
+
+                            botMessage.toolCalls.push({
+                                type: "tool.request",
+                                toolName: toolCall.function.name,
+                                props: toolCall.function.arguments,
+                                meta: {
+                                    toolRequestId: toolCall.id
+                                }
+                            });
+                        }
+                    }
+
+                    history.push(botMessage);
                     break
                 case "system":
                     history.push({

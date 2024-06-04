@@ -1,25 +1,21 @@
 
 type OpenAiUserMessage = {
   role: "user";
-  content: string;
+  content: string | null;
 }
 
 type OpenAiAssistantMessage = {
   role: "assistant";
-  content: string;
+  content: string | null;
+  tool_calls?: ChoiceToolCall[];
 }
 
 type OpenAiSystemMessage = {
   role: "system";
-  content: string;
+  content: string | null;
 }
 
-type OpenAiToolMessage = {
-  role: "tool";
-  content: string;
-}
-
-export type OpenAiMessage = OpenAiUserMessage | OpenAiAssistantMessage | OpenAiSystemMessage | OpenAiToolMessage;
+export type OpenAiMessage = OpenAiUserMessage | OpenAiAssistantMessage | OpenAiSystemMessage;
 
 // tool calls
 
@@ -67,6 +63,8 @@ export type OpenAiChatCompletionRequestBody = {
   messages: {
     role: string;
     content: string | null;
+    // TODO: the upstream DTO might be different from ChoiceToolCall
+    tool_calls?: ChoiceToolCall[];
   }[];
   tools?: OaiTool[];
 }
@@ -88,9 +86,19 @@ export type Choice = {
   message: Message;
 };
 
+export type ChoiceToolCall = {
+  id: string;
+  type: "function";
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
 export type Message = {
-  content: string;
+  content: string | null;
   role: string;
+  tool_calls?: ChoiceToolCall[];
 };
 
 export type Usage = {

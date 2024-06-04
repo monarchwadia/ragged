@@ -88,10 +88,19 @@ describe("OpenAiChatAdapter", () => {
         "history": [
           {
             "text": null,
+            "toolCalls": [
+              {
+                "meta": {
+                  "toolRequestId": "call_SeP7XORPM3I9SWWDtbUaIW6r",
+                },
+                "props": "{"query":"latest news"}",
+                "toolName": "todays-news",
+                "type": "tool.request",
+              },
+            ],
             "type": "bot",
           },
         ],
-        tools: [] // TODO change the matcher
       }
     `);
   });

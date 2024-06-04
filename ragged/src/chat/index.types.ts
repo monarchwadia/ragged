@@ -6,11 +6,12 @@ export type UserMessage = {
 export type BotMessage = {
     type: "bot";
     text: string | null;
+    toolCalls?: (ToolResponse | ToolRequest)[];
 };
 
 export type SystemMessage = {
     type: "system";
-    text: string;
+    text: string | null;
 };
 
 export type ErrorMessage = {
@@ -18,19 +19,20 @@ export type ErrorMessage = {
     text: string;
 };
 
-export type ToolRequestMessage = {
+export type ToolRequest = {
     type: "tool.request";
-    toolRequestId: string;
-    toolId: string;
+    toolName: string;
     props: any;
+    meta: any;
 };
 
-export type ToolResponseMessage = {
+export type ToolResponse = {
     type: "tool.response";
-    toolRequestId: string;
+    toolName: string;
     data: string;
+    meta: any;
 };
 
-export type Message = UserMessage | BotMessage | SystemMessage | ErrorMessage | ToolRequestMessage | ToolResponseMessage;
+export type Message = UserMessage | BotMessage | SystemMessage | ErrorMessage;
 
 export type MessageType = Message["type"];
