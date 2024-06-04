@@ -78,7 +78,7 @@ export type Tool = {
      * tool.id = "query-database"
      * tool.id = "query-instagram-api"
      */
-    id: string;
+    id: string; // TODO: Move to tool.name instead of tool.id
 
     /**
      * This is the description of the tool. This should be a short, human-readable description

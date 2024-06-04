@@ -402,4 +402,38 @@ describe("Chat", () => {
             });
         });
     });
+
+    describe("tool calling", () => {
+        describe("automatic tool call handling", () => {
+            describe("when on", () => {
+                it("should automatically call the tool handler when a tool call is detected and send a response to the LLM", async () => {
+                    c.autoToolReply(true);
+
+                    // adapter sends a tool call request
+                    adapter.chat.mockResolvedValue({
+                        history: [
+                            {
+                                type: "bot",
+                                text: null,
+                                toolCalls: [
+                                    {
+                                        meta: {
+                                            toolRequestId: "call_SeP7XORPM3I9SWWDtbUaIW6r",
+                                        },
+                                        props: `{"query":"latest news"}`,
+                                        toolName: "todays-news",
+                                        type: "tool.request",
+                                    },
+                                ],
+                            },
+                        ],
+                    });
+
+                    // chat generates a tool call response and re-queries the LLM
+
+                    // adapter sends a normal LLM response without any tool calls, and chat does not re-query the LLM
+                });
+            })
+        });
+    })
 });
