@@ -1,36 +1,36 @@
 type StringProp = {
     type: "string";
-    description: string;
+    description?: string;
     required?: boolean;
 };
 
 type NumberProp = {
     type: "number";
-    description: string;
+    description?: string;
     required?: boolean;
 };
 
 type BooleanProp = {
     type: "boolean";
-    description: string;
+    description?: string;
     required?: boolean;
 };
 
-type ObjectProp = {
+export type ObjectProp = {
     type: "object";
-    description: string;
+    description?: string;
     required?: boolean;
     props: Record<string, ToolProp>;
 };
 
 type ArrayProp = {
     type: "array";
-    description: string;
+    description?: string;
     required?: boolean;
     children: ToolProp;
 };
 
-export type ToolProp = StringProp | NumberProp | BooleanProp | ObjectProp | ArrayProp;
+export type ToolProp = StringProp | NumberProp | BooleanProp | ObjectProp | ArrayProp | undefined;
 
 /**
  * A validator is a function that takes the input properties of a tool and returns the
@@ -127,7 +127,7 @@ export type Tool = {
      *   }
      * }
      */
-    props: Record<string, ToolProp>;
+    props: ToolProp;
 
     /**
      * The handler function for the tool. This is the function that the tool will call when it is
@@ -152,7 +152,7 @@ export type Tool = {
      * }
      * 
      */
-    handler: (props: Record<string, ToolProp>) => string | Promise<string>;
+    handler: (props: string) => string | Promise<string>;
 
 
     /**

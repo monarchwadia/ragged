@@ -1,6 +1,7 @@
 import { Polly } from "@pollyjs/core";
 import FetchAdapter from "@pollyjs/adapter-fetch";
 import FSPersister from "@pollyjs/persister-fs";
+import { Logger } from "../src/support/logger/Logger";
 
 /*
   Register the adapters and persisters we want to use. This way all future
@@ -9,19 +10,28 @@ import FSPersister from "@pollyjs/persister-fs";
 Polly.register(FetchAdapter);
 Polly.register(FSPersister);
 
-export const startPollyRecording = (recordingName: string) => {
+const logger = new Logger("startPollyRecording");
+
+export const startPollyRecording = (recordingName: string, refresh: boolean = false) => {
+    const config: ConstructorParameters<typeof Polly>[1] = {
+        adapters: ["fetch"],
+        persister: "fs",
+        matchRequestsBy: {
+            headers: false,
+            body: false,
+            order: false,
+        },
+        logLevel: "ERROR"
+    };
+
+    if (refresh) {
+        logger.warn("Polly is in refresh mode. This will overwrite any existing recordings. Be careful! This is a destructive operation, and may incur API costs and deplete rate limits if hitting a paid API.");
+        config.mode = 'record';
+    }
+
     const polly = new Polly(
         recordingName,
-        {
-            adapters: ["fetch"],
-            persister: "fs",
-            matchRequestsBy: {
-                headers: false,
-                body: false,
-                order: false,
-            },
-            logLevel: "ERROR"
-        }
+        config
     );
     polly.server.any().on("beforeResponse", (req) => {
         // mask auth header

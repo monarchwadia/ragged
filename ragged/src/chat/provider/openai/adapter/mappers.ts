@@ -1,8 +1,9 @@
 import { MappingError } from "../../../../support/CustomErrors";
 import { MessageType } from "../../../index.types";
-import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "../driver/OpenAiApiTypes";
+import { OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "../driver/OpenAiApiTypes";
 import { ChatRequest, ChatResponse } from "../../index.types";
 import { Logger } from "../../../../support/logger/Logger";
+import { OpenAiToolMapper } from "./ToolMapper";
 
 const logger: Logger = new Logger("openai.adapter.mappers");
 
@@ -48,29 +49,23 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
                     });
                     break
                 case "error":
-                    // TODO: how to handle? right now, pushing up as system messages.
-                    messages.push({
-                        role: "system",
-                        content: message.text
-                    });
+                    // NO-OP
+                    break;
                 default:
-                    logger.warn(`Unknown and unhandled message type: ${message.type}. This will not get sent to OpenAI.`);
+                    logger.warn(`Unknown and unhandled message type: ${(message as any)?.type}. This will not get sent to OpenAI. Here is the full message: `, message);
                     break;
             }
         }
 
         // map tools
-        const tools: OpenAiChatCompletionRequestBody["tools"] = [];
+        let tools: OpenAiChatCompletionRequestBody["tools"] = undefined;
 
         if (request.tools) {
+            tools = [] as OaiTool[];
             for (let i = 0; i < request.tools.length; i++) {
                 const tool = request.tools[i];
 
-                tools.push({
-                    id: tool.id,
-                    description: tool.description,
-                    props: tool.props
-                });
+                tools.push(OpenAiToolMapper.mapToOpenAi(tool));
             }
         }
 

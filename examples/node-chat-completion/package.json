@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "openai": "^4.47.3",
     "ragged": "workspace:*",
     "tsx": "^4.7.1"
   },

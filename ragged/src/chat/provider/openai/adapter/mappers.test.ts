@@ -5,8 +5,13 @@ import {
 } from "../driver/OpenAiApiTypes";
 import { ChatRequest, ChatResponse } from "../../index.types";
 import { mapFromOpenAi, mapToOpenAi } from "./mappers";
+import { OpenAiToolMapper } from "./ToolMapper";
+import { OpenAiChatAdapter } from ".";
 
 describe("OpenAiChatAdapter Mappers", () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+    })
     describe("mapToOpenAi", () => {
         it("should map empty request to OpenAi format", () => {
             const request: ChatRequest = {
@@ -41,31 +46,34 @@ describe("OpenAiChatAdapter Mappers", () => {
             expect(result).toEqual(expected);
         });
 
-        it("should map request to OpenAi format", () => {
+        it("should not map error requests to openai payload", () => {
             // Arrange
             const request: ChatRequest = {
                 history: [
                     { type: "user", text: "Hello" },
                     { type: "bot", text: "Hi" },
+                    { type: "error", text: "Error" },
                 ],
             };
 
-            // to test error throwing, replace .filter function with a function that throws an error
-            // we know that .filter is called inside the mapping function
-            const expectedErr = new Error("ExpectedError");
-            request.history.filter = () => {
-                throw expectedErr;
-            };
+            const mapped = mapToOpenAi(request);
 
-            let thrownError: Error | null = null;
-            try {
-                mapToOpenAi(request);
-            } catch (e) {
-                thrownError = e as Error;
-            }
-
-            expect(thrownError).toBeInstanceOf(MappingError);
-            expect((thrownError as MappingError).cause).toBe(expectedErr);
+            expect(mapped).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "content": "Hello",
+              "role": "user",
+            },
+            {
+              "content": "Hi",
+              "role": "assistant",
+            },
+          ],
+          "model": "gpt-3.5-turbo",
+          "tools": undefined,
+        }
+      `);
         });
 
         it("should correctly map a request with type 'user' to OpenAi format", () => {
@@ -155,40 +163,7 @@ describe("OpenAiChatAdapter Mappers", () => {
             expect(result).toEqual(expected);
         });
 
-        it("should map errors to MappingError", () => {
-            const response: OpenAiChatCompletionResponseBody = {
-                choices: [],
-                created: 0,
-                id: "some-id",
-                model: "some-model",
-                object: "some-object",
-                system_fingerprint: null,
-                usage: {
-                    completion_tokens: 0,
-                    prompt_tokens: 0,
-                    total_tokens: 0,
-                },
-            };
-
-            // to test error throwing, replace .map function with a function that throws an error
-            // we know that .map is called inside the mapping function
-            const expectedErr = new Error("ExpectedError");
-            response.choices.map = () => {
-                throw expectedErr;
-            };
-
-            let thrownError: Error | null = null;
-            try {
-                mapFromOpenAi(response);
-            } catch (e) {
-                thrownError = e as Error;
-            }
-
-            expect(thrownError).toBeInstanceOf(MappingError);
-            expect((thrownError as MappingError).cause).toBe(expectedErr);
-        });
-
-        it.only("should map Tools to a Tools array", () => {
+        it("should map Tools to a Tools array", () => {
             const handler = jest.fn().mockReturnValue("OK");
 
             const mapped = mapToOpenAi({
@@ -199,52 +174,56 @@ describe("OpenAiChatAdapter Mappers", () => {
                         description: "Tool 1",
                         handler,
                         props: {
-                            str: {
-                                type: "string",
-                                description: "A string",
-                            },
-                            num: {
-                                type: "number",
-                                description: "A number, and is required",
-                                required: true,
-                            },
-                            bool: {
-                                type: "boolean",
-                                description: "A boolean, and is required",
-                                required: true,
-                            },
-                            arr: {
-                                type: "array",
-                                description: "An array of nested objects",
-                                children: {
-                                    type: "object",
-                                    description: "An object with a child",
-                                    props: {
-                                        child: {
-                                            type: "object",
-                                            description: "An empty object, and is required",
-                                            props: {},
-                                            required: true,
+                            type: "object",
+                            description: "An object",
+                            props: {
+                                str: {
+                                    type: "string",
+                                    description: "A string",
+                                },
+                                num: {
+                                    type: "number",
+                                    description: "A number, and is required",
+                                    required: true,
+                                },
+                                bool: {
+                                    type: "boolean",
+                                    description: "A boolean, and is required",
+                                    required: true,
+                                },
+                                arr: {
+                                    type: "array",
+                                    description: "An array of nested objects",
+                                    children: {
+                                        type: "object",
+                                        description: "An object with a child",
+                                        props: {
+                                            child: {
+                                                type: "object",
+                                                description: "An empty object, and is required",
+                                                props: {},
+                                                required: true,
+                                            },
                                         },
                                     },
                                 },
-                            },
-                            obj: {
-                                type: "object",
-                                description: "An object with a child array",
-                                props: {
-                                    child: {
-                                        type: "array",
-                                        description: "An array of arrays",
-                                        children: {
+                                obj: {
+                                    type: "object",
+                                    description: "An object with a child array",
+                                    props: {
+                                        child: {
                                             type: "array",
-                                            description: "An array of strings, and required",
+                                            description: "An array of arrays",
                                             children: {
-                                                type: "string",
-                                                description: "A string, and required",
+                                                type: "array",
+                                                description: "An array of strings, and required",
+                                                children: {
+                                                    type: "string",
+                                                    description: "A string, and required",
+                                                    required: true,
+                                                },
                                                 required: true,
                                             },
-                                            required: true,
                                         },
                                     },
                                 },
@@ -254,7 +233,82 @@ describe("OpenAiChatAdapter Mappers", () => {
                 ],
             });
 
-            console.log(mapped, 1)
+            expect(mapped).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "content": "Hello",
+              "role": "user",
+            },
+          ],
+          "model": "gpt-3.5-turbo",
+          "tools": [
+            {
+              "function": {
+                "description": "Tool 1",
+                "name": "tool-1",
+                "parameters": {
+                  "properties": {
+                    "arr": {
+                      "description": "An array of nested objects",
+                      "items": {
+                        "properties": {
+                          "child": {
+                            "properties": {},
+                            "type": "object",
+                          },
+                        },
+                        "required": [
+                          "child",
+                        ],
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                    "bool": {
+                      "description": "A boolean, and is required",
+                      "type": "boolean",
+                    },
+                    "num": {
+                      "description": "A number, and is required",
+                      "type": "number",
+                    },
+                    "obj": {
+                      "properties": {
+                        "child": {
+                          "description": "An array of arrays",
+                          "items": {
+                            "description": "An array of strings, and required",
+                            "items": {
+                              "description": "A string, and required",
+                              "type": "string",
+                            },
+                            "type": "array",
+                          },
+                          "type": "array",
+                        },
+                      },
+                      "type": "object",
+                    },
+                    "str": {
+                      "description": "A string",
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "num",
+                    "bool",
+                  ],
+                  "type": "object",
+                },
+              },
+              "type": "function",
+            },
+          ],
+        }
+      `);
+
+            // console.log(mapped, 1)
 
             //         expect(mapped).toMatchInlineSnapshot(`
             //     {

@@ -19,15 +19,56 @@ type OpenAiToolMessage = {
   content: string;
 }
 
-type OpenAiMessage = OpenAiUserMessage | OpenAiAssistantMessage | OpenAiSystemMessage | OpenAiToolMessage;
+export type OpenAiMessage = OpenAiUserMessage | OpenAiAssistantMessage | OpenAiSystemMessage | OpenAiToolMessage;
+
+// tool calls
+
+export type OaiToolParamObject = {
+  type: "object";
+  description?: string;
+  properties: Record<string, OaiToolParam>;
+  required?: string[];
+}
+
+export type OaiToolParamString = {
+  type: "string";
+  description?: string;
+}
+
+export type OaiToolParamNumber = {
+  type: "number";
+  description?: string;
+}
+
+export type OaiToolParamArray = {
+  type: "array";
+  description?: string;
+  items?: OaiToolParam;
+}
+
+export type OaiToolParamBoolean = {
+  type: "boolean";
+  description?: string;
+}
+
+export type OaiToolParam = OaiToolParamObject | OaiToolParamString | OaiToolParamNumber | OaiToolParamArray | OaiToolParamBoolean | undefined;
+
+export type OaiTool = {
+  type: "function",
+  function: {
+    name: string,
+    description: string,
+    parameters: OaiToolParam
+  }
+}
 
 export type OpenAiChatCompletionRequestBody = {
   model: string;
   messages: {
     role: string;
-    content: string;
+    content: string | null;
   }[];
-  tools?: any[];
+  tools?: OaiTool[];
 }
 
 export type OpenAiChatCompletionResponseBody = {

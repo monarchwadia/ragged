@@ -1,11 +1,11 @@
 export type UserMessage = {
     type: "user";
-    text: string;
+    text: string | null;
 };
 
 export type BotMessage = {
     type: "bot";
-    text: string;
+    text: string | null;
 };
 
 export type SystemMessage = {
