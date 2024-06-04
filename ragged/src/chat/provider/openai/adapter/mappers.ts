@@ -1,6 +1,6 @@
 import { MappingError } from "../../../../support/CustomErrors";
 import { BotMessage, MessageType } from "../../../index.types";
-import { OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage } from "../driver/OpenAiApiTypes";
+import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "../driver/OpenAiApiTypes";
 import { ChatRequest, ChatResponse } from "../../index.types";
 import { Logger } from "../../../../support/logger/Logger";
 import { OpenAiToolMapper } from "./ToolMapper";
@@ -25,11 +25,14 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
                 case "bot":
                     const asstMessage: OpenAiMessage = {
                         role: "assistant",
-                        content: message.text
+                        content: message.text,
                     }
 
+
+                    let toolResponses: OpenAiToolMessage[] = [];
+                    let tool_calls: ChoiceToolCall[] = [];
+
                     if (message.toolCalls?.length) {
-                        asstMessage.tool_calls = [];
 
                         TOOL_CALLS_LOOP: for (let j = 0; j < message.toolCalls.length; j++) {
                             const toolCall = message.toolCalls[j];
@@ -42,7 +45,7 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
                                         break TOOL_CALLS_LOOP;
                                     }
 
-                                    asstMessage.tool_calls.push({
+                                    tool_calls.push({
                                         id: toolCall.meta.toolRequestId,
                                         type: "function",
                                         function: {
@@ -55,16 +58,15 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
                                     if (!toolCall.meta?.toolRequestId) {
                                         logger.warn(`Tool response is missing a toolRequestId. No tool calls for this message will get sent to OpenAI. Here is the faulty tool response object: `, toolCall);
                                         delete asstMessage.tool_calls;
+                                        toolResponses = [];
                                         break TOOL_CALLS_LOOP;
                                     }
 
-                                    asstMessage.tool_calls.push({
-                                        id: toolCall.meta.toolRequestId,
-                                        type: "function",
-                                        function: {
-                                            name: toolCall.toolName,
-                                            arguments: toolCall.data
-                                        },
+                                    toolResponses.push({
+                                        tool_call_id: toolCall.meta.toolRequestId,
+                                        role: "tool",
+                                        name: toolCall.toolName,
+                                        content: toolCall.data
                                     });
                                     break;
                                 default:
@@ -74,7 +76,13 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
                         }
                     }
 
+                    if (tool_calls.length) {
+                        asstMessage.tool_calls = tool_calls;
+                    }
                     messages.push(asstMessage);
+                    for (const toolMessage of toolResponses) {
+                        messages.push(toolMessage);
+                    }
                     break
                 case "system":
                     messages.push({

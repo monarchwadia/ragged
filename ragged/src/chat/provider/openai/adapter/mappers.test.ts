@@ -381,7 +381,7 @@ describe("OpenAiChatAdapter Mappers", () => {
       `);
     });
 
-    it.only("should map outgoing tool responses correctly", () => {
+    it("should map outgoing tool responses correctly", () => {
       const tools: Tool[] = [
         {
           id: "tool-1",

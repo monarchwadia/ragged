@@ -1,21 +1,28 @@
 
-type OpenAiUserMessage = {
+export type OpenAiUserMessage = {
   role: "user";
   content: string | null;
 }
 
-type OpenAiAssistantMessage = {
+export type OpenAiAssistantMessage = {
   role: "assistant";
   content: string | null;
   tool_calls?: ChoiceToolCall[];
 }
 
-type OpenAiSystemMessage = {
+export type OpenAiSystemMessage = {
   role: "system";
   content: string | null;
 }
 
-export type OpenAiMessage = OpenAiUserMessage | OpenAiAssistantMessage | OpenAiSystemMessage;
+export type OpenAiToolMessage = {
+  tool_call_id: string;
+  role: "tool";
+  name: string;
+  content: string | null;
+}
+
+export type OpenAiMessage = OpenAiUserMessage | OpenAiAssistantMessage | OpenAiSystemMessage | OpenAiToolMessage;
 
 // tool calls
 
