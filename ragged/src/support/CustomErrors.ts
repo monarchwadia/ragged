@@ -35,3 +35,10 @@ export class MappingError extends BaseCustomError {
         this.name = "MappingError";
     }
 }
+
+export class UnknownError extends BaseCustomError {
+    constructor(message: string, public cause: unknown) {
+        super(message);
+        this.name = "UnknownError";
+    }
+}

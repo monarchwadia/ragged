@@ -1,3 +1,4 @@
+import { UnknownError } from "../support/CustomErrors";
 import { Logger } from "../support/logger/Logger";
 import { Tool } from "../tools";
 import { BotMessage, Message, ToolRequest, ToolResponse } from "./index.types";
@@ -5,8 +6,14 @@ import { BaseChatAdapter, ChatRequest, ChatResponse } from "./provider/index.typ
 import { provideOpenAiChatAdapter } from "./provider/openai";
 import { OpenAiChatDriverConfig } from "./provider/openai/driver";
 
+type ToolCallMap = Record<string, {
+    message: BotMessage,
+    request: ToolRequest | null,
+    response: ToolResponse | null
+}>;
+
 export class Chat {
-    public logger = new Logger("Chat");
+    private static logger = new Logger("Chat");
 
     private _history: Message[] = [];
     private _isRecording: boolean = true;
@@ -24,166 +31,68 @@ export class Chat {
 
         workingHistory.push(userMessageObj);
 
-        const request: ChatRequest = { history: Chat.cloneMessages(workingHistory) };
-        if (tools && tools.length) {
-            request.tools = [...tools];
-        }
+        // ======= start of loop =======
 
-        this.logger.debug("Chat request: ", JSON.stringify(request));
-        let response: ChatResponse = { history: [] }; // will be replaced soon
-        try {
-            response = await this.adapter.chat(request);
-        } catch (e: unknown) {
-            this.logger.error("Failed to chat", e);
+        let numIterations = 0;
+        let shouldIterate = true;
+        WORK_LOOP: while (shouldIterate && numIterations < 3) {
+            numIterations++;
+            shouldIterate = false;
 
-            if (e instanceof Error) {
-                response = { history: [{ type: "error", text: e.message }] };
-            } else {
-                response = { history: [{ type: "error", text: "An unknown error occurred" }] };
+            Chat.logger.debug("Iteration: ", numIterations);
+
+            let toolCallsWereResolved = false;
+
+            const request: ChatRequest = { history: Chat.cloneMessages(workingHistory) };
+            if (tools && tools.length) {
+                request.tools = [...tools];
             }
-        }
 
-        workingHistory = Chat.cloneMessages([...workingHistory, ...response.history]);
+            Chat.logger.debug("Chat request: ", JSON.stringify(request));
+            let response: ChatResponse = { history: [] }; // will be replaced soon
+            try {
+                response = await this.adapter.chat(request);
+            } catch (e: unknown) {
+                Chat.logger.error("Failed to chat", e);
 
-        if (this.isRecording) {
-            this.logger.debug("Recorded Response: ", JSON.stringify(workingHistory));
-            this.history = workingHistory;
-        }
-
-        // Automatic tool calling
-        if (request.tools?.length) {
-            // we have to do all the tool calls now.
-            // we log all the requests and responses to this map, whose key is the toolCall ID
-            // then we do all the handling of the tool calls.
-            const toolCallMap: Record<string, {
-                message: BotMessage,
-                request: ToolRequest | null,
-                response: ToolResponse | null
-            }> = {};
-
-            for (let mi = 0; mi < workingHistory.length; mi++) {
-                const message = workingHistory[mi];
-
-                if (!message) {
-                    this.logger.warn("Detected undefined message at history index: ", mi, "workingHistory looks like: ", JSON.stringify(workingHistory));
-                    continue;
-                }
-
-                if (message.type !== "bot") {
-                    continue;
-                }
-
-                if (!message.toolCalls) {
-                    continue;
-                }
-
-                // iterate over all toolCalls in message and check if they have been responded to
-                for (let ti = 0; ti < message.toolCalls.length; ti++) {
-                    const toolCall: (ToolResponse | ToolRequest) = message.toolCalls[ti];
-
-                    if (!toolCall) {
-                        this.logger.warn("Detected undefined tool call at message index: ", mi);
-                        continue;
-                    }
-
-                    // check if tool call respons with this matching id exists in array
-                    // TODO: Move away from meta.id and use a more robust way to identify tool calls
-                    this.logger.warn("Reminder: We are still using meta.toolRequestId to identify tool calls. We need to set unique IDs instead.");
-                    if (!toolCall.meta.toolRequestId) {
-                        this.logger.warn("Detected undefined meta.toolRequestId at message index: ", mi, "workingHistory: ", JSON.stringify(workingHistory));
-                        continue;
-                    }
-
-                    const toolCallId = toolCall.meta.toolRequestId;
-                    toolCallMap[toolCallId] = toolCallMap[toolCallId] || {
-                        message: message,
-                        request: null,
-                        response: null
-                    };
-                    switch (toolCall.type) {
-                        case "tool.request":
-                            toolCallMap[toolCallId].request = toolCall;
-                            break;
-                        case "tool.response":
-                            toolCallMap[toolCallId].response = toolCall;
-                            break;
-                        default:
-                            this.logger.warn("Detected unknown tool call type at message index: ", mi);
-                            break;
-                    }
+                if (e instanceof Error) {
+                    response = { history: [{ type: "error", text: e.message }] };
+                } else {
+                    response = { history: [{ type: "error", text: "An unknown error occurred" }] };
                 }
             }
 
-            // now we have all the tool calls in the toolCallMap
-            // we can now handle them
+            workingHistory = Chat.cloneMessages([...workingHistory, ...response.history]);
 
-            for (const toolCallId in toolCallMap) {
-                const toolCall = toolCallMap[toolCallId];
+            if (this.isRecording) {
+                Chat.logger.debug("Recorded Response: ", JSON.stringify(workingHistory));
+                this.history = workingHistory;
+            }
 
-                if (toolCall.response && !toolCall.request) {
-                    this.logger.warn("Detected tool response without request. This should never happen. Tool call ID: ", toolCallId);
-                }
+            if (request.tools?.length) {
+                const toolCallMap = Chat.getToolCallMap(workingHistory);
 
-                if (toolCall.request && toolCall.response) {
-                    continue;
-                }
+                // now we have all the tool calls in the toolCallMap
+                // we can now handle them
 
-                this.logger.debug("Detected unhandled tool call with ID: ", toolCallId, ", performing tool call now.");
-
-                // find the tool that was called
-                const tool = request.tools.find(tool => tool.id === toolCall.request?.toolName);
-
-                if (!tool) {
-                    this.logger.warn("Detected tool call for non-existent tool. Tool call ID: ", toolCallId);
-                    continue;
-                }
-
-                // now we have the tool, we can call it
                 try {
-                    let toolResponse = tool.handler(toolCall.request?.props);
-                    if (toolResponse instanceof Promise) {
-                        // TODO: parallel calls
-                        toolResponse = await toolResponse;
-                    }
-                    toolCallMap[toolCallId].response = {
-                        type: "tool.response",
-                        meta: { id: toolCallId },
-                        data: toolResponse,
-                        toolName: tool.id
-                    };
+                    const { toolCallsWereResolved: wereResolved } = await this.processToolCallMap(toolCallMap, request);
+                    toolCallsWereResolved = wereResolved;
                 } catch (e) {
-                    this.logger.error("An error occurred while calling the tool: ", e);
-                    // TODO: configurable retries
-                    toolCallMap[toolCallId].response = {
-                        type: "tool.response",
-                        meta: { id: toolCallId },
-                        data: "An error occurred while calling the tool.",
-                        toolName: tool.id
-                    };
+                    throw new UnknownError("An error occurred while processing tool calls.", e);
                 }
             }
 
-            // // now we add the tool response message to the history
-            // workingHistory.push(toolResponseMessage);
-            for (const toolCallId in toolCallMap) {
-                const { message, response, request } = toolCallMap[toolCallId];
-
-                if (!message.toolCalls) {
-                    this.logger.error("Detected tool response without tool call in message. This should never happen. Undefined behaviour may occur. Tool call ID: ", toolCallId);
-                    continue;
-                }
-
-                if (request && response) {
-                    message.toolCalls.push(response);
-                }
+            // TODO: auto tool calling
+            if (this.isRecording) {
+                Chat.logger.debug("Recorded Response: ", JSON.stringify(workingHistory));
+                this.history = workingHistory;
             }
 
-        }
-
-        // TODO: auto tool calling
-        if (this.isRecording) {
-            this.logger.debug("Recorded Response: ", JSON.stringify(workingHistory));
-            this.history = workingHistory;
+            if (this._autoToolReply && toolCallsWereResolved) {
+                shouldIterate = true;
+                continue WORK_LOOP;
+            }
         }
 
         return Chat.cloneMessages(workingHistory);
@@ -217,5 +126,150 @@ export class Chat {
 
     private static cloneMessage(message: Message): Message {
         return { ...message };
+    }
+
+    private static getToolCallMap(workingHistory: Message[]): ToolCallMap {
+
+        // we have to do all the tool calls now.
+        // we log all the requests and responses to this map, whose key is the toolCall ID
+        // then we do all the handling of the tool calls.
+        const toolCallMap: ToolCallMap = {};
+
+        for (let mi = 0; mi < workingHistory.length; mi++) {
+            const message = workingHistory[mi];
+
+            if (!message) {
+                Chat.logger.warn("Detected undefined message at history index: ", mi, "workingHistory looks like: ", JSON.stringify(workingHistory));
+                continue;
+            }
+
+            if (message.type !== "bot") {
+                continue;
+            }
+
+            if (!message.toolCalls) {
+                continue;
+            }
+
+            // iterate over all toolCalls in message and check if they have been responded to
+            for (let ti = 0; ti < message.toolCalls.length; ti++) {
+                const toolCall: (ToolResponse | ToolRequest) = message.toolCalls[ti];
+
+                if (!toolCall) {
+                    Chat.logger.warn("Detected undefined tool call at message index: ", mi);
+                    continue;
+                }
+
+                // check if tool call respons with this matching id exists in array
+                // TODO: Move away from meta.id and use a more robust way to identify tool calls
+                Chat.logger.warn("Reminder: We are still using meta.toolRequestId to identify tool calls. We need to set unique IDs instead.");
+                if (!toolCall.meta.toolRequestId) {
+                    Chat.logger.warn("Detected undefined meta.toolRequestId at message index: ", mi, "workingHistory: ", JSON.stringify(workingHistory));
+                    continue;
+                }
+
+                const toolRequestId = toolCall.meta.toolRequestId;
+                toolCallMap[toolRequestId] = toolCallMap[toolRequestId] || {
+                    message: message,
+                    request: null,
+                    response: null
+                };
+                switch (toolCall.type) {
+                    case "tool.request":
+                        toolCallMap[toolRequestId].request = toolCall;
+                        break;
+                    case "tool.response":
+                        toolCallMap[toolRequestId].response = toolCall;
+                        break;
+                    default:
+                        Chat.logger.warn("Detected unknown tool call type at message index: ", mi);
+                        break;
+                }
+            }
+        }
+
+        return toolCallMap
+    }
+
+    private async processToolCallMap(toolCallMap: ToolCallMap, request: ChatRequest): Promise<{ toolCallsWereResolved: boolean }> {
+        let toolCallsWereResolved = false;
+
+        if (!request.tools) {
+            Chat.logger.warn("Detected tool calls without tools in request. This should never happen. Request: ", JSON.stringify(request));
+            return { toolCallsWereResolved };
+        }
+
+        for (const toolRequestId in toolCallMap) {
+            const toolCall = toolCallMap[toolRequestId];
+
+            if (toolCall.response && !toolCall.request) {
+                Chat.logger.warn("Detected tool response without request. This should never happen. Tool call ID: ", toolRequestId);
+            }
+
+            if (toolCall.request && toolCall.response) {
+                continue;
+            }
+
+            Chat.logger.debug("Detected unhandled tool call with ID: ", toolRequestId, ", performing tool call now.");
+
+            // find the tool that was called
+            const tool = request.tools.find(tool => tool.id === toolCall.request?.toolName);
+
+            if (!tool) {
+                Chat.logger.warn("Detected tool call for non-existent tool. Tool call ID: ", toolRequestId);
+                const toolName = toolCall.request?.toolName;
+                toolCallMap[toolRequestId].response = {
+                    type: "tool.response",
+                    meta: { toolRequestId },
+                    data: toolName
+                        ? "Tool with name " + toolName + " does not exist."
+                        : "Tool name not provided.",
+                    toolName: toolName || "unknown"
+                };
+                toolCallsWereResolved = true;
+                continue;
+            }
+
+            // now we have the tool, we can call it
+            try {
+                let toolResponse = tool.handler(toolCall.request?.props);
+                if (toolResponse instanceof Promise) {
+                    // TODO: parallel calls
+                    toolResponse = await toolResponse;
+                }
+                toolCallMap[toolRequestId].response = {
+                    type: "tool.response",
+                    meta: { toolRequestId },
+                    data: toolResponse,
+                    toolName: tool.id
+                };
+                toolCallsWereResolved = true;
+            } catch (e) {
+                Chat.logger.error("An error occurred while calling the tool: ", e);
+                // TODO: configurable retries
+                toolCallMap[toolRequestId].response = {
+                    type: "tool.response",
+                    meta: { toolRequestId },
+                    data: "An error occurred while calling the tool.",
+                    toolName: tool.id
+                };
+                toolCallsWereResolved = true;
+            }
+        }
+
+        for (const toolRequestId in toolCallMap) {
+            const { message, response, request } = toolCallMap[toolRequestId];
+
+            if (!message.toolCalls) {
+                Chat.logger.error("Detected tool response without tool call in message. This should never happen. Undefined behaviour may occur. Tool call ID: ", toolRequestId);
+                continue;
+            }
+
+            if (request && response) {
+                message.toolCalls.push(response);
+            }
+        }
+
+        return { toolCallsWereResolved };
     }
 }
