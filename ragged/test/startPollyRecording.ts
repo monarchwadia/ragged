@@ -12,7 +12,11 @@ Polly.register(FSPersister);
 
 const logger = new Logger("startPollyRecording");
 
-export const startPollyRecording = (recordingName: string, refresh: boolean = false) => {
+type PollyOptions = {
+    refresh?: boolean;
+    persistErrors?: boolean;
+}
+export const startPollyRecording = (recordingName: string, opts: PollyOptions = {}) => {
     const config: ConstructorParameters<typeof Polly>[1] = {
         adapters: ["fetch"],
         persister: "fs",
@@ -24,9 +28,13 @@ export const startPollyRecording = (recordingName: string, refresh: boolean = fa
         logLevel: "ERROR"
     };
 
-    if (refresh) {
+    if (opts.refresh) {
         logger.warn("Polly is in refresh mode. This will overwrite any existing recordings. Be careful! This is a destructive operation, and may incur API costs and deplete rate limits if hitting a paid API.");
         config.mode = 'record';
+    }
+
+    if (opts.persistErrors) {
+        config.recordFailedRequests = true;
     }
 
     const polly = new Polly(

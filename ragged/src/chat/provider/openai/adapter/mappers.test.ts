@@ -7,6 +7,8 @@ import { ChatRequest, ChatResponse } from "../../index.types";
 import { mapFromOpenAi, mapToOpenAi } from "./mappers";
 import { OpenAiToolMapper } from "./ToolMapper";
 import { OpenAiChatAdapter } from ".";
+import { Message } from "../../../index.types";
+import { Tool } from "../../../../tools";
 
 describe("OpenAiChatAdapter Mappers", () => {
   afterEach(() => {
@@ -377,6 +379,112 @@ describe("OpenAiChatAdapter Mappers", () => {
           ],
         }
       `);
+    });
+
+    it.only("should map outgoing tool responses correctly", () => {
+      const tools: Tool[] = [
+        {
+          id: "tool-1",
+          description: "Tool 1",
+          handler: jest.fn(),
+          props: {
+            type: "object",
+            props: {
+              key1: {
+                type: "string",
+                description: "A string",
+                required: true,
+              },
+              key2: {
+                type: "number",
+                description: "A number",
+                required: true,
+              },
+            },
+          },
+        },
+      ];
+      const history: Message[] = [
+        {
+          type: "bot",
+          text: null,
+          toolCalls: [
+            {
+              toolName: "tool-1",
+              type: "tool.request",
+              props: '{"key1":"123","key2":456}',
+              meta: {
+                toolRequestId: "some-id",
+              },
+            },
+            {
+              toolName: "tool-1",
+              type: "tool.response",
+              data: "tool-1 has responded",
+              meta: {
+                toolRequestId: "some-id",
+              },
+            },
+          ],
+        },
+      ];
+
+      expect(
+        mapToOpenAi({
+          history,
+          tools,
+        })
+      ).toMatchObject({
+        "messages": [
+          {
+            "content": null,
+            "role": "assistant",
+            "tool_calls": [
+              {
+                "function": {
+                  "arguments": "{\"key1\":\"123\",\"key2\":456}",
+                  "name": "tool-1",
+                },
+                "id": "some-id",
+                "type": "function",
+              }
+            ],
+          },
+          {
+            tool_call_id: "some-id",
+            role: "tool",
+            name: "tool-1",
+            content: "tool-1 has responded",
+          }
+        ],
+        "model": "gpt-3.5-turbo",
+        "tools": [
+          {
+            "function": {
+              "description": "Tool 1",
+              "name": "tool-1",
+              "parameters": {
+                "properties": {
+                  "key1": {
+                    "description": "A string",
+                    "type": "string",
+                  },
+                  "key2": {
+                    "description": "A number",
+                    "type": "number",
+                  },
+                },
+                "required": [
+                  "key1",
+                  "key2",
+                ],
+                "type": "object",
+              },
+            },
+            "type": "function",
+          },
+        ],
+      })
     });
   });
 });
