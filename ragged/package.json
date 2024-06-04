@@ -13,6 +13,11 @@
       "import": "./build/esm/chat/index.js",
       "require": "./build/cjs/chat/index.js",
       "types": "./build/src/public/chat/index.d.ts"
+    },
+    "./tools": {
+      "import": "./build/esm/tools/index.js",
+      "require": "./build/cjs/tools/index.js",
+      "types": "./build/src/public/tools/index.d.ts"
     }
   },
   "files": [

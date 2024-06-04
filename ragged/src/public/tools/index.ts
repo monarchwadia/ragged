@@ -1,1 +1,1 @@
-export type { Tool } from "../../tools/index";
+export type * from "../../tools/index";

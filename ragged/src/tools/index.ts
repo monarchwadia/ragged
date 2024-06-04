@@ -1,16 +1,16 @@
-type StringProp = {
+export type StringProp = {
     type: "string";
     description?: string;
     required?: boolean;
 };
 
-type NumberProp = {
+export type NumberProp = {
     type: "number";
     description?: string;
     required?: boolean;
 };
 
-type BooleanProp = {
+export type BooleanProp = {
     type: "boolean";
     description?: string;
     required?: boolean;
@@ -23,7 +23,7 @@ export type ObjectProp = {
     props: Record<string, ToolProp>;
 };
 
-type ArrayProp = {
+export type ArrayProp = {
     type: "array";
     description?: string;
     required?: boolean;
