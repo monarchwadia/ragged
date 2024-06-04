@@ -200,75 +200,78 @@ export class Chat {
         }
 
         for (const toolRequestId in toolCallMap) {
-            const toolCall = toolCallMap[toolRequestId];
+            const {
+                request: mapRequest,
+                response: mapResponse
+            } = toolCallMap[toolRequestId];
 
-            if (toolCall.response && !toolCall.request) {
+            if (mapResponse && !mapRequest) {
                 Chat.logger.warn("Detected tool response without request. This should never happen. Tool call ID: ", toolRequestId);
             }
 
-            if (toolCall.request && toolCall.response) {
+            if (mapRequest && mapResponse) {
                 continue;
             }
+
+            // if we are here, it means that the tool call exists and was not responded to
 
             Chat.logger.debug("Detected unhandled tool call with ID: ", toolRequestId, ", performing tool call now.");
 
             // find the tool that was called
-            const tool = request.tools.find(tool => tool.id === toolCall.request?.toolName);
+            const tool = request.tools.find(tool => tool.id === mapRequest?.toolName);
 
             if (!tool) {
                 Chat.logger.warn("Detected tool call for non-existent tool. Tool call ID: ", toolRequestId);
-                const toolName = toolCall.request?.toolName;
-                toolCallMap[toolRequestId].response = {
+                const toolName = mapRequest?.toolName;
+                toolCallMap[toolRequestId].message.toolCalls?.push({
                     type: "tool.response",
                     meta: { toolRequestId },
                     data: toolName
                         ? "Tool with name " + toolName + " does not exist."
                         : "Tool name not provided.",
                     toolName: toolName || "unknown"
-                };
+                });
                 toolCallsWereResolved = true;
                 continue;
             }
 
             // now we have the tool, we can call it
             try {
-                let toolResponse = tool.handler(toolCall.request?.props);
+                let toolResponse = tool.handler(mapRequest?.props);
                 if (toolResponse instanceof Promise) {
                     // TODO: parallel calls
                     toolResponse = await toolResponse;
                 }
-                toolCallMap[toolRequestId].response = {
+                toolCallMap[toolRequestId].message.toolCalls?.push({
                     type: "tool.response",
                     meta: { toolRequestId },
                     data: toolResponse,
                     toolName: tool.id
-                };
+                });
                 toolCallsWereResolved = true;
             } catch (e) {
                 Chat.logger.error("An error occurred while calling the tool: ", e);
                 // TODO: configurable retries
-                toolCallMap[toolRequestId].response = {
+                toolCallMap[toolRequestId].message.toolCalls?.push({
                     type: "tool.response",
                     meta: { toolRequestId },
                     data: "An error occurred while calling the tool.",
                     toolName: tool.id
-                };
+                });
                 toolCallsWereResolved = true;
             }
         }
 
-        for (const toolRequestId in toolCallMap) {
-            const { message, response, request } = toolCallMap[toolRequestId];
+        // for (const toolRequestId in toolCallMap) {
+        //     const { message: mapMessage, response: mapResponse, request: mapRequest } = toolCallMap[toolRequestId];
 
-            if (!message.toolCalls) {
-                Chat.logger.error("Detected tool response without tool call in message. This should never happen. Undefined behaviour may occur. Tool call ID: ", toolRequestId);
-                continue;
-            }
+        //     if (!mapMessage.toolCalls) {
+        //         Chat.logger.error("Detected tool response without tool call in message. This should never happen. Undefined behaviour may occur. Tool call ID: ", toolRequestId);
+        //         continue;
+        //     }
 
-            if (request && response) {
-                message.toolCalls.push(response);
-            }
-        }
+
+        // }
 
         return { toolCallsWereResolved };
     }

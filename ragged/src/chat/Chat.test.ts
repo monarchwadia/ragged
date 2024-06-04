@@ -484,14 +484,6 @@ describe("Chat", () => {
                   "toolName": "todays-news",
                   "type": "tool.response",
                 },
-                {
-                  "data": "Here are the latest news",
-                  "meta": {
-                    "toolRequestId": "call_SeP7XORPM3I9SWWDtbUaIW6r",
-                  },
-                  "toolName": "todays-news",
-                  "type": "tool.response",
-                },
               ],
               "type": "bot",
             },
