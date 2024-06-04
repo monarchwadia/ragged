@@ -19,9 +19,17 @@ export class Chat {
     private _isRecording: boolean = true;
     private _autoToolReply: boolean = true;
 
+    /**
+     * Maximum number of iterations to run the chat loop. This only applies in the case of tool calls.
+     * The chat loop will run until all tool calls are resolved or this limit is reached.
+     * Default: 3
+     */
+    public maxIterations = 3;
+
     constructor(private adapter: BaseChatAdapter) { }
 
-    async chat(userMessage: string, history: Message[] = [], tools?: Tool[]): Promise<Message[]> {
+    // TODO: Need to put tools, model inside options object.. consider also doing cascading options overrides
+    async chat(userMessage: string, history: Message[] = [], tools?: Tool[], model?: string): Promise<Message[]> {
         let workingHistory = [...this.history, ...history];
 
         const userMessageObj: Message = {
@@ -35,7 +43,7 @@ export class Chat {
 
         let numIterations = 0;
         let shouldIterate = true;
-        WORK_LOOP: while (shouldIterate && numIterations < 3) {
+        WORK_LOOP: while (shouldIterate && numIterations < this.maxIterations) {
             numIterations++;
             shouldIterate = false;
 
@@ -46,6 +54,9 @@ export class Chat {
             const request: ChatRequest = { history: Chat.cloneMessages(workingHistory) };
             if (tools && tools.length) {
                 request.tools = [...tools];
+            }
+            if (model) {
+                request.model = model;
             }
 
             Chat.logger.debug("Chat request: ", JSON.stringify(request));

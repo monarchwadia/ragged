@@ -112,7 +112,7 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
         }
 
         return {
-            model: "gpt-3.5-turbo",
+            model: request.model || "gpt-3.5-turbo",
             messages,
             tools
         }

@@ -272,3 +272,158 @@ console.log(appendResponse.at(-1)?.text); // This is the start of the file.\nHel
 const appendResponse2 = await appending.chat("This is a test message.");
 console.log(appendResponse2.at(-1)?.text); // This is the start of the file.\nHello, world!\nThis is a test message.
 ```
+
+---
+
+## Using Tools with the Chat API
+
+Ragged allows you to further extend its functionality using tools. This gives you the power to integrate custom behavior or commands directly into your chat-based application.
+
+Here is an example of how to use a tool with Ragged's chat:
+
+```ts
+import { config } from 'dotenv';
+config();
+
+import { Chat } from "ragged/chat"
+import { Tool } from "ragged/tools";
+const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+
+c.record(true);
+
+// Tool calling will always dial back to the LLM with the results of the tool.
+// Here, we are allowing the tool to run for a maximum of 10 iterations.
+// This is useful for agentic tools that may need to call the LLM multiple times.
+c.maxIterations = 10;
+
+
+const lsTool: Tool = {
+    id: "ls",
+    description: "List the files in any given directory on the user's local machine.",
+    props: {
+        type: "object",
+        props: {
+            path: {
+                type: "string",
+                description: "The path to the directory to list files from.",
+                required: true
+            }
+        }
+    },
+    handler: async (props: any) => {
+        try {
+            const json = await JSON.parse(props);
+            const providedPath = json.path;
+            const files = fs.readdirSync(providedPath);
+            return `The files in the directory ${providedPath} are: ${files.join("\n")}`;
+        } catch (e: any) {
+            console.error(e);
+            if (e?.message) {
+                return `An error occurred: ${e.message}`;
+            } else {
+                return `An unknown error occurred.`;
+            }
+        }
+
+    }
+}
+
+const pwdTool: Tool = {
+    id: "pwd",
+    description: "Print the current working directory of the user's local machine.",
+    props: {
+        type: "object",
+        props: {}
+    },
+    handler: async () => {
+        return `The current working directory is: ${__dirname}`;
+    }
+}
+
+const catTool: Tool = {
+    id: "cat",
+    description: "Print the contents of a file on the user's local machine.",
+    props: {
+        type: "object",
+        props: {
+            path: {
+                type: "string",
+                description: "The path to the file to read.",
+                required: true
+            }
+        }
+    },
+    handler: async (props: any) => {
+        try {
+            const json = await JSON.parse(props);
+            const path = json.path;
+            const contents = fs.readFileSync(path, 'utf8');
+            return `The contents of the file ${path} are as follows: \n\n: ${contents}`;
+        } catch (e: any) {
+            console.error(e);
+            if (e?.message) {
+                return `An error occurred: ${e.message}`;
+            } else {
+                return `An unknown error occurred.`;
+            }
+        }
+    }
+}
+
+// Execute the call.
+// I'll be honest, this signature needs to be cleaned up.
+const response = await c.chat(`
+List the files in the current directory, then read all of them. Finally, give me a report on what they all do.
+`, [], [lsTool, pwdTool, catTool], "gpt-4")
+
+// Log the messages
+console.log(response.at(-1)?.text);
+```
+
+The `Chat.chat()` method accepts an array of tools as the third argument, which can be used to extend the functionality of the chat command.
+
+***Note:*** *The tools are executed in the order they are listed in the array, and the execution halts once a tool has handled the command.*
+
+---
+
+## Creating Custom Tools
+
+A tool in Ragged is an object that implements the `Tool` interface. It consists of an `id`, `description`, and `props` for defining the data schema, and a `handler` function that implements the tool's functionality. The `handler` function takes the user's command, processes it, and returns a response.
+
+Here's an example tool that echoes back the user's command:
+
+```ts
+import { config } from 'dotenv';
+config();
+
+import { Chat } from "ragged/chat"
+import { Tool } from "ragged/tools";
+const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+
+// Define your tool
+const echoTool: Tool = {
+    id: "echo",
+    description: "Echos back the text.",
+    props: {
+        type: "object",
+        props: {
+            text: {
+                type: "string",
+                description: "The text to echo back.",
+                required: true
+            }
+        }
+    },
+    handler: async (props: any) => {
+        return `Echo: ${props.text}`;
+    }
+}; 
+
+// Chat with the model using the tool
+const response = await c.chat('Echo this please.', [], [echoTool]);
+
+// Log the messages
+console.log(response.at(-1)?.text);
+```
+
+In the example above, the `echoTool` simply repeats back the text that it's given. The `props` field in the tool definition specifies that this tool requires one string argument, `text`, which is used in the `handler` function.

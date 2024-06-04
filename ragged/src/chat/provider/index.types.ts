@@ -4,6 +4,7 @@ import { Tool } from "../../tools"
 export type ChatRequest = {
     history: Message[];
     tools?: Tool[];
+    model?: string;
 }
 
 export type ChatResponse = {
