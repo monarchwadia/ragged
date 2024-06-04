@@ -61,11 +61,11 @@ export class Chat {
                 response: ToolResponse | null
             }> = {};
 
-            for (let mi = 0; mi = workingHistory.length; mi++) {
+            for (let mi = 0; mi < workingHistory.length; mi++) {
                 const message = workingHistory[mi];
 
                 if (!message) {
-                    this.logger.warn("Detected undefined message at history index: ", mi);
+                    this.logger.warn("Detected undefined message at history index: ", mi, "workingHistory looks like: ", JSON.stringify(workingHistory));
                     continue;
                 }
 
@@ -88,13 +88,13 @@ export class Chat {
 
                     // check if tool call respons with this matching id exists in array
                     // TODO: Move away from meta.id and use a more robust way to identify tool calls
-                    this.logger.warn("Reminder: We are still using meta.id to identify tool calls. We need to set unique IDs instead.");
-                    if (!toolCall.meta.id) {
-                        this.logger.warn("Detected undefined tool call id at message index: ", mi);
+                    this.logger.warn("Reminder: We are still using meta.toolRequestId to identify tool calls. We need to set unique IDs instead.");
+                    if (!toolCall.meta.toolRequestId) {
+                        this.logger.warn("Detected undefined meta.toolRequestId at message index: ", mi, "workingHistory: ", JSON.stringify(workingHistory));
                         continue;
                     }
 
-                    const toolCallId = toolCall.meta.id;
+                    const toolCallId = toolCall.meta.toolRequestId;
                     toolCallMap[toolCallId] = toolCallMap[toolCallId] || {
                         message: message,
                         request: null,
@@ -193,10 +193,6 @@ export class Chat {
         this._isRecording = record;
     }
 
-    public autoToolReply(autoToolReply: boolean) {
-        this._autoToolReply = autoToolReply;
-    }
-
     get isRecording() {
         return this._isRecording;
     }
@@ -209,11 +205,8 @@ export class Chat {
         return Chat.cloneMessages(this._history)
     }
 
-    get isAutoToolReplying() {
-        return this._autoToolReply;
-    }
-
     static with(provider: "openai", config: Partial<OpenAiChatDriverConfig> = {}) {
+        // TODO: Add more providers
         const adapter = provideOpenAiChatAdapter({ config })
         return new Chat(adapter);
     }

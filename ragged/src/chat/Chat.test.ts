@@ -335,7 +335,6 @@ describe("Chat", () => {
                 },
             ] as Message[]);
 
-
             expect(c.history).toMatchObject([
                 {
                     type: "user",
@@ -405,35 +404,83 @@ describe("Chat", () => {
 
     describe("tool calling", () => {
         describe("automatic tool call handling", () => {
-            describe("when on", () => {
-                it("should automatically call the tool handler when a tool call is detected and send a response to the LLM", async () => {
-                    c.autoToolReply(true);
-
-                    // adapter sends a tool call request
-                    adapter.chat.mockResolvedValue({
-                        history: [
-                            {
-                                type: "bot",
-                                text: null,
-                                toolCalls: [
-                                    {
-                                        meta: {
-                                            toolRequestId: "call_SeP7XORPM3I9SWWDtbUaIW6r",
-                                        },
-                                        props: `{"query":"latest news"}`,
-                                        toolName: "todays-news",
-                                        type: "tool.request",
+            it("should automatically call the tool handler when a tool call is detected and send a response to the LLM", async () => {
+                // adapter sends a tool call request
+                adapter.chat.mockResolvedValue({
+                    history: [
+                        {
+                            type: "bot",
+                            text: null,
+                            toolCalls: [
+                                {
+                                    meta: {
+                                        toolRequestId: "call_SeP7XORPM3I9SWWDtbUaIW6r",
                                     },
-                                ],
-                            },
-                        ],
-                    });
-
-                    // chat generates a tool call response and re-queries the LLM
-
-                    // adapter sends a normal LLM response without any tool calls, and chat does not re-query the LLM
+                                    props: `{"query":"latest news"}`,
+                                    toolName: "todays-news",
+                                    type: "tool.request",
+                                },
+                            ],
+                        },
+                    ],
                 });
-            })
+
+                // chat generates a tool call response and re-queries the LLM
+                const response = await c.chat(
+                    `This is a test message to the adapter`,
+                    [],
+                    [
+                        {
+                            id: "todays-news",
+                            description: "Get the latest news",
+                            props: {
+                                type: "object",
+                                props: {
+                                    query: {
+                                        type: "string",
+                                        description: "The query to search for",
+                                        required: true,
+                                    },
+                                },
+                            },
+                            handler: async (props: string) => {
+                                return "Here are the latest news";
+                            },
+                        },
+                    ]
+                );
+
+                expect(response).toMatchInlineSnapshot(`
+          [
+            {
+              "text": "This is a test message to the adapter",
+              "type": "user",
+            },
+            {
+              "text": null,
+              "toolCalls": [
+                {
+                  "meta": {
+                    "toolRequestId": "call_SeP7XORPM3I9SWWDtbUaIW6r",
+                  },
+                  "props": "{"query":"latest news"}",
+                  "toolName": "todays-news",
+                  "type": "tool.request",
+                },
+                {
+                  "data": "Here are the latest news",
+                  "meta": {
+                    "id": "call_SeP7XORPM3I9SWWDtbUaIW6r",
+                  },
+                  "toolName": "todays-news",
+                  "type": "tool.response",
+                },
+              ],
+              "type": "bot",
+            },
+          ]
+        `);
+            });
         });
-    })
+    });
 });
