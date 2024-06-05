@@ -45,15 +45,18 @@ console.log(messages.at(-1)?.text); // A rickroll is a prank...
 ```
 
 
-## Recording chat history
+## History & recordkeeping
 
-Ragged can record the history of the conversation. This is useful when you want to keep track of the conversation history and use it later. You can turn recording on and off by passing a boolean to the `.record` method.
+By default, each instance of the `Chat` object records the history of the conversation. 
+
+This is useful when you want to keep track of the conversation history and use it later. You can turn recording on and off by passing a boolean to the `.record` method.
 
 ```ts
-c.record(true);
+// Recording is on by default. Here is how you can turn it off.
+c.record(false);
 ```
 
-Here's a basic example of how to use the `.record` functionality. You can access the history of the conversation using the `.history` property.
+Here's a basic example of how to use the history functionality. You can access the history of the conversation using the `.history` property.
 
 ```ts
 import { config } from 'dotenv';
@@ -62,7 +65,8 @@ config();
 import { Chat } from "ragged/chat"
 const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
 
-// Turn recording on
+// By default, recording is already turned on
+// Doing this line just to demonstrate the API
 c.record(true);
 
 const response = await c.chat('What is a rickroll?');
