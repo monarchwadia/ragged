@@ -54,6 +54,9 @@ importers:
 
   examples/node-chat-completion:
     dependencies:
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
       openai:
         specifier: ^4.47.3
         version: 4.47.3

@@ -173,7 +173,7 @@ export class Chat {
 
                 // check if tool call respons with this matching id exists in array
                 // TODO: Move away from meta.id and use a more robust way to identify tool calls
-                Chat.logger.warn("Reminder: We are still using meta.toolRequestId to identify tool calls. We need to set unique IDs instead.");
+                Chat.logger.debug("Reminder: We are still using meta.toolRequestId to identify tool calls. We need to set unique IDs instead.");
                 if (!toolCall.meta.toolRequestId) {
                     Chat.logger.warn("Detected undefined meta.toolRequestId at message index: ", mi, "workingHistory: ", JSON.stringify(workingHistory));
                     continue;
