@@ -7,6 +7,31 @@
 
 Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and Typescript. It makes it easy to access LLMs via a simple, easy to understand, and uncomplicated API.
 
+## Table of Contents 
+
+- [Ragged](#ragged)
+  - [What is this?](#what-is-this)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Feature Roadmap](#feature-roadmap)
+    - [Providers and Models](#providers-and-models)
+  - [Simple chat](#simple-chat)
+  - [History \& recordkeeping](#history--recordkeeping)
+  - [Manually managing chat history](#manually-managing-chat-history)
+    - [Accessing chat history](#accessing-chat-history)
+    - [Setting chat history](#setting-chat-history)
+    - [History is immutable](#history-is-immutable)
+  - [Prompt freezing](#prompt-freezing)
+  - [API](#api)
+    - [`Chat.with(name, options)`](#chatwithname-options)
+    - [`Chat.with('openai')`](#chatwithopenai)
+    - [`new Chat(adapter)` and custom adapters](#new-chatadapter-and-custom-adapters)
+      - [Inline adapter](#inline-adapter)
+      - [Object adapter](#object-adapter)
+      - [Class adapter](#class-adapter)
+  - [Using Tools with the Chat API](#using-tools-with-the-chat-api)
+  - [Creating Custom Tools](#creating-custom-tools)
+
 ## Installation
 
 Installing Ragged is very easy.
@@ -21,6 +46,50 @@ yarn install ragged
 ```
 
 That's it.
+
+## Feature Roadmap
+
+Ragged is currently in alpha. It is not yet ready for production use. We are actively working on it and will be releasing new features and improvements regularly.
+
+🟡
+
+| Feature                            | Is Working | API Frozen* | Notes                                                                                   |
+| ---------------------------------- | ---------- | ----------- | --------------------------------------------------------------------------------------- |
+| Chat Completion                    | 🟢 100%     | ❌           |                                                                                         |
+| In-built Message History           | 🟢 100%     | ❌           |                                                                                         |
+| Write your own custom LLM adapters | 🟢 100%     | ❌           |                                                                                         |
+| Tool Calling                       | 🟢 100%     | ❌           |                                                                                         |
+| Autonomous Agents                  | 🟢 100%     | ❌           |                                                                                         |
+| Message History                    | 🟢 100%     | ❌           |                                                                                         |
+| Helpful Errors                     | 🟡 30%      | ❌           |                                                                                         |
+| Embeddings Generation              | 🔴 0%       | ❌           |                                                                                         |
+| Image Input                        | 🔴 0%       | ❌           |                                                                                         |
+| Video Input                        | 🔴 0%       | ❌           |                                                                                         |
+| File Input                         | 🔴 0%       | ❌           | If your file is human-readable (XML, JSON, etc) then you can include it in your prompt. |
+| Image Generation                   | 🔴 0%       | ❌           |                                                                                         |
+| Video Generation                   | 🔴 0%       | ❌           |                                                                                         |
+| Model Fine-Tuning                  | 🔴 0%       | ❌           |                                                                                         |
+
+\* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
+
+### Providers and Models
+
+The following table lists the providers and models that Ragged supports.
+
+| Provider      | Models                  | Is Working |
+| ------------- | ----------------------- | ---------- |
+| OpenAI        | GPT: 4o, 4T, 4, 3.5     | ✅          |
+| Azure OpenAI  | GPT: 4, 4T, 3.5         | ❌          |
+| Together      | Several OSS Models      | ❌          |
+| Cohere        | CommandR, Command       | ❌          |
+| Anthropic     | Claude 2, Claude 3      | ❌          |
+| Mistral       | 7B, 8x7B, S, M & L      | ❌          |
+| Groq          | Lama2-70B, Mixtral-8x7b | ❌          |
+| DeepSeek      | Chat and Code           | ❌          |
+| Ollama        | All models              | ❌          |
+| Google Gemini | Gemini: Flash, Pro      | ❌          |
+| Hugging Face  | OSS Model               | ❌          |
+
 
 ## Simple chat
 
