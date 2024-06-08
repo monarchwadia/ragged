@@ -10,7 +10,9 @@ const countingAdapter: BaseChatAdapter = {
         let totalCharacters = 0;
 
         for (const message of request.history) {
-            totalCharacters += message.text.length;
+            if (message.text) {
+                totalCharacters += message.text.length;
+            }
         }
 
         return {

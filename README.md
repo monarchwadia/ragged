@@ -16,11 +16,11 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
   - [Feature Roadmap](#feature-roadmap)
     - [Providers and Models](#providers-and-models)
   - [Simple chat](#simple-chat)
-  - [History \& recordkeeping](#history--recordkeeping)
-  - [Manually managing chat history](#manually-managing-chat-history)
-    - [Accessing chat history](#accessing-chat-history)
-    - [Setting chat history](#setting-chat-history)
+  - [Automatic Message History](#automatic-message-history)
+  - [Manually-managed Message history](#manually-managed-message-history)
+    - [Accessing message history](#accessing-message-history)
     - [History is immutable](#history-is-immutable)
+    - [Setting message history](#setting-message-history)
   - [Prompt freezing](#prompt-freezing)
   - [API](#api)
     - [`Chat.with(name, options)`](#chatwithname-options)
@@ -62,6 +62,7 @@ Ragged is currently in alpha. It is not yet ready for production use. We are act
 | Autonomous Agents                  | 🟢 100%     | ❌           |                                                                                         |
 | Message History                    | 🟢 100%     | ❌           |                                                                                         |
 | Helpful Errors                     | 🟡 30%      | ❌           |                                                                                         |
+| Streaming                          | 🔴 0%       | ❌           |                                                                                         |
 | Embeddings Generation              | 🔴 0%       | ❌           |                                                                                         |
 | Image Input                        | 🔴 0%       | ❌           |                                                                                         |
 | Video Input                        | 🔴 0%       | ❌           |                                                                                         |
@@ -110,11 +111,12 @@ const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
 const messages = await c.chat('What is a rickroll?');
 
 // log the messages
-console.log(messages.at(-1)?.text); // A rickroll is a prank...
+const lastText = messages.at(-1)?.text; // this is just vanilla JavaScript to get the last message
+console.log(lastText); // A rickroll is a prank...
 ```
 
 
-## History & recordkeeping
+## Automatic Message History
 
 By default, each instance of the `Chat` object records the history of the conversation. 
 
@@ -154,11 +156,11 @@ console.log(c.history.at(-1)?.text); // The purpose of a rickroll is to...
 
 This will cause Ragged to record the conversation history. 
 
-## Manually managing chat history
+## Manually-managed Message history
 
-Instead of using recorded chat history, it is possible to manage chat history manually. 
+Instead of using recorded message history, it is possible to manage message history manually. 
 
-### Accessing chat history
+### Accessing message history
 
 You can access the history using the `.history` property.
 
@@ -172,7 +174,13 @@ You can also access the last message in the history using the `.at` method.
 console.log(c.history.at(-1)?.text); // A rickroll is a prank...
 ```
 
-### Setting chat history
+### History is immutable
+
+Note that all message history is immutable. A new copy of the history array is created on write as well as on read. 
+
+Don't try to modify the history directly. Instead, set the `.history` property to a new array.
+
+### Setting message history
 
 You can set the history by setting the `.history` property to an array of messages.
 
@@ -188,12 +196,6 @@ You can clear the history by setting the `.history` property to an empty array.
 ```ts
 c.history = [];
 ```
-
-### History is immutable
-
-Note that all chat history is immutable. A new copy of the history array is created on write as well as on read. 
-
-Don't try to modify the history directly. Instead, set the `.history` property to a new array.
 
 ## Prompt freezing
 

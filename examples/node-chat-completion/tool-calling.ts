@@ -102,17 +102,4 @@ Tell me how the README can be improved based on what you can see the tool-callin
 Write the new documentation sections for tool calling so I can copy paste it directly in the README.
 `, [], [lsTool, pwdTool, catTool], "gpt-4")
 
-console.log(response.at(-1)?.text); // The files in the directory / are: bin
-
-// const response = await c.chat('What is a rickroll?');
-
-// // you can get the last message from the response
-// console.log(response.at(-1)?.text); // A rickroll is a prank...
-// // or, alternatively, you can access the response directly from the chat instance
-// console.log(c.history.at(-1)?.text); // A rickroll is a prank...
-
-// // continue the conversation
-// await c.chat('Where did it originate?');
-// console.log(c.history.at(-1)?.text); // The Rickroll meme originated in the...
-// await c.chat('What is the purpose?');
-// console.log(c.history.at(-1)?.text); // The purpose of a rickroll is to...
+console.log(response.at(-1)?.text); // The files in the directory / are: bin, ....
