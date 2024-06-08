@@ -1,6 +1,5 @@
 /*
- * This example demonstrates how to persist the history of messages in a Chat instance 
- * by turning on recording.
+ * This is a slightly more advanced tool calling example
  */
 
 import fs from 'fs';
