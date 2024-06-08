@@ -1,3 +1,5 @@
+import { Tool } from "../tools";
+
 export type UserMessage = {
     type: "user";
     text: string | null;
@@ -36,3 +38,8 @@ export type ToolResponse = {
 export type Message = UserMessage | BotMessage | SystemMessage | ErrorMessage;
 
 export type MessageType = Message["type"];
+
+export type ChatConfig = {
+    tools?: Tool[];
+    model?: string;
+}

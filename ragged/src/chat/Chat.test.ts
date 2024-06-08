@@ -5,6 +5,7 @@ import { Message, UserMessage } from "./index.types";
 import { BaseChatAdapter } from "./provider/index.types";
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { startPollyRecording } from "../../test/startPollyRecording";
+import { JsonParseError, ParameterValidationError } from "../support/CustomErrors";
 
 describe("Chat", () => {
     let adapter: DeepMockProxy<BaseChatAdapter>;
@@ -41,11 +42,15 @@ describe("Chat", () => {
                 ],
             });
 
-            const history = await c.chat(`This is a test message to the adapter`, [
+            const history = await c.chat([
                 {
                     type: "system",
                     text: "This is a system message",
                 },
+                {
+                    type: "user",
+                    text: "This is a test message to the adapter",
+                }
             ]);
 
             expect(history).toMatchInlineSnapshot(`
@@ -198,10 +203,14 @@ describe("Chat", () => {
                 ],
             });
 
-            const messages = await c.chat(`This is a test message to the adapter`, [
+            const messages = await c.chat([
                 {
                     type: "system",
                     text: "This message will be appended in the history",
+                },
+                {
+                    type: "user",
+                    text: `This is a test message to the adapter`,
                 },
             ]);
 
@@ -439,27 +448,28 @@ describe("Chat", () => {
 
                 // chat generates a tool call response and re-queries the LLM
                 const response = await c.chat(
-                    `This is a test message to the adapter`,
-                    [],
-                    [
-                        {
-                            id: "todays-news",
-                            description: "Get the latest news",
-                            props: {
-                                type: "object",
+                    "This is a test message to the adapter",
+                    {
+                        tools: [
+                            {
+                                id: "todays-news",
+                                description: "Get the latest news",
                                 props: {
-                                    query: {
-                                        type: "string",
-                                        description: "The query to search for",
-                                        required: true,
+                                    type: "object",
+                                    props: {
+                                        query: {
+                                            type: "string",
+                                            description: "The query to search for",
+                                            required: true,
+                                        },
                                     },
                                 },
+                                handler: async (props: string) => {
+                                    return "Here are the latest news";
+                                },
                             },
-                            handler: async (props: string) => {
-                                return "Here are the latest news";
-                            },
-                        },
-                    ]
+                        ]
+                    }
                 );
 
                 expect(response).toMatchInlineSnapshot(`
@@ -540,61 +550,54 @@ describe("Chat", () => {
             );
             const response = await c.chat(
                 `What are the files in my root dir?`,
-                [],
-                [lsTool]
+                { tools: [lsTool] }
             );
 
-            console.log(response);
             polly.stop();
-
-            //         expect(response).toMatchInlineSnapshot(`
-            //     [
-            //       {
-            //         "text": "What are the files in my root dir?",
-            //         "type": "user",
-            //       },
-            //       {
-            //         "text": null,
-            //         "toolCalls": [
-            //           {
-            //             "meta": {
-            //               "toolRequestId": "call_zaTG8vWarJ2g9tsYu4oecdiX",
-            //             },
-            //             "props": "{"path":"/"}",
-            //             "toolName": "ls",
-            //             "type": "tool.request",
-            //           },
-            //           {
-            //             "data": "The files in the directory / are: cool.doc
-            //     cool2.doc
-            //     cool3.doc",
-            //             "meta": {
-            //               "toolRequestId": "call_zaTG8vWarJ2g9tsYu4oecdiX",
-            //             },
-            //             "toolName": "ls",
-            //             "type": "tool.response",
-            //           },
-            //         ],
-            //         "type": "bot",
-            //       },
-            //       {
-            //         "text": null,
-            //         "toolCalls": [
-            //           {
-            //             "meta": {
-            //               "toolRequestId": "call_zaTG8vWarJ2g9tsYu4oecdiX",
-            //             },
-            //             "props": "{"path":"/"}",
-            //             "toolName": "ls",
-            //             "type": "tool.request",
-            //           },
-            //         ],
-            //         "type": "bot",
-            //       },
-            //     ]
-            //   `);
-
-            //         throw new Error("This test is actually broken.");
         });
     });
+
+    describe("parameter validation", () => {
+        describe("chat()", () => {
+            it("should not throw an error in sunny-day cases", async () => {
+                adapter.chat.mockResolvedValue({ history: [] });
+
+                await c.chat();
+                await c.chat("");
+                await c.chat("Something");
+                await c.chat("Something", {});
+                await c.chat("Something", { tools: [] });
+                await c.chat("Something", { model: "gpt-3" });
+                await c.chat("Something", { tools: [], model: "gpt-3" });
+                await c.chat([]);
+                await c.chat([{ type: "user", text: "Something", }]);
+                await c.chat([{ type: "user", text: "Something", }], { tools: [], model: "gpt-3" });
+                await c.chat([{ type: "user", text: "Something", }], { tools: [] });
+                await c.chat([
+                    { type: "user", text: "Something", },
+                    { type: "bot", text: "Something", },
+                ], { tools: [] });
+                await c.chat([
+                    { type: "user", text: "Something", },
+                    { type: "bot", text: "Something", },
+                ], { model: "gpt-3" });
+                await c.chat([
+                    { type: "user", text: "Something", },
+                    { type: "bot", text: "Something", },
+                ], { tools: [], model: "gpt-3" });
+                await c.chat({})
+                await c.chat({ tools: [] });
+                await c.chat({ model: "gpt-3" });
+                await c.chat({ tools: [], model: "gpt-3" });
+            });
+            it("should throw an error when the first parameter is weird", async () => {
+                await expect(() => c.chat(123 as any)).rejects.toThrow(ParameterValidationError);
+                await expect(() => c.chat(class X { } as any)).rejects.toThrow(ParameterValidationError);
+                await expect(() => c.chat((() => { }) as any)).rejects.toThrow(ParameterValidationError);
+            });
+            it("should throw when the first parameter is undefined, but a config object is passed in the 2nd parameter", async () => {
+                await expect(() => c.chat(undefined as any, {})).rejects.toThrow(ParameterValidationError);
+            });
+        })
+    })
 });

@@ -42,3 +42,10 @@ export class UnknownError extends BaseCustomError {
         this.name = "UnknownError";
     }
 }
+
+export class ParameterValidationError extends BaseCustomError {
+    constructor(message: string) {
+        super(message);
+        this.name = "ParameterError";
+    }
+}

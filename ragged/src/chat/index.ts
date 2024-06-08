@@ -1,7 +1,7 @@
-import { UnknownError } from "../support/CustomErrors";
+import { ParameterValidationError, UnknownError } from "../support/CustomErrors";
 import { Logger } from "../support/logger/Logger";
 import { Tool } from "../tools";
-import { BotMessage, Message, ToolRequest, ToolResponse } from "./index.types";
+import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./index.types";
 import { BaseChatAdapter, ChatRequest, ChatResponse } from "./provider/index.types";
 import { provideOpenAiChatAdapter } from "./provider/openai";
 import { OpenAiChatDriverConfig } from "./provider/openai/driver";
@@ -29,17 +29,47 @@ export class Chat {
     constructor(private adapter: BaseChatAdapter) { }
 
     // TODO: Need to put tools, model inside options object.. consider also doing cascading options overrides
-    async chat(userMessage: string, history: Message[] = [], tools?: Tool[], model?: string): Promise<Message[]> {
-        let workingHistory = [...this.history, ...history];
+    async chat(): Promise<Message[]>;
+    async chat(config: ChatConfig): Promise<Message[]>;
+    async chat(userMessage: string): Promise<Message[]>;
+    async chat(userMessage: string, config: ChatConfig): Promise<Message[]>;
+    async chat(messages: Message[]): Promise<Message[]>;
+    async chat(messages: Message[], config: ChatConfig): Promise<Message[]>;
+    async chat(...args: any[]): Promise<Message[]> {
+        let incomingMessages = [];
+        let config: ChatConfig = {
+            tools: [],
+            // TODO: Make this configurable 
+            model: undefined
+        };
 
-        const userMessageObj: Message = {
-            type: "user",
-            text: userMessage
+        if (args.length === 0) {
+            // async chat(): Promise<Message[]>;
+            // Note: No-op, this is an experimental feature for continuing agentic chat
+        } else if (!Array.isArray(args[0]) && typeof args[0] === "object") {
+            // async chat(config: ChatConfig): Promise<Message[]>;
+            config = { ...config, ...args[0] };
+        } else if (typeof args[0] === "string") {
+            // async chat(userMessage: string): Promise<Message[]>;
+            // OR
+            // async chat(userMessage: string, config: ChatConfig): Promise<Message[]>;
+            incomingMessages = [{ type: "user", text: args[0] }];
+            config = { ...config, ...args[1] } || config;
+        } else if (Array.isArray(args[0])) {
+            // async chat(messages: Message[]): Promise<Message[]>;
+            // OR
+            // async chat(messages: Message[], config: ChatConfig): Promise<Message[]>;
+            incomingMessages = args[0];
+            config = config = { ...config, ...args[1] } || config;
+        } else {
+            throw new ParameterValidationError("Invalid arguments passed to Ragged.chat(). Please check the documentation or your editor's code autocomplete for more information on how to use Ragged.chat().");
         }
 
-        workingHistory.push(userMessageObj);
+        let workingHistory = [...this.history, ...incomingMessages];
 
         // ======= start of loop =======
+
+        const { tools, model } = config;
 
         let numIterations = 0;
         let shouldIterate = true;
