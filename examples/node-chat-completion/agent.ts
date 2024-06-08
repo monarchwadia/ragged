@@ -147,11 +147,7 @@ const shouldImprove = async (tweet: TweetHolder): Promise<void> => {
         }
     }
 
-    await c.chat(`
-        Evaluate the following tweet:
-
-        ${tweet.tweet}
-    `, [
+    await c.chat([
         {
             type: "system",
             text: `
@@ -165,10 +161,20 @@ const shouldImprove = async (tweet: TweetHolder): Promise<void> => {
 
                 ${evaluationCriteria}
             `
+        },
+        {
+            type: "user",
+            text: `
+                Evaluate the following tweet:
+        
+                ${tweet.tweet}
+            `
         }
     ],
-        [tool],
-        "gpt-4"
+        {
+            tools: [tool],
+            model: "gpt-4"
+        }
     );
 }
 

@@ -100,6 +100,9 @@ Also read "/home/monarch/workspace/ragged/README.md" . This documentation is for
 Tell me how the README can be improved based on what you can see the tool-calling.ts file can do, but is not documented in the README. Ignore the tool definitions in this file. Focus on the ChatCompletion APIs that are not yet documented in README.md
 
 Write the new documentation sections for tool calling so I can copy paste it directly in the README.
-`, [], [lsTool, pwdTool, catTool], "gpt-4")
+`, {
+    tools: [lsTool, pwdTool, catTool],
+    model: "gpt-4"
+});
 
 console.log(response.at(-1)?.text); // The files in the directory / are: bin, ....

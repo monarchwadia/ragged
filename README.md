@@ -1,100 +1,19 @@
+Given the recent addition of parameter validation to the `chat()` method, the following sections of the README need to be updated:
 
-# Ragged
+1. **Simple Chat**
+   - Mention that the `chat()` method includes parameter validation.
+   - Update the code examples to ensure they demonstrate valid parameter usage.
 
-![An image of an audio cable with a ragged blue denim insulation covering. The caption in the foreground reads "Ragged, the universal LLM client for JavaScript."](./ragged-social-card.jpeg)
+2. **API**
+   - Update the description of the `chat()` method to include details about parameter validation.
+   - Provide examples of valid and invalid parameter usages.
+   - Highlight that invalid parameters will throw a `ParameterValidationError`.
 
-## What is this?
+### Updated Sections:
 
-Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and Typescript. It makes it easy to access LLMs via a simple, easy to understand, and uncomplicated API.
+#### Simple Chat
 
-## Table of Contents 
-
-- [Ragged](#ragged)
-  - [What is this?](#what-is-this)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Feature Roadmap](#feature-roadmap)
-    - [Providers and Models](#providers-and-models)
-  - [Simple chat](#simple-chat)
-  - [Automatic Message History](#automatic-message-history)
-  - [Manually-managed Message history](#manually-managed-message-history)
-    - [Accessing message history](#accessing-message-history)
-    - [History is immutable](#history-is-immutable)
-    - [Setting message history](#setting-message-history)
-  - [Prompt freezing](#prompt-freezing)
-  - [API](#api)
-    - [`Chat.with(name, options)`](#chatwithname-options)
-    - [`Chat.with('openai')`](#chatwithopenai)
-    - [`new Chat(adapter)` and custom adapters](#new-chatadapter-and-custom-adapters)
-      - [Inline adapter](#inline-adapter)
-      - [Object adapter](#object-adapter)
-      - [Class adapter](#class-adapter)
-  - [Using Tools with the Chat API](#using-tools-with-the-chat-api)
-  - [Creating Custom Tools](#creating-custom-tools)
-
-## Installation
-
-Installing Ragged is very easy.
-
-```bash
-# either
-npm install ragged
-# or
-pnpm install ragged
-# or
-yarn install ragged
-```
-
-That's it.
-
-## Feature Roadmap
-
-Ragged is currently in alpha. It is not yet ready for production use. We are actively working on it and will be releasing new features and improvements regularly.
-
-🟡
-
-| Feature                            | Is Working | API Frozen* | Notes                                                                                   |
-| ---------------------------------- | ---------- | ----------- | --------------------------------------------------------------------------------------- |
-| Chat Completion                    | 🟢 100%     | ❌           |                                                                                         |
-| In-built Message History           | 🟢 100%     | ❌           |                                                                                         |
-| Write your own custom LLM adapters | 🟢 100%     | ❌           |                                                                                         |
-| Tool Calling                       | 🟢 100%     | ❌           |                                                                                         |
-| Autonomous Agents                  | 🟢 100%     | ❌           |                                                                                         |
-| Message History                    | 🟢 100%     | ❌           |                                                                                         |
-| Helpful Errors                     | 🟡 30%      | ❌           |                                                                                         |
-| Streaming                          | 🔴 0%       | ❌           |                                                                                         |
-| Embeddings Generation              | 🔴 0%       | ❌           |                                                                                         |
-| Image Input                        | 🔴 0%       | ❌           |                                                                                         |
-| Video Input                        | 🔴 0%       | ❌           |                                                                                         |
-| File Input                         | 🔴 0%       | ❌           | If your file is human-readable (XML, JSON, etc) then you can include it in your prompt. |
-| Image Generation                   | 🔴 0%       | ❌           |                                                                                         |
-| Video Generation                   | 🔴 0%       | ❌           |                                                                                         |
-| Model Fine-Tuning                  | 🔴 0%       | ❌           |                                                                                         |
-
-\* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
-
-### Providers and Models
-
-The following table lists the providers and models that Ragged supports.
-
-| Provider      | Models                  | Is Working |
-| ------------- | ----------------------- | ---------- |
-| OpenAI        | GPT: 4o, 4T, 4, 3.5     | ✅          |
-| Azure OpenAI  | GPT: 4, 4T, 3.5         | ❌          |
-| Together      | Several OSS Models      | ❌          |
-| Cohere        | CommandR, Command       | ❌          |
-| Anthropic     | Claude 2, Claude 3      | ❌          |
-| Mistral       | 7B, 8x7B, S, M & L      | ❌          |
-| Groq          | Lama2-70B, Mixtral-8x7b | ❌          |
-| DeepSeek      | Chat and Code           | ❌          |
-| Ollama        | All models              | ❌          |
-| Google Gemini | Gemini: Flash, Pro      | ❌          |
-| Hugging Face  | OSS Model               | ❌          |
-
-
-## Simple chat
-
-Ragged is very easy to use. Here is a complete application that shows chat completion.
+Ragged is very easy to use. Here is a complete application that shows chat completion with valid parameters.
 
 ```ts
 // configure dotenv to load environment variables from a .env file into process.env
@@ -115,117 +34,7 @@ const lastText = messages.at(-1)?.text; // this is just vanilla JavaScript to ge
 console.log(lastText); // A rickroll is a prank...
 ```
 
-
-## Automatic Message History
-
-By default, each instance of the `Chat` object records the history of the conversation. 
-
-This is useful when you want to keep track of the conversation history and use it later. You can turn recording on and off by passing a boolean to the `.record` method.
-
-```ts
-// Recording is on by default. Here is how you can turn it off.
-c.record(false);
-```
-
-Here's a basic example of how to use the history functionality. You can access the history of the conversation using the `.history` property.
-
-```ts
-import { config } from 'dotenv';
-config();
-
-import { Chat } from "ragged/chat"
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
-
-// By default, recording is already turned on
-// Doing this line just to demonstrate the API
-c.record(true);
-
-const response = await c.chat('What is a rickroll?');
-
-// you can get the last message from the response
-console.log(response.at(-1)?.text); // A rickroll is a prank...
-// or, alternatively, you can access the response directly from the chat instance
-console.log(c.history.at(-1)?.text); // A rickroll is a prank...
-
-// continue the conversation
-await c.chat('Where did it originate?');
-console.log(c.history.at(-1)?.text); // The Rickroll meme originated in the...
-await c.chat('What is the purpose?');
-console.log(c.history.at(-1)?.text); // The purpose of a rickroll is to...
-```
-
-This will cause Ragged to record the conversation history. 
-
-## Manually-managed Message history
-
-Instead of using recorded message history, it is possible to manage message history manually. 
-
-### Accessing message history
-
-You can access the history using the `.history` property.
-
-```ts
-console.log(c.history); // [ { text: 'What is a rickroll?' ... ]
-```
-
-You can also access the last message in the history using the `.at` method.
-
-```ts
-console.log(c.history.at(-1)?.text); // A rickroll is a prank...
-```
-
-### History is immutable
-
-Note that all message history is immutable. A new copy of the history array is created on write as well as on read. 
-
-Don't try to modify the history directly. Instead, set the `.history` property to a new array.
-
-### Setting message history
-
-You can set the history by setting the `.history` property to an array of messages.
-
-```ts
-c.history = [
-    { type: "user", text: "What is a rickroll?" },
-    { type: "bot", text: "A rickroll is a prank..." }
-];
-```
-
-You can clear the history by setting the `.history` property to an empty array.
-
-```ts
-c.history = [];
-```
-
-## Prompt freezing
-
-Sometimes, you may want to freeze a conversation. This is useful when you want to create multiple responses to a single prompt. You can freeze the recording by passing a `false` to the `.record` method. Then, you can prompt the model multiple times. Each time, the model will respond as if it were the first time, and the history will not be updated with each call.
-
-```ts
-import { config } from 'dotenv';
-config();
-
-import { Chat } from "ragged/chat"
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
-
-c.record(true);
-
-const response = await c.chat('Write a 4-step framework that can be used to provide insights into a snippet of code.');
-console.log(response.at(-1)?.text); // 1. Provide a summary. By providing....
-
-// freeze the history
-c.record(false);
-
-// continue the conversation, always using the same prompt
-
-const analysis1 = await c.chat('Analyze this code snippet using the framework: `const x = 5;`');
-console.log(analysis1.at(-1)?.text); // 1. Summary: This code snippet declares a variable called...
-
-const analysis2 = await c.chat('Analyze this code snippet using the framework: `for (let i = 0; i < 5; i++) { console.log(i); }`');
-console.log(analysis2.at(-1)?.text); // 1. Summary: This code snippet is a for loop that iterates...
-```
-
-## API
+#### API
 
 ### `Chat.with(name, options)`
 
@@ -255,6 +64,32 @@ const c = Chat.with('openai', {
 });
 ```
 
+### `chat(message, options)`
+
+The `chat()` method is used to send a message to the model and receive a response. It includes parameter validation to ensure that the inputs are valid. 
+
+- `message`: Can be a string, an array of message objects, or an options object. If it's an array or string, it represents the conversation history. If it's an object, it represents options.
+- `options`: An optional configuration object that may include `tools`, `model`, and other settings.
+
+#### Valid Usages
+
+```ts
+await c.chat("Something");
+await c.chat([{ type: "user", text: "Something" }]);
+await c.chat([{ type: "user", text: "Something" }], { tools: [], model: "gpt-3" });
+await c.chat({ tools: [], model: "gpt-3" });
+```
+
+#### Invalid Usages
+
+The method will throw a `ParameterValidationError` for invalid parameters.
+
+```ts
+await expect(() => c.chat(123)).rejects.toThrow(ParameterValidationError);
+await expect(() => c.chat(class X {})).rejects.toThrow(ParameterValidationError);
+await expect(() => c.chat(() => {})).rejects.toThrow(ParameterValidationError);
+await expect(() => c.chat(undefined, {})).rejects.toThrow(ParameterValidationError);
+```
 
 ### `new Chat(adapter)` and custom adapters
 

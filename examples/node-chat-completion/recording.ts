@@ -12,10 +12,11 @@ c.record(true);
 
 const response = await c.chat('What is a rickroll?');
 
-// you can get the last message from the response
-console.log(response.at(-1)?.text); // A rickroll is a prank...
-// or, alternatively, you can access the response directly from the chat instance
-console.log(c.history.at(-1)?.text); // A rickroll is a prank...
+
+// you can access the response directly from the chat instance
+console.log("FROM C OBJECT", c.history.at(-1)?.text); // A rickroll is a prank...
+// or, alternatively, you can get the last message from the response
+console.log("FROM RESPONSE", response.at(-1)?.text); // A rickroll is a prank...
 
 // continue the conversation
 await c.chat('Where did it originate?');
