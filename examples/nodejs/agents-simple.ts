@@ -20,6 +20,7 @@ import { config } from 'dotenv';
 config();
 import { Chat } from "ragged/chat"
 
+// Define the main function
 async function main() {
     const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
     c.record(false);
