@@ -1,5 +1,5 @@
 /*
-This is a simple example of a functional agent script that generates tweets about climate change. 
+This is a more advanced example of a functional agent script that generates tweets about climate change. 
 The script uses three agents: a writer agent, an evaluator agent, and a re-writer agent.
 
 * The `writeTweet` agent generates tweets about climate change, 
