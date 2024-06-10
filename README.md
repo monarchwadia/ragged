@@ -34,13 +34,13 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
       - [Class adapter](#class-adapter)
 - [Development Instructions](#development-instructions)
   - [Prerequisites](#prerequisites)
-  - [Understanding the folder structure](#understanding-the-folder-structure)
-    - [Main folder](#main-folder)
-    - [Supporting folders](#supporting-folders)
   - [Development Instructions](#development-instructions-1)
   - [Manual Testing](#manual-testing)
   - [PollyJS recordings](#pollyjs-recordings)
     - [How to refresh PollyJS Recordings](#how-to-refresh-pollyjs-recordings)
+    - [Understanding the folder structure](#understanding-the-folder-structure)
+      - [Main folder](#main-folder)
+      - [Supporting folders](#supporting-folders)
   - [Feature Roadmap](#feature-roadmap)
     - [Providers and Models](#providers-and-models)
 
@@ -466,35 +466,6 @@ You will need to have Node.js installed on your machine. You can download it fro
 
 You will also need pnpm. Please see the [official website](https://pnpm.io/) for installation instructions.
 
-## Understanding the folder structure
-
-Ragged has a simple folder structure. Here is a brief overview of the folders and their contents.
-
-### Main folder
-
-- `ragged` contains the main codebase for Ragged. This is where you will find the source code for the library itself.
-
-Within the `ragged` folder, you will find the following files and folders:
-
-- `buildConfig` contains the configuration for the build process. We use esbuild to build the library. This folder contains the configuration for esbuild.
-- `recordings` contain Pollyjs recordings of various API calls. These recordings are used for testing and development. Do not modify these files directly. Instead, work with Pollyjs to record new interactions.
-- `src` contains the source code for Ragged. This is where you will find the main codebase for the library.
-- `src/chat` contains the code for the `Chat` class.
-- `src/chat/adapter` contains the code for the built-in adapters for the `Chat` class. These adapters are used to interact with the various LLM providers. You can add new adapters here if you want to support a new provider.
-- `src/public` is a folder that dynamically defines the public API for the ragged `npm` module (i.e. what you can import using `import * from "ragged/....."` ). The folder structure in `src/public` is mapped to `package.json`'s `exports` field, and is also mapped to `esbuild`'s `entryPoints` field. This is kind of neat and I don't know if this is a common pattern, but it works well for us.
-- `src/support` contains support code that is used by the main codebase. This includes the API client, custom errors, JSON parsing, logging, and other shared code.
-- `src/tools` contains the code for the `Tool` class, which enables tool calls in Ragged.
-- `/test` contains test utilities, used in `*.test.ts` files.
-- `.env.sample` is a sample `.env` file that you can use to set environment variables. Right now it only contains placeholders for various LLM API keys, and is mainly used in the unit tests to generate PollyJS recordings.
-
-### Supporting folders
-
-- `.github` contains GitHub Actions workflows that are used to automate the testing and deployment process. I.e. this is the CI/CD pipeline for deploying Ragged to `npm` and for deploying the documentation to GitHub Pages.
-- `.vscode` contains Visual Studio Code settings that are used to configure the editor for Ragged development. You can ignore this folder if you are not using Visual Studio Code.
-- `documentation` contains a Docusaurus project that is used to generate the documentation for Ragged. Currently, this is out of date and not deployed. We may delete this folder in the future, or we may update it and deploy it.
-- `examples` contains example code that demonstrates how to use Ragged. This is useful for testing and learning how to use Ragged. Please refer to the README in each examples folder for more information on how to run the examples.
-- `scratch` contains scratch files that are used for testing and debugging. These files are not part of the main codebase. They are used for quick testing and prototyping. You can ignore this folder if you are not familiar with it.
-
 ## Development Instructions
 
 Development is easy. First, clone the repository to your local machine.
@@ -583,6 +554,34 @@ If you want to refresh ALL PollyJS recordings, you can set the `REFRESH_POLY_REC
 REFRESH_POLY_RECORDINGS=true pnpm test
 ```
 
+### Understanding the folder structure
+
+Ragged has a simple folder structure. Here is a brief overview of the folders and their contents.
+
+#### Main folder
+
+- `ragged` contains the main codebase for Ragged. This is where you will find the source code for the library itself.
+
+Within the `ragged` folder, you will find the following files and folders:
+
+- `buildConfig` contains the configuration for the build process. We use esbuild to build the library. This folder contains the configuration for esbuild.
+- `recordings` contain Pollyjs recordings of various API calls. These recordings are used for testing and development. Do not modify these files directly. Instead, work with Pollyjs to record new interactions.
+- `src` contains the source code for Ragged. This is where you will find the main codebase for the library.
+- `src/chat` contains the code for the `Chat` class.
+- `src/chat/adapter` contains the code for the built-in adapters for the `Chat` class. These adapters are used to interact with the various LLM providers. You can add new adapters here if you want to support a new provider.
+- `src/public` is a folder that dynamically defines the public API for the ragged `npm` module (i.e. what you can import using `import * from "ragged/....."` ). The folder structure in `src/public` is mapped to `package.json`'s `exports` field, and is also mapped to `esbuild`'s `entryPoints` field. This is kind of neat and I don't know if this is a common pattern, but it works well for us.
+- `src/support` contains support code that is used by the main codebase. This includes the API client, custom errors, JSON parsing, logging, and other shared code.
+- `src/tools` contains the code for the `Tool` class, which enables tool calls in Ragged.
+- `/test` contains test utilities, used in `*.test.ts` files.
+- `.env.sample` is a sample `.env` file that you can use to set environment variables. Right now it only contains placeholders for various LLM API keys, and is mainly used in the unit tests to generate PollyJS recordings.
+
+#### Supporting folders
+
+- `.github` contains GitHub Actions workflows that are used to automate the testing and deployment process. I.e. this is the CI/CD pipeline for deploying Ragged to `npm` and for deploying the documentation to GitHub Pages.
+- `.vscode` contains Visual Studio Code settings that are used to configure the editor for Ragged development. You can ignore this folder if you are not using Visual Studio Code.
+- `documentation` contains a Docusaurus project that is used to generate the documentation for Ragged. Currently, this is out of date and not deployed. We may delete this folder in the future, or we may update it and deploy it.
+- `examples` contains example code that demonstrates how to use Ragged. This is useful for testing and learning how to use Ragged. Please refer to the README in each examples folder for more information on how to run the examples.
+- `scratch` contains scratch files that are used for testing and debugging. These files are not part of the main codebase. They are used for quick testing and prototyping. You can ignore this folder if you are not familiar with it.
 
 ## Feature Roadmap
 
