@@ -28,7 +28,7 @@ export const startPollyRecording = (recordingName: string, opts: PollyOptions = 
         logLevel: "ERROR"
     };
 
-    if (opts.refresh) {
+    if (opts.refresh || process.env.REFRESH_POLLY_RECORDINGS === "true") {
         logger.warn("Polly is in refresh mode. This will overwrite any existing recordings. Be careful! This is a destructive operation, and may incur API costs and deplete rate limits if hitting a paid API.");
         config.mode = 'record';
     }

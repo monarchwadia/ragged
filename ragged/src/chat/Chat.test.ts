@@ -2,7 +2,7 @@ import { Chat } from ".";
 import { Tool } from "../tools";
 import fs from "fs";
 import { Message, UserMessage } from "./index.types";
-import { BaseChatAdapter } from "./provider/index.types";
+import { BaseChatAdapter } from "./adapter/index.types";
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { startPollyRecording } from "../../test/startPollyRecording";
 import { JsonParseError, ParameterValidationError } from "../support/CustomErrors";

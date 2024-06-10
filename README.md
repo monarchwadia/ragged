@@ -36,6 +36,11 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [How do agents work?](#how-do-agents-work)
     - [Incrementing Agent Example](#incrementing-agent-example)
     - [Multiple Agents Example](#multiple-agents-example)
+- [Development Instructions](#development-instructions)
+  - [Prerequisites](#prerequisites)
+  - [Understanding the folder structure](#understanding-the-folder-structure)
+    - [Main folder](#main-folder)
+    - [Supporting folders](#supporting-folders)
 
 ## Installation
 
@@ -559,3 +564,57 @@ await main();
 ### Multiple Agents Example
 
 Agents can get very complex, with multiple agents running at the same time. Here is an example of a simple chat application that uses multiple agents to generate a conversation: [examples/nodejs/agents-multiple.ts](examples/nodejs/agents-multiple.ts).
+
+------
+
+# Development Instructions
+
+These instructions will get you a copy of Ragged up and running on your local machine for development and testing purposes. If you are not working on Ragged's own source code, you can skip all documentation past this point.
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+## Prerequisites
+
+You will need to have Node.js installed on your machine. You can download it from the [official website](https://nodejs.org/), but we recommend using a version manager like `nvm` or `nodenv` to manage your Node.js installations.
+
+You will also need pnpm. Please see the [official website](https://pnpm.io/) for installation instructions.
+
+You will then have to clone the repository to your local machine.
+
+```bash
+# This will create a new directory called "ragged" in your current directory, and clone the repository into it.
+git clone git@github.com:monarchwadia/ragged.git
+```
+
+## Understanding the folder structure
+
+Ragged has a simple folder structure. Here is a brief overview of the folders and their contents.
+
+### Main folder
+
+- `ragged` contains the main codebase for Ragged. This is where you will find the source code for the library itself.
+
+Within the `ragged` folder, you will find the following files and folders:
+
+- `buildConfig` contains the configuration for the build process. We use esbuild to build the library. This folder contains the configuration for esbuild.
+- `recordings` contain Pollyjs recordings of various API calls. These recordings are used for testing and development. Do not modify these files directly. Instead, work with Pollyjs to record new interactions.
+- `src` contains the source code for Ragged. This is where you will find the main codebase for the library.
+- `src/chat` contains the code for the `Chat` class.
+- `src/chat/adapters` contains the code for the built-in adapters.
+
+
+### Supporting folders
+
+- `.github` contains GitHub Actions workflows that are used to automate the testing and deployment process. I.e. this is the CI/CD pipeline for deploying Ragged to `npm` and for deploying the documentation to GitHub Pages.
+- `.vscode` contains Visual Studio Code settings that are used to configure the editor for Ragged development. You can ignore this folder if you are not using Visual Studio Code.
+- `documentation` contains a Docusaurus project that is used to generate the documentation for Ragged. Currently, this is out of date and not deployed. We may delete this folder in the future, or we may update it and deploy it.
+- `examples` contains example code that demonstrates how to use Ragged. This is useful for testing and learning how to use Ragged. Please refer to the README in each examples folder for more information on how to run the examples.
+- `scratch` contains scratch files that are used for testing and debugging. These files are not part of the main codebase. They are used for quick testing and prototyping. You can ignore this folder if you are not familiar with it.
+- 
+
+Next, navigate to the project directory and install the dependencies.
+
+```bash
+cd ragged
+pnpm install
+```

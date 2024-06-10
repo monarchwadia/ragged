@@ -80,8 +80,8 @@ describe("ApiClient", () => {
       });
 
       it("should have the correct message", () => {
-        expect(caught?.message).toMatchInlineSnapshot(
-          `"Received a non-200 response from an API call."`
+        expect(caught?.message).toBe(
+          `Received a non-200 response from an API call. Status was ${status}.`
         );
       });
     });

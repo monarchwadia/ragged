@@ -14,7 +14,7 @@ describe("OpenAiChatAdapter", () => {
     apiClient = new ApiClient();
     spy = jest.spyOn(apiClient, "post");
     const config = {
-      // apiKey: process.env.OPENAI_API_KEY,
+      apiKey: process.env.OPENAI_API_KEY,
     };
     const driver = new OpenAiChatDriver(apiClient, config);
     adapter = new OpenAiChatAdapter(driver);
@@ -44,7 +44,7 @@ describe("OpenAiChatAdapter", () => {
     expect(response.history).toHaveLength(1);
     expect(response.history[0]).toMatchObject({
       type: "bot",
-      text: "Hello there! How can I assist you today?",
+      text: "Hello! How can I assist you today?",
     });
   });
 
@@ -91,7 +91,7 @@ describe("OpenAiChatAdapter", () => {
             "toolCalls": [
               {
                 "meta": {
-                  "toolRequestId": "call_SeP7XORPM3I9SWWDtbUaIW6r",
+                  "toolRequestId": "call_MhanXUgR5MD6pSGbsWi2D4Of",
                 },
                 "props": "{"query":"latest news"}",
                 "toolName": "todays-news",

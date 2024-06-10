@@ -2,9 +2,9 @@ import { ParameterValidationError, UnknownError } from "../support/CustomErrors"
 import { Logger } from "../support/logger/Logger";
 import { Tool } from "../tools";
 import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./index.types";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "./provider/index.types";
-import { provideOpenAiChatAdapter } from "./provider/openai";
-import { OpenAiChatDriverConfig } from "./provider/openai/driver";
+import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/index.types";
+import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdapter";
+import { OpenAiChatDriverConfig } from "./adapter/openai/driver";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
