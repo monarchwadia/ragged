@@ -41,6 +41,10 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
   - [Understanding the folder structure](#understanding-the-folder-structure)
     - [Main folder](#main-folder)
     - [Supporting folders](#supporting-folders)
+  - [Development Instructions](#development-instructions-1)
+  - [Manual Testing](#manual-testing)
+  - [PollyJS recordings](#pollyjs-recordings)
+    - [How to refresh PollyJS Recordings](#how-to-refresh-pollyjs-recordings)
 
 ## Installation
 
@@ -579,13 +583,6 @@ You will need to have Node.js installed on your machine. You can download it fro
 
 You will also need pnpm. Please see the [official website](https://pnpm.io/) for installation instructions.
 
-You will then have to clone the repository to your local machine.
-
-```bash
-# This will create a new directory called "ragged" in your current directory, and clone the repository into it.
-git clone git@github.com:monarchwadia/ragged.git
-```
-
 ## Understanding the folder structure
 
 Ragged has a simple folder structure. Here is a brief overview of the folders and their contents.
@@ -600,8 +597,12 @@ Within the `ragged` folder, you will find the following files and folders:
 - `recordings` contain Pollyjs recordings of various API calls. These recordings are used for testing and development. Do not modify these files directly. Instead, work with Pollyjs to record new interactions.
 - `src` contains the source code for Ragged. This is where you will find the main codebase for the library.
 - `src/chat` contains the code for the `Chat` class.
-- `src/chat/adapters` contains the code for the built-in adapters.
-
+- `src/chat/adapter` contains the code for the built-in adapters for the `Chat` class. These adapters are used to interact with the various LLM providers. You can add new adapters here if you want to support a new provider.
+- `src/public` is a folder that dynamically defines the public API for the ragged `npm` module (i.e. what you can import using `import * from "ragged/....."` ). The folder structure in `src/public` is mapped to `package.json`'s `exports` field, and is also mapped to `esbuild`'s `entryPoints` field. This is kind of neat and I don't know if this is a common pattern, but it works well for us.
+- `src/support` contains support code that is used by the main codebase. This includes the API client, custom errors, JSON parsing, logging, and other shared code.
+- `src/tools` contains the code for the `Tool` class, which enables tool calls in Ragged.
+- `/test` contains test utilities, used in `*.test.ts` files.
+- `.env.sample` is a sample `.env` file that you can use to set environment variables. Right now it only contains placeholders for various LLM API keys, and is mainly used in the unit tests to generate PollyJS recordings.
 
 ### Supporting folders
 
@@ -610,11 +611,88 @@ Within the `ragged` folder, you will find the following files and folders:
 - `documentation` contains a Docusaurus project that is used to generate the documentation for Ragged. Currently, this is out of date and not deployed. We may delete this folder in the future, or we may update it and deploy it.
 - `examples` contains example code that demonstrates how to use Ragged. This is useful for testing and learning how to use Ragged. Please refer to the README in each examples folder for more information on how to run the examples.
 - `scratch` contains scratch files that are used for testing and debugging. These files are not part of the main codebase. They are used for quick testing and prototyping. You can ignore this folder if you are not familiar with it.
-- 
 
-Next, navigate to the project directory and install the dependencies.
+## Development Instructions
+
+Development is easy. First, clone the repository to your local machine.
+
+You will then have to clone the repository to your local machine.
+
+```bash
+# This will create a new directory called "ragged" in your current directory, and clone the repository into it.
+git clone git@github.com:monarchwadia/ragged.git
+```
+
+Then, change into the `ragged` directory.
 
 ```bash
 cd ragged
-pnpm install
 ```
+
+Then, install all dependencies for all projects. In `pnpm` this is easy.
+
+
+```bash
+# -r is short for --recursive, which means the command is run in all projects.
+# Projects are defined in the `pnpm-workspace.yaml` file.
+pnpm -r install
+```
+
+Now that you have `pnpm` installed, you are mostly ready to go. You can enter TDD mode using the following command (or by setting it up on your IDE). 
+
+```bash
+# make sure youre in the /ragged subfolder
+cd ragged
+pnpm tdd
+```
+
+This will run the tests in watch mode. You can now make changes to the code and see the tests run automatically.
+
+If you want to run the tests once, you can use the following command.
+
+```bash
+# make sure youre in the /ragged subfolder
+cd ragged
+pnpm test
+```
+
+## Manual Testing
+
+To manually test your local build of Ragged without publishing it to `npm`, you can use the following command.
+
+```bash
+# make sure youre in the /ragged subfolder
+cd ragged
+pnpm build
+pnpm link --global
+```
+
+> [!IMPORTANT]  
+> It's absolutely necessary to rebuild the project after every code change that you want to test. This is because the `pnpm link --global` command creates a symlink to the build output, not to the source code. Thankfully it is not necessary to run `pnpm link --global` after every build. Usually this is not a problem because using Test-Driven Development, i.e. the `pnpm tdd` command, we know the outcome of our changes without building them. Therefore, we can build only when we want to test the changes manually.
+
+This will create a global symlink to your local build of Ragged. You can then use this build in other projects by running the following command in a project that uses Ragged:
+
+```bash
+pnpm link --global ragged
+```
+
+This will link the global Ragged build to your project. You can now use your local build of Ragged in your project.
+
+## PollyJS recordings
+
+PollyJS is a tool that we use to record and replay API interactions. This is useful for testing and development, as it allows us to test our code against real API responses without making actual API calls, and without having to worry about rate limits or other issues. It also removes the need to manually mock API responses, which can be time-consuming and error-prone.
+
+PollyJS recordings are stored in the `recordings` folder. Each recording is a JSON file that contains the request and response data for a single API interaction. The recordings are used by the unit tests to simulate API interactions. When the tests run, they check the recordings to see if there is a matching response for the request. If there is, the response is used. If there isn't, then the test makes a real API call and records the response.
+
+### How to refresh PollyJS Recordings
+
+First, make sure you have the `.env` file set up with the necessary API keys. You can copy the `.env.sample` file to `.env` and fill in the necessary API keys.
+
+If you want to refresh a specific PollyJS recording, then you'll have to pass `{ refresh: true }` to `startPollyRecordings` in the test file. This will cause the test to make a real API call and record the response, overwriting the existing recording.
+
+If you want to refresh ALL PollyJS recordings, you can set the `REFRESH_POLY_RECORDINGS` environment variable to `true` before running the tests. This will cause the tests to make real API calls and record the responses, overwriting any existing recordings.
+
+```bash
+REFRESH_POLY_RECORDINGS=true pnpm test
+```
+
