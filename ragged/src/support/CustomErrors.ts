@@ -36,6 +36,13 @@ export class FetchRequestFailedError extends BaseCustomError {
     }
 }
 
+export class FetchResponseNotOkError extends BaseCustomError {
+    constructor(public response: Response, public status: number) {
+        super("Received a non-200 response from an API call.");
+        this.name = "FetchResponseNotOkError";
+    }
+}
+
 export class MappingError extends BaseCustomError {
     constructor(message: string, public cause: unknown) {
         super(message);

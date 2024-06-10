@@ -2,7 +2,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  verbose: true,
+  // verbose: true,
   // Jest 29 doesn't support Prettier 3
   // See docs for more details. https://jestjs.io/docs/configuration/#prettierpath-string
   prettierPath: require.resolve('prettier-2'),
