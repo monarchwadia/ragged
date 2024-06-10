@@ -82,7 +82,7 @@ Nothing to it!
 ## Message History
 
 > [!TIP]
-> You can see an example of how to use the history functionality in the examples folder. [Click here](examples/nodejs/history.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example history.ts`.
+> You can see an example of how to use the history functionality in the examples folder. [Click here](examples/nodejs/history.ts) to see the example. This is a fully working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example history.ts`.
 
 By default, each instance of the `Chat` object records the history of the conversation. You can access the history of the conversation using the `.history` property.
 
@@ -120,6 +120,9 @@ You can also access the last message in the history using the `.at` method.
 console.log(c.history.at(-1)?.text); // A rickroll is a prank...
 ```
 
+> [!TIP]
+> The `.at` method is a native JavaScript array method that allows you to access elements in an array using negative indices. This is useful for accessing the last element in an array. The `.at()` method has been available in JavaScript since ES2022. [See MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at).
+
 ### Setting message history
 
 You can set the history by setting the `.history` property to an array of messages.
@@ -143,7 +146,7 @@ c.history = [];
 ## Freezing History
 
 > [!TIP]
-> You can see an example of how to use the freezing functionality in the examples folder. [Click here](examples/nodejs/frozen.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example frozen.ts`.
+> You can see an example of how to use the freezing functionality in the examples folder. [Click here](examples/nodejs/frozen.ts) to see the example. This is a fully working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example frozen.ts`.
 
 You can turn recording on and off by passing a boolean to the `.record` method. To turn recording off, pass `false`. We call this "freezing" the conversation. When the conversation is frozen, the history will not be updated with each call.
 
@@ -167,6 +170,9 @@ const response2 = await c.chat('What is my name?');
 ```
 
 ## Tool Calling
+
+> [!TIP]
+> You can see 2 examples of how to use the tool calling functionality in the examples folder. The [Fetch RSS Example](examples/nodejs/tool-calling-simple.ts) is a simple, single-tool example that shows how to give the LLM the ability to `fetch` the latest news from the BBC RSS feed. The [List Files](examples/nodejs/tool-calling-list-files.ts) example is a more complex example that shows how to use multiple tools in order to let the LLM read your local file system. These are fully working examples, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example tools.ts`.
 
 Ragged allows you to further extend its functionality using tools. This gives you the power to integrate custom behavior or commands directly into your chat-based application.
 
@@ -394,7 +400,7 @@ Here are some examples of how to create a new instance of the `Chat` class using
 #### Inline adapter
 
 > [!TIP]
-> You can see an example of how to use an inline adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-inline.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-inline.ts`.
+> You can see an example of how to use an inline adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-inline.ts) to see the example. This is a fully working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-inline.ts`.
 
 An inline adapter is a simple way to create a custom adapter. You can define the adapter inline when you create a new instance of the `Chat` class.
 
@@ -414,7 +420,7 @@ const c = new Chat({
 #### Object adapter
 
 > [!TIP]
-> You can see an example of how to use an object adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-object.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-object.ts`.
+> You can see an example of how to use an object adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-object.ts) to see the example. This is a fully working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-object.ts`.
 
 You could also create a custom adapter as an object and pass it to the constructor. This is useful if you want to store the adapter in a separate variable or if you want to reuse the adapter in multiple places.
 
@@ -435,7 +441,7 @@ const c = new Chat(adapter);
 #### Class adapter
 
 > [!TIP]
-> You can see an example of how to use an object adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-class.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-class.ts`.
+> You can see an example of how to use an object adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-class.ts) to see the example. This is a fully working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-class.ts`.
 
 You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
 
