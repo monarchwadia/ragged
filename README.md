@@ -618,8 +618,6 @@ Within the `ragged` folder, you will find the following files and folders:
 
 Ragged is currently in alpha. It is not yet ready for production use. We are actively working on it and will be releasing new features and improvements regularly.
 
-🟡
-
 | Feature                            | Is Working | API Frozen* | Notes                                                                                   |
 | ---------------------------------- | ---------- | ----------- | --------------------------------------------------------------------------------------- |
 | Chat Completion                    | 🟢 100%     | ❌           |                                                                                         |
