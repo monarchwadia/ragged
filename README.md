@@ -688,7 +688,11 @@ PollyJS recordings are stored in the `recordings` folder. Each recording is a JS
 
 First, make sure you have the `.env` file set up with the necessary API keys. You can copy the `.env.sample` file to `.env` and fill in the necessary API keys.
 
-If you want to refresh a specific PollyJS recording, then you'll have to pass `{ refresh: true }` to `startPollyRecordings` in the test file. This will cause the test to make a real API call and record the response, overwriting the existing recording.
+If you want to refresh a specific PollyJS recording, then you'll have to pass `{ refresh: true }` to `startPollyRecording` in the test file. This will cause the test to make a real API call and record the response, overwriting the existing recording.
+
+```bash
+    const polly = startPollyRecording("name of the test", { refresh: true });
+```
 
 If you want to refresh ALL PollyJS recordings, you can set the `REFRESH_POLY_RECORDINGS` environment variable to `true` before running the tests. This will cause the tests to make real API calls and record the responses, overwriting any existing recordings.
 
