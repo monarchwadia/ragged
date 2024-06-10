@@ -13,8 +13,6 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
   - [What is this?](#what-is-this)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
-  - [Feature Roadmap](#feature-roadmap)
-    - [Providers and Models](#providers-and-models)
   - [Simple chat](#simple-chat)
   - [Message History](#message-history)
     - [History is immutable](#history-is-immutable)
@@ -43,6 +41,8 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
   - [Manual Testing](#manual-testing)
   - [PollyJS recordings](#pollyjs-recordings)
     - [How to refresh PollyJS Recordings](#how-to-refresh-pollyjs-recordings)
+  - [Feature Roadmap](#feature-roadmap)
+    - [Providers and Models](#providers-and-models)
 
 ## Installation
 
@@ -57,52 +57,7 @@ pnpm install ragged
 yarn install ragged
 ```
 
-That's it.
-
-## Feature Roadmap
-
-Ragged is currently in alpha. It is not yet ready for production use. We are actively working on it and will be releasing new features and improvements regularly.
-
-🟡
-
-| Feature                            | Is Working | API Frozen* | Notes                                                                                   |
-| ---------------------------------- | ---------- | ----------- | --------------------------------------------------------------------------------------- |
-| Chat Completion                    | 🟢 100%     | ❌           |                                                                                         |
-| In-built Message History           | 🟢 100%     | ❌           |                                                                                         |
-| Write your own custom LLM adapters | 🟢 100%     | ❌           |                                                                                         |
-| Tool Calling                       | 🟢 100%     | ❌           |                                                                                         |
-| Autonomous Agents                  | 🟢 100%     | ❌           |                                                                                         |
-| Message History                    | 🟢 100%     | ❌           |                                                                                         |
-| Helpful Errors                     | 🟡 30%      | ❌           |                                                                                         |
-| Streaming                          | 🔴 0%       | ❌           |                                                                                         |
-| Embeddings Generation              | 🔴 0%       | ❌           |                                                                                         |
-| Image Input                        | 🔴 0%       | ❌           |                                                                                         |
-| Video Input                        | 🔴 0%       | ❌           |                                                                                         |
-| File Input                         | 🔴 0%       | ❌           | If your file is human-readable (XML, JSON, etc) then you can include it in your prompt. |
-| Image Generation                   | 🔴 0%       | ❌           |                                                                                         |
-| Video Generation                   | 🔴 0%       | ❌           |                                                                                         |
-| Model Fine-Tuning                  | 🔴 0%       | ❌           |                                                                                         |
-
-\* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
-
-### Providers and Models
-
-The following table lists the providers and models that Ragged supports.
-
-| Provider      | Models                  | Is Working |
-| ------------- | ----------------------- | ---------- |
-| OpenAI        | GPT: 4o, 4T, 4, 3.5     | ✅          |
-| Azure OpenAI  | GPT: 4, 4T, 3.5         | ❌          |
-| Together      | Several OSS Models      | ❌          |
-| Cohere        | CommandR, Command       | ❌          |
-| Anthropic     | Claude 2, Claude 3      | ❌          |
-| Mistral       | 7B, 8x7B, S, M & L      | ❌          |
-| Groq          | Lama2-70B, Mixtral-8x7b | ❌          |
-| DeepSeek      | Chat and Code           | ❌          |
-| Ollama        | All models              | ❌          |
-| Google Gemini | Gemini: Flash, Pro      | ❌          |
-| Hugging Face  | OSS Model               | ❌          |
-
+That's it. You're ready to go!
 
 ## Simple chat
 
@@ -126,7 +81,7 @@ Nothing to it!
 
 ## Message History
 
-> [!TIP] See a Working Example
+> [!TIP]
 > You can see an example of how to use the history functionality in the examples folder. [Click here](examples/nodejs/history.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example history.ts`.
 
 By default, each instance of the `Chat` object records the history of the conversation. You can access the history of the conversation using the `.history` property.
@@ -187,7 +142,7 @@ c.history = [];
 
 ## Freezing History
 
-> [!TIP] See a Working Example
+> [!TIP]
 > You can see an example of how to use the freezing functionality in the examples folder. [Click here](examples/nodejs/frozen.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example frozen.ts`.
 
 You can turn recording on and off by passing a boolean to the `.record` method. To turn recording off, pass `false`. We call this "freezing" the conversation. When the conversation is frozen, the history will not be updated with each call.
@@ -438,7 +393,7 @@ Here are some examples of how to create a new instance of the `Chat` class using
 
 #### Inline adapter
 
-> [!TIP] See a Working Example
+> [!TIP]
 > You can see an example of how to use an inline adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-inline.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-inline.ts`.
 
 An inline adapter is a simple way to create a custom adapter. You can define the adapter inline when you create a new instance of the `Chat` class.
@@ -458,7 +413,7 @@ const c = new Chat({
 
 #### Object adapter
 
-> [!TIP] See a Working Example
+> [!TIP]
 > You can see an example of how to use an object adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-object.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-object.ts`.
 
 You could also create a custom adapter as an object and pass it to the constructor. This is useful if you want to store the adapter in a separate variable or if you want to reuse the adapter in multiple places.
@@ -479,7 +434,7 @@ const c = new Chat(adapter);
 
 #### Class adapter
 
-> [!TIP] See a Working Example
+> [!TIP]
 > You can see an example of how to use an object adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-class.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-class.ts`.
 
 You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
@@ -628,3 +583,47 @@ If you want to refresh ALL PollyJS recordings, you can set the `REFRESH_POLY_REC
 REFRESH_POLY_RECORDINGS=true pnpm test
 ```
 
+
+## Feature Roadmap
+
+Ragged is currently in alpha. It is not yet ready for production use. We are actively working on it and will be releasing new features and improvements regularly.
+
+🟡
+
+| Feature                            | Is Working | API Frozen* | Notes                                                                                   |
+| ---------------------------------- | ---------- | ----------- | --------------------------------------------------------------------------------------- |
+| Chat Completion                    | 🟢 100%     | ❌           |                                                                                         |
+| In-built Message History           | 🟢 100%     | ❌           |                                                                                         |
+| Write your own custom LLM adapters | 🟢 100%     | ❌           |                                                                                         |
+| Tool Calling                       | 🟢 100%     | ❌           |                                                                                         |
+| Autonomous Agents                  | 🟢 100%     | ❌           |                                                                                         |
+| Message History                    | 🟢 100%     | ❌           |                                                                                         |
+| Helpful Errors                     | 🟡 30%      | ❌           |                                                                                         |
+| Streaming                          | 🔴 0%       | ❌           |                                                                                         |
+| Embeddings Generation              | 🔴 0%       | ❌           |                                                                                         |
+| Image Input                        | 🔴 0%       | ❌           |                                                                                         |
+| Video Input                        | 🔴 0%       | ❌           |                                                                                         |
+| File Input                         | 🔴 0%       | ❌           | If your file is human-readable (XML, JSON, etc) then you can include it in your prompt. |
+| Image Generation                   | 🔴 0%       | ❌           |                                                                                         |
+| Video Generation                   | 🔴 0%       | ❌           |                                                                                         |
+| Model Fine-Tuning                  | 🔴 0%       | ❌           |                                                                                         |
+
+\* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
+
+### Providers and Models
+
+The following table lists the providers and models that Ragged supports.
+
+| Provider      | Models                  | Is Working |
+| ------------- | ----------------------- | ---------- |
+| OpenAI        | GPT: 4o, 4T, 4, 3.5     | ✅          |
+| Azure OpenAI  | GPT: 4, 4T, 3.5         | ❌          |
+| Together      | Several OSS Models      | ❌          |
+| Cohere        | CommandR, Command       | ❌          |
+| Anthropic     | Claude 2, Claude 3      | ❌          |
+| Mistral       | 7B, 8x7B, S, M & L      | ❌          |
+| Groq          | Lama2-70B, Mixtral-8x7b | ❌          |
+| DeepSeek      | Chat and Code           | ❌          |
+| Ollama        | All models              | ❌          |
+| Google Gemini | Gemini: Flash, Pro      | ❌          |
+| Hugging Face  | OSS Model               | ❌          |
