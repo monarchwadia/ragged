@@ -19,6 +19,13 @@ export class JsonParseError extends BaseCustomError {
     }
 }
 
+export class JsonStringifyError extends BaseCustomError {
+    constructor(message: string, public cause: unknown) {
+        super(message);
+        this.name = "JsonStringifyError";
+    }
+}
+
 /**
  * Throw when a request fails with a non-2xx status code.
  */
