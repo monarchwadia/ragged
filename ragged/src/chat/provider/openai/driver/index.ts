@@ -33,10 +33,8 @@ export class OpenAiChatDriver {
         this.config = { ...buildDefaultConfig(), ...config };
     }
 
-    async chatCompletion(requestBody: OpenAiChatCompletionRequestBody): Promise<OpenAiChatCompletionResponseBody> {
-        const body = ApiJsonHandler.stringify(requestBody);
-
-        const response = await this.driverApiClient.post(
+    async chatCompletion(body: OpenAiChatCompletionRequestBody): Promise<OpenAiChatCompletionResponseBody> {
+        return await this.driverApiClient.post(
             this.config.rootUrl,
             {
                 headers: {
@@ -46,7 +44,5 @@ export class OpenAiChatDriver {
                 body
             }
         )
-
-        return ApiJsonHandler.parseResponse(response);
     }
 }

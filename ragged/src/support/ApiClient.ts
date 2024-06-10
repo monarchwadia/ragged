@@ -1,5 +1,6 @@
 import { ApiJsonHandler } from "./ApiJsonHandler";
 import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors";
+import { Logger } from "./logger/Logger";
 
 /**
  * This class is passed into each driver to allow the driver to make API calls.
@@ -11,7 +12,9 @@ type PostOpts = {
     body?: any;
 }
 export class ApiClient {
-    async post(url: string, request: PostOpts) {
+    static logger: Logger = new Logger('ApiClient');
+
+    async post(url: string, request: PostOpts): Promise<any> {
         let requestInit: RequestInit = {}
 
         requestInit.method = "POST";
@@ -31,10 +34,10 @@ export class ApiClient {
             throw new FetchRequestFailedError("Failed to make fetch call.", e);
         }
 
-        if (response.status < 200 || response.status >= 300) {
+        if (!response.ok) {
             throw new FetchResponseNotOkError(response, response.status);
         }
 
-        return response;
+        return ApiJsonHandler.parseResponse(response);
     }
 }

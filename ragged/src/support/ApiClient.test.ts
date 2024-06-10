@@ -1,18 +1,7 @@
+import { before } from "node:test";
 import { ApiClient } from "./ApiClient";
 import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors";
-
-const toReadableStream = (obj: any) => {
-  const json = JSON.stringify(obj);
-  const uint8Array = new TextEncoder().encode(json); // Convert string to Uint8Array
-  // create a new readable stream from a Uint8Array
-  const stream = new ReadableStream({
-    start(controller) {
-      controller.enqueue(uint8Array);
-      controller.close();
-    },
-  });
-  return stream;
-};
+import { objToReadableStream } from "../../test/objectToReadableStream";
 
 describe("ApiClient", () => {
   describe("post", () => {
@@ -34,19 +23,18 @@ describe("ApiClient", () => {
       fetchMock.mockImplementationOnce(() =>
         Promise.resolve(
           new Response(
-            toReadableStream({
+            objToReadableStream({
               some: "response",
             })
           )
         )
       );
 
-      const response = await new ApiClient().post("https://example.com", {
+      const json = await new ApiClient().post("https://example.com", {
         body: {
           some: "request",
         },
       });
-      const json = await response.json();
 
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(fetchMock).toHaveBeenCalledWith("https://example.com", {
@@ -61,14 +49,14 @@ describe("ApiClient", () => {
       `);
     });
 
-    describe("non-200 status code error", () => {
-      let caught: FetchResponseNotOkError | null = null;
 
+    describe.each([300, 301, 400, 401, 404, 500, 503, 504])("Status code %s", (status) => {
+      let caught: FetchResponseNotOkError | null = null;
       beforeEach(async () => {
         fetchMock.mockImplementationOnce(() =>
           Promise.resolve(
             new Response(null, {
-              status: 500,
+              status,
             })
           )
         );
@@ -82,14 +70,13 @@ describe("ApiClient", () => {
         } catch (e) {
           caught = e as FetchResponseNotOkError;
         }
-      });
-
+      })
       it("should have thrown an instance of FetchResponseNotOkError", () => {
         expect(caught instanceof FetchResponseNotOkError).toBe(true);
       });
 
       it("should have the correct status code", () => {
-        expect(caught?.response.status).toBe(500);
+        expect(caught?.response?.status).toBe(status);
       });
 
       it("should have the correct message", () => {
@@ -98,6 +85,8 @@ describe("ApiClient", () => {
         );
       });
     });
+
+
 
     describe("fetch request failed altogether error", () => {
       beforeEach(async () => {

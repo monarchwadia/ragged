@@ -9,7 +9,6 @@ export class ApiJsonHandler {
             return JSON.parse(json);
         } catch (e) {
             const err = new JsonParseError("Failed to parse JSON.", e);
-            this.logger.error(err);
             throw err;
         }
     }
@@ -19,7 +18,6 @@ export class ApiJsonHandler {
             return JSON.stringify(obj);
         } catch (e) {
             const err = new JsonStringifyError("Failed to stringify JSON.", e);
-            this.logger.error(err);
             throw err;
         }
     }
@@ -30,7 +28,6 @@ export class ApiJsonHandler {
             return ApiJsonHandler.parse(text);
         } catch (e) {
             const err = new JsonParseError("Failed to parse JSON response.", e);
-            this.logger.error(err);
             throw err;
         }
     }

@@ -1,8 +1,10 @@
 import { startPollyRecording } from "../../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
 import { OpenAiChatDriver } from ".";
+import { objToReadableStream } from "../../../../../test/objectToReadableStream";
 
 describe("OpenAiChatDriver", () => {
+  let apiClient: ApiClient;
   let driver: OpenAiChatDriver;
 
   beforeEach(() => {
@@ -10,11 +12,29 @@ describe("OpenAiChatDriver", () => {
       // apiKey: process.env.OPENAI_API_KEY,
     };
 
-    const driverApiClient = new ApiClient();
-    driver = new OpenAiChatDriver(driverApiClient, config);
+    apiClient = new ApiClient();
+    driver = new OpenAiChatDriver(apiClient, config);
   });
 
-  afterEach(() => { });
+  afterEach(() => { jest.clearAllMocks() });
+
+  it("should pass the body directly into the apiclient", () => {
+    const spy = jest.spyOn(apiClient, "post").mockImplementation(() => Promise.resolve(new Response(objToReadableStream("{}"))));
+
+    driver.chatCompletion({ model: "gpt-3.5-turbo", messages: [] });
+
+    expect(spy).toHaveBeenCalledWith(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer undefined`,
+        },
+        body: { "model": "gpt-3.5-turbo", "messages": [] },
+      }
+    );
+
+  })
 
   it("should perform a chat completion", async () => {
     const polly = startPollyRecording(
