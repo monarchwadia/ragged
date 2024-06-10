@@ -1,5 +1,5 @@
 import { ApiClient } from "./ApiClient";
-import { FetchResponseNotOkError } from "./CustomErrors";
+import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors";
 
 const toReadableStream = (obj: any) => {
   const json = JSON.stringify(obj);
@@ -97,6 +97,30 @@ describe("ApiClient", () => {
           `"Received a non-200 response from an API call."`
         );
       });
-    })
+    });
+
+    describe("fetch request failed altogether error", () => {
+      beforeEach(async () => {
+        fetchMock.mockImplementationOnce(() =>
+          Promise.reject(new Error("Fetch will throw this error"))
+        );
+      });
+
+      it("should throw an instance of FetchRequestFailedError", async () => {
+        let err: FetchRequestFailedError | null = null;
+
+        try {
+          await new ApiClient().post("https://example.com", {
+            body: {
+              some: "request",
+            },
+          });
+        } catch (e) {
+          err = e as FetchRequestFailedError;
+        }
+
+        expect(err instanceof FetchRequestFailedError).toBe(true);
+      });
+    });
   });
 });

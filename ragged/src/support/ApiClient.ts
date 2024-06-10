@@ -1,5 +1,5 @@
 import { ApiJsonHandler } from "./ApiJsonHandler";
-import { FetchResponseNotOkError } from "./CustomErrors";
+import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors";
 
 /**
  * This class is passed into each driver to allow the driver to make API calls.
@@ -24,9 +24,14 @@ export class ApiClient {
             requestInit.body = ApiJsonHandler.stringify(request.body)
         }
 
-        const response = await fetch(url, requestInit);
+        let response: Response | null = null;
+        try {
+            response = await fetch(url, requestInit);
+        } catch (e) {
+            throw new FetchRequestFailedError("Failed to make fetch call.", e);
+        }
 
-        if (!response.ok) {
+        if (response.status < 200 || response.status >= 300) {
             throw new FetchResponseNotOkError(response, response.status);
         }
 

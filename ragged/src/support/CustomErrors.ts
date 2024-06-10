@@ -30,7 +30,7 @@ export class JsonStringifyError extends BaseCustomError {
  * Throw when a request fails with a non-2xx status code.
  */
 export class FetchRequestFailedError extends BaseCustomError {
-    constructor(message: string) {
+    constructor(message: string, public cause: unknown) {
         super(message);
         this.name = "FetchRequestFailedError";
     }
