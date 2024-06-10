@@ -16,19 +16,11 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
   - [Feature Roadmap](#feature-roadmap)
     - [Providers and Models](#providers-and-models)
   - [Simple chat](#simple-chat)
-  - [Automatic Message History](#automatic-message-history)
-  - [Manually-managed Message history](#manually-managed-message-history)
-    - [Accessing message history](#accessing-message-history)
+  - [Message History](#message-history)
     - [History is immutable](#history-is-immutable)
+    - [Accessing message history](#accessing-message-history)
     - [Setting message history](#setting-message-history)
-  - [Prompt freezing](#prompt-freezing)
-  - [API](#api)
-    - [`Chat.with(name, options)`](#chatwithname-options)
-    - [`Chat.with('openai')`](#chatwithopenai)
-    - [`new Chat(adapter)` and custom adapters](#new-chatadapter-and-custom-adapters)
-      - [Inline adapter](#inline-adapter)
-      - [Object adapter](#object-adapter)
-      - [Class adapter](#class-adapter)
+  - [Freezing History](#freezing-history)
   - [Tool Calling](#tool-calling)
   - [Using Tools to fetch and display the contents of a URL](#using-tools-to-fetch-and-display-the-contents-of-a-url)
   - [Autonomous Agents](#autonomous-agents)
@@ -36,6 +28,12 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [How do agents work?](#how-do-agents-work)
     - [Incrementing Agent Example](#incrementing-agent-example)
     - [Multiple Agents Example](#multiple-agents-example)
+  - [Custom LLM Adapters](#custom-llm-adapters)
+    - [Rules for custom adapters](#rules-for-custom-adapters)
+    - [Examples of custom adapters](#examples-of-custom-adapters)
+      - [Inline adapter](#inline-adapter)
+      - [Object adapter](#object-adapter)
+      - [Class adapter](#class-adapter)
 - [Development Instructions](#development-instructions)
   - [Prerequisites](#prerequisites)
   - [Understanding the folder structure](#understanding-the-folder-structure)
@@ -111,11 +109,6 @@ The following table lists the providers and models that Ragged supports.
 Ragged is very easy to use. Here is a complete application that shows chat completion.
 
 ```ts
-// configure dotenv to load environment variables from a .env file into process.env
-import { config } from 'dotenv';
-config();
-
-// import the Chat class from the ragged/chat module
 import { Chat } from "ragged/chat"
 
 // create a new Chat instance with the OpenAI provider
@@ -124,55 +117,39 @@ const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
 // chat with the model
 const messages = await c.chat('What is a rickroll?');
 
-// log the messages
-const lastText = messages.at(-1)?.text; // this is just vanilla JavaScript to get the last message
-console.log(lastText); // A rickroll is a prank...
+// messages.at(-1) is a native JS array method for the last element
+console.log(messages.at(-1)?.text); // A rickroll is a prank...
 ```
 
+Nothing to it!
 
-## Automatic Message History
 
-By default, each instance of the `Chat` object records the history of the conversation. 
+## Message History
 
-This is useful when you want to keep track of the conversation history and use it later. You can turn recording on and off by passing a boolean to the `.record` method.
+> [!TIP] See a Working Example
+> You can see an example of how to use the history functionality in the examples folder. [Click here](examples/nodejs/history.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example history.ts`.
+
+By default, each instance of the `Chat` object records the history of the conversation. You can access the history of the conversation using the `.history` property.
 
 ```ts
-// Recording is on by default. Here is how you can turn it off.
-c.record(false);
+console.log(c.history);
 ```
 
-Here's a basic example of how to use the history functionality. You can access the history of the conversation using the `.history` property.
+This array gets updated with each call to the `chat` method. It is immutable, and a new copy of the history array is created on write as well as on read.
+
+Because history is immutable, you can create a new instance of it by just assigning `c.history` to a new array.
 
 ```ts
-import { config } from 'dotenv';
-config();
-
-import { Chat } from "ragged/chat"
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
-
-// By default, recording is already turned on
-// Doing this line just to demonstrate the API
-c.record(true);
-
-const response = await c.chat('What is a rickroll?');
-
-// you can get the last message from the response
-console.log(response.at(-1)?.text); // A rickroll is a prank...
-// or, alternatively, you can access the response directly from the chat instance
-console.log(c.history.at(-1)?.text); // A rickroll is a prank...
-
-// continue the conversation
-await c.chat('Where did it originate?');
-console.log(c.history.at(-1)?.text); // The Rickroll meme originated in the...
-await c.chat('What is the purpose?');
-console.log(c.history.at(-1)?.text); // The purpose of a rickroll is to...
+// create a new instance of the history array
+// (we are using TS getters under the hood...)
+const history = c.history;
 ```
 
-This will cause Ragged to record the conversation history. 
+### History is immutable
 
-## Manually-managed Message history
+Note that all message history is immutable. A new copy of the history array is created on write as well as on read. 
 
-Instead of using recorded message history, it is possible to manage message history manually. 
+Don't modify the history directly. Instead, set the `.history` property to a new array.
 
 ### Accessing message history
 
@@ -187,12 +164,6 @@ You can also access the last message in the history using the `.at` method.
 ```ts
 console.log(c.history.at(-1)?.text); // A rickroll is a prank...
 ```
-
-### History is immutable
-
-Note that all message history is immutable. A new copy of the history array is created on write as well as on read. 
-
-Don't try to modify the history directly. Instead, set the `.history` property to a new array.
 
 ### Setting message history
 
@@ -211,158 +182,34 @@ You can clear the history by setting the `.history` property to an empty array.
 c.history = [];
 ```
 
-## Prompt freezing
+> [!WARNING]
+> Never modify elements inside the history object directly. Always set the `.history` property to a new array. This prevents unexpected behavior and makes the code more predictable.
 
-Sometimes, you may want to freeze a conversation. This is useful when you want to create multiple responses to a single prompt. You can freeze the recording by passing a `false` to the `.record` method. Then, you can prompt the model multiple times. Each time, the model will respond as if it were the first time, and the history will not be updated with each call.
+## Freezing History
+
+> [!TIP] See a Working Example
+> You can see an example of how to use the freezing functionality in the examples folder. [Click here](examples/nodejs/frozen.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example frozen.ts`.
+
+You can turn recording on and off by passing a boolean to the `.record` method. To turn recording off, pass `false`. We call this "freezing" the conversation. When the conversation is frozen, the history will not be updated with each call.
 
 ```ts
-import { config } from 'dotenv';
-config();
+// Recording is on by default. Here is how you can turn it off.
+c.record(false);
+```
 
-import { Chat } from "ragged/chat"
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+This is useful when you want to create multiple responses to a single prompt. Then, you can prompt the model multiple times. Each time, the model will respond as if it were the first time, and the history will not be updated with each call.
 
-c.record(true);
-
-const response = await c.chat('Write a 4-step framework that can be used to provide insights into a snippet of code.');
-console.log(response.at(-1)?.text); // 1. Provide a summary. By providing....
-
-// freeze the history
+```ts
+// Turn off history
 c.record(false);
 
-// continue the conversation, always using the same prompt
+// Chat with the model
+const response1 = await c.chat('Remember that my name is "John."'); 
+// Response: Okay! I will remember that your name is "John."
 
-const analysis1 = await c.chat('Analyze this code snippet using the framework: `const x = 5;`');
-console.log(analysis1.at(-1)?.text); // 1. Summary: This code snippet declares a variable called...
-
-const analysis2 = await c.chat('Analyze this code snippet using the framework: `for (let i = 0; i < 5; i++) { console.log(i); }`');
-console.log(analysis2.at(-1)?.text); // 1. Summary: This code snippet is a for loop that iterates...
+const response2 = await c.chat('What is my name?');
+// Response: I do not know your name. Please tell me.
 ```
-
-## API
-
-### `Chat.with(name, options)`
-
-The `Chat.with()` method is used to create a new instance of the `Chat` class with any one of several built-in adapters. (NOTE: right now, we only support openai). It takes two arguments: the provider name and the provider options. The provider name is a string that specifies the provider to use. The provider options is an object that contains the options for the provider.
-
-Under the hood, the `Chat.with()` method creates a new instance of the `Chat` class and passes the adapter to the constructor. See the `new Chat(adapter)` section for more information.
-
-```ts
-// Create an instance of the Chat class with the OpenAI provider
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
-```
-
-### `Chat.with('openai')`
-
-The `Chat.with('openai')` method is a shorthand for creating a new instance of the `Chat` class with the OpenAI provider. Its configuration allows you to pass the OpenAI API key as an environment variable.
-
-Note that, unlike the official OpenAI client, `Chat` does not read the environment variable directly. You must pass the API key as an option. We consider this a feature, not a bug, because it reduces surprises and makes the code more predictable.
-
-```ts
-const c = Chat.with('openai', {
-    // The API key is optional, but calls will fail without it
-    apiKey: process.env.OPENAI_API_KEY,
-    // The root URL is optional and defaults to the OpenAI API URL
-    // You can set this to a different URL if you are using a proxy
-    // This also comes in handy for Ollama, LM Studio and other OpenAI API-compatible services
-    rootUrl: 'https://api.openai.com/v1',
-});
-```
-
-
-### `new Chat(adapter)` and custom adapters
-
-This is the constructor for the `Chat` class. It takes an adapter as an argument. The adapter is an object that contains the methods and properties that the `Chat` class uses to interact with the model.
-
-Using this constructor directly allows you to use your own custom adapters with the `Chat` class. This is useful if you want to use a different model or if you want to use a different API that is not supported by the built-in adapters. It is also useful if you want to mock the adapter for testing purposes.
-
-#### Inline adapter
-
-```ts
-
-import { Chat } from "ragged/chat"
-import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
-
-const countingAdapter: BaseChatAdapter = {
-    chat: async (request: ChatRequest): Promise<ChatResponse> => {
-        let totalCharacters = 0;
-
-        for (const message of request.history) {
-            totalCharacters += message.text.length;
-        }
-
-        return {
-            history: [
-                { type: "bot", text: "Your request had a total of " + totalCharacters + " characters in it." }
-            ]
-        };
-    }
-}
-
-const count = new Chat(countingAdapter);
-
-const countResponse = await count.chat("This is a test message.");
-console.log(countResponse.at(-1)?.text); // Your request had a total of 23 characters in it.
-
-```
-
-#### Object adapter
-
-You could also create a custom adapter as an object and pass it to the constructor. This is useful if you want to store the adapter in a separate variable or if you want to reuse the adapter in multiple places.
-
-```ts
-import { Chat } from "ragged/chat"
-
-// You can also put your adapter in a separate variable, like so:
-
-const countingAdapter: BaseChatAdapter = {
-    chat: async (request: ChatRequest): Promise<ChatResponse> => {
-        const totalCharacters = request.history.reduce((acc, message) => acc + message.text.length, 0);
-        return {
-            history: [
-                { type: "bot", text: "Your request had a total of " + totalCharacters + " characters in it." }
-            ]
-        };
-    }
-}
-
-const countResponse = await count.chat("This is a test message.");
-console.log(countResponse.at(-1)?.text); // Your request had a total of 23 characters in it.
-```
-
-#### Class adapter
-
-You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
-
-```ts
-
-import { Chat } from "ragged/chat"
-import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
-
-class AppendingAdapter implements BaseChatAdapter {
-    constructor(private history: string = "") { }
-
-    async chat(request: ChatRequest): Promise<ChatResponse> {
-
-        this.history += "\n" + request.history.map(message => message.text).join("n");
-
-        return {
-            history: [
-                { type: "bot", text: this.history }
-            ]
-        };
-    }
-}
-
-const appending = new Chat(new AppendingAdapter("This is the start of the file."));
-
-const appendResponse = await appending.chat("Hello, world!");
-console.log(appendResponse.at(-1)?.text); // This is the start of the file.\nHello, world!
-const appendResponse2 = await appending.chat("This is a test message.");
-console.log(appendResponse2.at(-1)?.text); // This is the start of the file.\nHello, world!\nThis is a test message.
-```
-
----
 
 ## Tool Calling
 
@@ -570,6 +417,87 @@ await main();
 Agents can get very complex, with multiple agents running at the same time. Here is an example of a simple chat application that uses multiple agents to generate a conversation: [examples/nodejs/agents-multiple.ts](examples/nodejs/agents-multiple.ts).
 
 ------
+
+## Custom LLM Adapters
+
+Usually, we would use `Chat.with` to create a new instance of the `Chat` class. This is the easiest way to create a new instance of the `Chat` class, as it automatically selects the correct adapter based on the provider name.
+
+However, you can also create a new instance of the `Chat` class using the constructor directly. This allows you to use your own custom adapters with the `Chat` class. This is useful if you want to use a different model or if you want to use a different API that is not supported by the built-in adapters. It is also useful if you want to mock the adapter for testing purposes.
+
+### Rules for custom adapters
+
+Custom adapters must implement the `BaseChatAdapter` interface. This interface defines the `chat` method, which is used to interact with the LLM provider. 
+
+The `chat` method takes a `ChatRequest` object as input and returns a `ChatResponse` object as output.
+
+You do not need to manage history or state in your custom adapter. The `Chat` class will handle that for you. You just need to return the latest messages from the LLM in the return object of the `chat` method.
+
+### Examples of custom adapters
+
+Here are some examples of how to create a new instance of the `Chat` class using the constructor and custom adapters.
+
+#### Inline adapter
+
+> [!TIP] See a Working Example
+> You can see an example of how to use an inline adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-inline.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-inline.ts`.
+
+An inline adapter is a simple way to create a custom adapter. You can define the adapter inline when you create a new instance of the `Chat` class.
+
+```ts
+import { Chat } from "ragged/chat"
+import type { ChatRequest, ChatResponse } from "ragged/chat/adapter"
+
+const c = new Chat({
+    chat: async (request: ChatRequest): Promise<ChatResponse> => {
+        // Make your API calls here, then return the mapped response.
+        return { history: [] };
+    });
+})
+
+```
+
+#### Object adapter
+
+> [!TIP] See a Working Example
+> You can see an example of how to use an object adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-object.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-object.ts`.
+
+You could also create a custom adapter as an object and pass it to the constructor. This is useful if you want to store the adapter in a separate variable or if you want to reuse the adapter in multiple places.
+
+```ts
+import { Chat } from "ragged/chat"
+import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+
+const adapter: BaseChatAdapter = {
+    chat: async (request: ChatRequest): Promise<ChatResponse> => {
+        // Make your API calls here, then return the mapped response.
+        return { history: [] };
+    }
+}
+
+const c = new Chat(adapter);
+```
+
+#### Class adapter
+
+> [!TIP] See a Working Example
+> You can see an example of how to use an object adapter in the examples folder. [Click here](examples/nodejs/custom-adapter-class.ts) to see the example. This is a working example, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example custom-adapter-class.ts`.
+
+You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
+
+```ts
+
+import { Chat } from "ragged/chat"
+import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+
+class ExampleAdapter implements BaseChatAdapter {
+    async chat(request: ChatRequest): Promise<ChatResponse> {
+        // Make your API calls here, then return the mapped response.
+        return { history: [] };
+    }
+}
+
+const c = new Chat(new ExampleAdapter());
+```
 
 # Development Instructions
 
