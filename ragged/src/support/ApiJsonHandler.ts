@@ -23,4 +23,15 @@ export class ApiJsonHandler {
             throw err;
         }
     }
+
+    static async parseResponse(response: Response): Promise<any> {
+        try {
+            const text = await response.text();
+            return ApiJsonHandler.parse(text);
+        } catch (e) {
+            const err = new JsonParseError("Failed to parse JSON response.", e);
+            this.logger.error(err);
+            throw err;
+        }
+    }
 }

@@ -2,6 +2,7 @@ import { Logger } from "../../../../support/logger/Logger";
 import { ApiClient } from "../../../../support/ApiClient";
 import { JsonParseError, FetchRequestFailedError } from "../../../../support/CustomErrors";
 import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody as OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
+import { ApiJsonHandler } from "../../../../support/ApiJsonHandler";
 
 // ============ types ============
 
@@ -33,15 +34,7 @@ export class OpenAiChatDriver {
     }
 
     async chatCompletion(requestBody: OpenAiChatCompletionRequestBody): Promise<OpenAiChatCompletionResponseBody> {
-        let body: string;
-
-        try {
-            body = JSON.stringify(requestBody);
-        } catch (e) {
-            const message = "Failed to stringify request JSON for OpenAI API.";
-            this.logger.error(message, e);
-            throw new JsonParseError(message, e);
-        }
+        const body = ApiJsonHandler.stringify(requestBody);
 
         const response = await this.driverApiClient.post(
             this.config.rootUrl,
@@ -71,15 +64,6 @@ export class OpenAiChatDriver {
             throw err;
         }
 
-        let json: any;
-        try {
-            json = response.json();
-        } catch (e) {
-            const err = new JsonParseError("Failed to parse response JSON from OpenAI API.", e);
-            this.logger.error(err);
-            throw err;
-        }
-
-        return json;
+        return ApiJsonHandler.parseResponse(response);
     }
 }

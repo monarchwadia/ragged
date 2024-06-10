@@ -10,7 +10,6 @@ export class CohereChatAdapter implements BaseChatAdapter {
     constructor(private apiClient: ApiClient, private config: CohereChatAdapterConfig) { }
 
     chat(request: ChatRequest): Promise<ChatResponse> {
-        // throw new Error("Method not implemented.");
         throw new Error("Method not implemented.");
         const cohereRequest = CohereChatMapper.mapChatRequestToApiRequest(request);
 
