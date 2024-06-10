@@ -20,10 +20,10 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [Setting message history](#setting-message-history)
   - [Freezing History](#freezing-history)
   - [Tool Calling](#tool-calling)
-  - [Using Tools to fetch and display the contents of a URL](#using-tools-to-fetch-and-display-the-contents-of-a-url)
+    - [Tool Props](#tool-props)
   - [Autonomous Agents](#autonomous-agents)
     - [What is an agent?](#what-is-an-agent)
-    - [How do agents work?](#how-do-agents-work)
+    - [How agents work in Ragged](#how-agents-work-in-ragged)
     - [Incrementing Agent Example](#incrementing-agent-example)
     - [Multiple Agents Example](#multiple-agents-example)
   - [Custom LLM Adapters](#custom-llm-adapters)
@@ -172,104 +172,129 @@ const response2 = await c.chat('What is my name?');
 ## Tool Calling
 
 > [!TIP]
-> You can see 2 examples of how to use the tool calling functionality in the examples folder. The [Fetch RSS Example](examples/nodejs/tool-calling-simple.ts) is a simple, single-tool example that shows how to give the LLM the ability to `fetch` the latest news from the BBC RSS feed. The [List Files](examples/nodejs/tool-calling-list-files.ts) example is a more complex example that shows how to use multiple tools in order to let the LLM read your local file system. These are fully working examples, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example tools.ts`.
+> You can see 3 examples of how to use the tool calling functionality in the examples folder. The [Simple Example](examples/nodejs/tool-calling-simple.ts) shows a very simple tool calling example that returns some mock data (although the LLM thinks it's coming from an actual website). The [Fetch BBC News RSS Feed Example](examples/nodejs/tool-calling-bbc-rss.ts) is a simple, single-tool example that shows how to give the LLM the ability to `fetch` the latest news from the BBC RSS feed. The [List Files](examples/nodejs/tool-calling-list-files.ts) example is a more complex example that shows how to use multiple tools in order to let the LLM read your local file system. These are fully working examples, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example tools.ts`.
 
 Ragged allows you to further extend its functionality using tools. This gives you the power to integrate custom behavior or commands directly into your chat-based application.
 
-## Using Tools to fetch and display the contents of a URL
+Tools are very powerful! You can use tools to fetch data from external APIs, perform calculations, generate dynamic content, and much more. Tools can be used to extend the capabilities of the LLM and create more interactive and dynamic chat experiences.
 
-Here is an example of how to use a tool with Ragged's chat to fetch the contents of a URL and display it in the chat.
+To define a tool, first we import the Tool type from Ragged and then define a tool object.
 
 ```ts
-import { config } from 'dotenv';
-config();
-import { Chat } from "ragged/chat"
 import { Tool } from "ragged/tools";
 
-// Instantiate the Chat object with the OpenAI provider
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
-
-// Perform the query with the tool
-const response = await c.chat("Fetch and display the contents of https://feeds.bbci.co.uk/news/world/rss.xml", {
-    tools: [buildFetchTool()],
-    model: "gpt-4"
-});
-
-// Output the final text response. We don't need to care about the intermediate messages, tool calling is handled automatically.
-// "Here are some of the latest news from around the world according to the BBC: ..."
-console.log(response.at(-1)?.text); 
-
-// ===================  The tool definition ===================
-
-function buildFetchTool() {
-    const fetchTool: Tool = {
-        id: "fetch",
-        description: "Do a simple GET call and retrieve the contents of a URL.",
-        // The props object describes the expected input for the tool.
-        props: {
-            type: "object",
-            props: {
-                url: {
-                    type: "string",
-                    description: "The URL to fetch.",
-                    required: true
-                }
-            }
-        },
-        // The handler function processes the input and returns the output.
-        handler: async (props: any) => {
-            try {
-                const json = await JSON.parse(props);
-                const url = json.url;
-                const response = await fetch(url);
-                const text = await response.text();
-                return text;
-            } catch (e: any) {
-                console.error(e);
-                if (e?.message) {
-                    return `An error occurred: ${e.message}`;
-                } else {
-                    return `An unknown error occurred.`;
-                }
-            }
-        }
+const getHomepageTool: Tool = {
+    id: "get-homepage-contents",
+    description: "Gets the contents of my homepage.",
+    handler: async () => {
+        return Promise.resolve("Hello! My name is John! I'm a student at a community college!")
     }
-
-    return fetchTool
 }
 ```
 
-In this example:
+In this example, we define a tool called `getHomepageTool`. This tool has the following properties:
 
-* Chat Initialization: We initialize a Chat instance using the OpenAI provider.
-* Tool Query: We perform a chat query that uses a custom tool to fetch and display the contents of a specified URL.
-* Tool Definition: The buildFetchTool function defines a tool that performs a simple GET request to retrieve the contents of a URL.
+- `id`: A unique identifier for the tool. This identifier is how the LLM references the tool in the chat. The LLM will be aware of the tool's existence and will be able to use it in the chat.
+- `description`: A brief description of what the tool does. This description is used to help the LLM understand the purpose of the tool.
+- `handler` is a function that processes the input and returns the output. It handles the logic of the tool and manages errors gracefully.
 
-The fetchTool object includes:
+Once you have defined a tool, you can use it in a chat interaction by passing it to the `chat` method.
 
-* ID and Description: Basic metadata for the tool.
-* Props: Describes the expected input, ensuring the tool receives the correct data structure.
-* Handler: The function that processes the input and returns the output. It handles the URL fetching logic and manages errors gracefully.
+```ts
+const response = await c.chat("Get the contents of my homepage.", {
+    // Pass the tool to the chat method.
+    tools: [getHomepageTool],
+    model: "gpt-3.5-turbo"
+});
 
-With this setup, Ragged can seamlessly integrate external data fetching capabilities into its chat interactions, enabling more dynamic and interactive applications.
+console.log(response.at(-1)?.text);
+// RESPONSE: I retrieved the contents of your homepage. It says: "Hello! My name is John! I'm a student at a community college!"
+```
+
+Putting it all together, here's what it looks like:
+
+```ts
+import { Chat } from "ragged/chat"
+import { Tool } from "ragged/tools";
+
+const getHomepageTool: Tool = {
+    id: "get-homepage-contents",
+    description: "Gets the contents of my homepage.",
+    handler: async () => {
+        return Promise.resolve("Hello! My name is John! I'm a student at a community college!")
+    }
+}
+
+const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+
+const response = await c.chat("Get the contents of my homepage.", {
+    // Pass the tool to the chat method.
+    tools: [getHomepageTool],
+    model: "gpt-3.5-turbo"
+});
+
+console.log(response.at(-1)?.text);
+
+// RESPONSE: I retrieved the contents of your homepage. It says: "Hello! My name is John! I'm a student at a community college!"
+```
+
+### Tool Props
+
+The `Tool` object can also take an optional `props` object. This object allows the LLM to pass pass additional information to the tool handler. This can be useful if you want the LLM to pass configuration options, data, or other information to the tool handler.
+
+Here is an example of how to use the `props` object:
+
+```ts
+import { Tool } from "ragged/tools";
+
+const fetchTool: Tool = {
+    id: "fetch",
+    description: "Do a simple GET call and retrieve the contents of a URL.",
+    // The props object describes the expected input for the tool.
+    props: {
+        type: "object",
+        props: {
+            url: {
+                type: "string",
+                description: "The URL to fetch.",
+                required: true
+            }
+        }
+    },
+    // The handler function processes the input and returns the output.
+    handler: async (props: string) => {
+        // Props are passed to the handler function as a string.
+        // This string needs to be parsed into an object before it can be used.
+        // Several examples can be seen in the `/examples` folder.
+    }
+}
+```
+
+Here, we define a tool called `fetchTool`. This tool has a `props` object that describes the expected input for the tool. The `props` object contains a `url` property that is required and must be a string. The `handler` function processes the input and returns the output.
+
+> [!WARNING]
+> It's important to note that the LLM can hallucinate the props object. This means that the LLM can pass props which are not defined in the props object. This is dangerous, as it can lead to unexpected behavior. To prevent this, you should always validate the props object before using it in your tool handler.
 
 ## Autonomous Agents
 
-Ragged supports autonomous agents. These are tools that can be used to perform tasks without user input. They can be used to automate repetitive tasks, provide real-time information, or interact with external services.
+> [!TIP]
+> You can see 2 examples of how to use the agent functionality in the examples folder. The [Simple Example](examples/nodejs/agents-simple.ts) shows a very simple agent that increments a number automatically. The [Multiple Agents Example](examples/nodejs/agents-multiple.ts) uses multiple agents to generate tweets. These are fully working examples, so if you [set up Ragged locally](#development-instructions), you can execute the example using `pnpm run:example agents-simple.ts` or `pnpm run:example agents-multiple.ts`.
 
 ### What is an agent?
 
-An agent is an autonomous tool that can perform tasks without user input. It can be used to automate repetitive tasks, provide real-time information, or interact with external services.
+Many LLM frameworks support autonomous agents. These are tools that can be used to perform tasks without user input. They can be used to automate repetitive tasks, provide real-time information, or interact with external services.
 
-### How do agents work?
+### How agents work in Ragged
 
-In Ragged, agents are very simple to implement. They are just pieces of code that take input and return output in a recursive or repetive way. 
+In many LLM frameworks, agents are complex and require a lot of setup. But in Ragged, agents are very simple to implement using normal, easy-to-understand code. Agents are just pieces of code that take input and return output in a recursive or repetive way.
 
 The simplest agent has the following main components:
 
 * A starting state
 * A loop which calls an LLM to mutate the state recursively
 * A stop condition which determines when the agent should stop
+
+Using these components, you can create agents that perform a wide variety of tasks. 
 
 ### Incrementing Agent Example
 
