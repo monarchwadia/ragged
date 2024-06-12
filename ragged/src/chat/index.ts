@@ -5,6 +5,8 @@ import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./in
 import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/index.types";
 import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdapter";
 import { OpenAiChatDriverConfig } from "./adapter/openai/driver";
+import { provideCohereChatAdapter } from "./adapter/cohere/provideCohereChatAdapter";
+import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
@@ -155,9 +157,22 @@ export class Chat {
         return Chat.cloneMessages(this._history)
     }
 
-    static with(provider: "openai", config: Partial<OpenAiChatDriverConfig> = {}) {
-        // TODO: Add more providers
-        const adapter = provideOpenAiChatAdapter({ config })
+    static with(provider: "openai", config: Partial<OpenAiChatDriverConfig>): Chat;
+    static with(provider: "cohere", config: Partial<CohereChatAdapterConfig>): Chat;
+    static with(provider: string, config: any = {}) {
+        let adapter: BaseChatAdapter;
+
+        switch (provider) {
+            case "openai":
+                adapter = provideOpenAiChatAdapter({ config });
+                break;
+            case "cohere":
+                adapter = provideCohereChatAdapter({ config });
+                break;
+            default:
+                throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Chat.with().");
+        }
+
         return new Chat(adapter);
     }
 
