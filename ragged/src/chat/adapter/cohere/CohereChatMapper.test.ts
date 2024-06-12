@@ -1,3 +1,4 @@
+import { MappingError } from "../../../support/CustomErrors";
 import { ChatRequest } from "../index.types";
 import { CohereChatMapper } from "./CohereChatMapper";
 
@@ -80,4 +81,51 @@ describe("CohereChatMapper", () => {
             message: "Hello, how are you?"
         });
     });
+
+    it("throws an error if the last message in history was not a user message", () => {
+        const request: ChatRequest = {
+            history: [
+                {
+                    type: "system",
+                    text: "I am a system message"
+                }
+            ]
+        };
+
+        expect(() => CohereChatMapper.mapChatRequestToApiRequest(request)).toThrow(MappingError);
+    })
+
+    it("throws an error if the last user message has no text", () => {
+        const request: ChatRequest = {
+            history: [
+                {
+                    type: "user",
+                    text: ""
+                }
+            ]
+        };
+
+        expect(() => CohereChatMapper.mapChatRequestToApiRequest(request)).toThrow(MappingError);
+    })
+
+    it("throws an error if the last user message has null text", () => {
+        const request: ChatRequest = {
+            history: [
+                {
+                    type: "user",
+                    text: null
+                }
+            ]
+        };
+
+        expect(() => CohereChatMapper.mapChatRequestToApiRequest(request)).toThrow(MappingError);
+    })
+
+    it("throws an error if no history is provided", () => {
+        const request: ChatRequest = {
+            history: []
+        };
+
+        expect(() => CohereChatMapper.mapChatRequestToApiRequest(request)).toThrow(MappingError);
+    })
 });
