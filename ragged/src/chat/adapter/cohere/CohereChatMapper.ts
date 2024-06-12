@@ -15,8 +15,7 @@ const roleMapRaggedCohere: Record<Message['type'], CohereChatItem['role']> = {
     "bot": "CHATBOT",
     "system": "SYSTEM",
     "user": "USER",
-    // TODO: How to map error mapping? Maybe just skip?
-    'error': "SYSTEM"
+    'error': "CHATBOT" // we actually just skip this
 }
 
 

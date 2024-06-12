@@ -53,4 +53,31 @@ describe("CohereChatMapper", () => {
             message: "Hello, how are you?"
         });
     });
+
+    it("maps error messages to chatbot messages", () => {
+        const request: ChatRequest = {
+            history: [
+                {
+                    type: "error",
+                    text: "I am an error message"
+                },
+                {
+                    type: "user",
+                    text: "Hello, how are you?"
+                }
+            ]
+        };
+
+        const mappedRequest = CohereChatMapper.mapChatRequestToApiRequest(request);
+
+        expect(mappedRequest).toMatchObject({
+            chat_history: [
+                {
+                    role: "CHATBOT",
+                    message: "I am an error message"
+                }
+            ],
+            message: "Hello, how are you?"
+        });
+    });
 });

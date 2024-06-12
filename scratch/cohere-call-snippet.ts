@@ -14,12 +14,20 @@ const { COHERE_API_KEY } = process.env;
 let request = {
     chat_history: [
         {
-            role: "SYSTEM",
+            role: "CHATBOT",
             message: "WOW! I encountered an error! That's unusual."
         },
         {
             role: "USER",
             message: "Hello, how are you?",
+        },
+        {
+            role: "CHATBOT",
+            message: "WOW! I encountered an error! That's unusual."
+        },
+        {
+            role: "CHATBOT",
+            message: "WOW! I encountered an error! That's unusual."
         },
         {
             role: "CHATBOT",
@@ -29,7 +37,7 @@ let request = {
     ],
     // chat_history: [],
     // preamble: "WOW! I encountered an error! That's unusual",
-    message: "Have you had any errors today? If so, how many?"
+    message: "Have you had an error recently?"
 };
 let response: any;
 
