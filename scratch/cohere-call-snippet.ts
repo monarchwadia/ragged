@@ -14,6 +14,10 @@ const { COHERE_API_KEY } = process.env;
 let request = {
     chat_history: [
         {
+            role: "SYSTEM",
+            message: "WOW! I encountered an error! That's unusual."
+        },
+        {
             role: "USER",
             message: "Hello, how are you?",
         },
@@ -21,8 +25,11 @@ let request = {
             role: "CHATBOT",
             message: "I'm doing well, thank you for asking!",
         },
+
     ],
-    message: "What are you up to today?"
+    // chat_history: [],
+    // preamble: "WOW! I encountered an error! That's unusual",
+    message: "Have you had any errors today? If so, how many?"
 };
 let response: any;
 
@@ -45,8 +52,8 @@ if (!response.ok) {
 } else {
     const output = await response.json();
     console.log(output);
-    fs.writeFileSync(`${outputDir}/cohere-call-snippet-request.json`, JSON.stringify(request, null, 2));
-    fs.writeFileSync(`${outputDir}/cohere-call-snippet-response.json`, JSON.stringify(response, null, 2));
+    fs.writeFileSync(`${outputDir}/request-body.json`, JSON.stringify(request, null, 2));
+    fs.writeFileSync(`${outputDir}/response-body.json`, JSON.stringify(output, null, 2));
     console.log("Request and response written to file.")
 }
 

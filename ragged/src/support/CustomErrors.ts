@@ -44,7 +44,7 @@ export class FetchResponseNotOkError extends BaseCustomError {
 }
 
 export class MappingError extends BaseCustomError {
-    constructor(message: string, public cause: unknown) {
+    constructor(message: string, public cause?: unknown) {
         super(message);
         this.name = "MappingError";
     }
