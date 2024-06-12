@@ -9,9 +9,6 @@ export const provideCohereChatAdapter = (params: CohereChatProviderParam = {}): 
     const apiClient = params.apiClient || new ApiClient();
     const config = params.config || {};
 
-    // const driver = new OpenAiChatDriver(apiClient, config);
-    // const adapter = new OpenAiChatAdapter(driver)
-
     const adapter = new CohereChatAdapter(apiClient, config);
 
     return adapter;

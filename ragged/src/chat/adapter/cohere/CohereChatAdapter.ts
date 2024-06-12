@@ -9,13 +9,18 @@ export type CohereChatAdapterConfig = {
 export class CohereChatAdapter implements BaseChatAdapter {
     constructor(private apiClient: ApiClient, private config: CohereChatAdapterConfig) { }
 
-    chat(request: ChatRequest): Promise<ChatResponse> {
-        throw new Error("Method not implemented.");
+    async chat(request: ChatRequest): Promise<ChatResponse> {
         const cohereRequest = CohereChatMapper.mapChatRequestToCohereRequest(request);
 
-        // const response = this.apiClient.post('https://api.cohere.ai/v1/complete', {
-        //     body: 
-        // });
+        const response = await this.apiClient.post('https://api.cohere.com/v1/chat', {
+            body: cohereRequest,
+            headers: {
+                'accept': 'application/json',
+                'content-type': 'application/json',
+                'Authorization': `bearer ${this.config.apiKey}`
+            }
+        });
 
+        return CohereChatMapper.mapCohereResponseToChatResponse(response);
     }
 }
