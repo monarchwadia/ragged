@@ -647,7 +647,7 @@ The following table lists the providers and models that Ragged supports.
 | OpenAI        | GPT: 4o, 4T, 4, 3.5     | ✅          |
 | Azure OpenAI  | GPT: 4, 4T, 3.5         | ❌          |
 | Together      | Several OSS Models      | ❌          |
-| Cohere        | CommandR, Command       | ❌          |
+| Cohere        | CommandR, Command       | 🟡 - Chat is working. Tool calls not supported yet.          |
 | Anthropic     | Claude 2, Claude 3      | ❌          |
 | Mistral       | 7B, 8x7B, S, M & L      | ❌          |
 | Groq          | Lama2-70B, Mixtral-8x7b | ❌          |
