@@ -6,3 +6,5 @@ packages:
   - 'examples/*'
   # # exclude packages that are inside test directories
   # - '!**/test/**'
+  # Just a scratch project
+  - 'scratch'

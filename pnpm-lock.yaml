@@ -152,6 +152,18 @@ importers:
         specifier: ^7.8.0
         version: 7.8.0(eslint@9.1.1)(typescript@5.4.3)
 
+  scratch:
+    dependencies:
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+
 packages:
 
   '@aashutoshrathi/word-wrap@1.2.6':
