@@ -11,7 +11,7 @@ export class CohereChatAdapter implements BaseChatAdapter {
 
     chat(request: ChatRequest): Promise<ChatResponse> {
         throw new Error("Method not implemented.");
-        const cohereRequest = CohereChatMapper.mapChatRequestToApiRequest(request);
+        const cohereRequest = CohereChatMapper.mapChatRequestToCohereRequest(request);
 
         // const response = this.apiClient.post('https://api.cohere.ai/v1/complete', {
         //     body: 

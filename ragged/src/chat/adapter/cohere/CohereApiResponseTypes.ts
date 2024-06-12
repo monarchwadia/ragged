@@ -1,5 +1,5 @@
 export interface ChatItem {
-  role: string;
+  role: "CHATBOT" | "SYSTEM" | "USER";
   message: string;
 }
 

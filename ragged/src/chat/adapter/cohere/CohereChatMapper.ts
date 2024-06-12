@@ -21,7 +21,7 @@ const roleMapRaggedCohere: Record<Message['type'], CohereChatItem['role']> = {
 
 
 export class CohereChatMapper {
-    static mapChatRequestToApiRequest(request: ChatRequest): CohereChatRequestRoot {
+    static mapChatRequestToCohereRequest(request: ChatRequest): CohereChatRequestRoot {
         const root: CohereChatRequestRoot = {
             message: undefined
         }
@@ -78,7 +78,18 @@ export class CohereChatMapper {
 
         return root;
     }
-    static mapApiResponseToChatResponse(response: CohereChatResponseRoot): ChatResponse {
-        throw new Error("Method not implemented.");
+    static mapCohereResponseToChatResponse(response: CohereChatResponseRoot): ChatResponse {
+        const history: ChatResponse['history'] = [];
+        response.chat_history.forEach((item) => {
+            const mappedRole = roleMapCohereRagged[item.role];
+            history.push({
+                type: mappedRole,
+                text: item.message
+            })
+        });
+
+        return {
+            history
+        }
     }
 }
