@@ -26,6 +26,10 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [How agents work in Ragged](#how-agents-work-in-ragged)
     - [Incrementing Agent Example](#incrementing-agent-example)
     - [Multiple Agents Example](#multiple-agents-example)
+  - [Official LLM Adapters](#official-llm-adapters)
+    - [OpenAI](#openai)
+    - [Cohere](#cohere)
+    - [Supported Providers and Models](#supported-providers-and-models)
   - [Custom LLM Adapters](#custom-llm-adapters)
     - [Rules for custom adapters](#rules-for-custom-adapters)
     - [Examples of custom adapters](#examples-of-custom-adapters)
@@ -42,7 +46,6 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
       - [Main folder](#main-folder)
       - [Supporting folders](#supporting-folders)
   - [Feature Roadmap](#feature-roadmap)
-    - [Providers and Models](#providers-and-models)
 
 ## Installation
 
@@ -404,6 +407,50 @@ Agents can get very complex, with multiple agents running at the same time. Here
 
 ------
 
+## Official LLM Adapters
+
+Ragged supports multiple LLM providers out of the box. You can use these providers to interact with the LLMs and generate responses to your prompts.
+
+### OpenAI
+
+The OpenAI adapter allows you to interact with the OpenAI API.
+
+```ts
+const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+await c.chat('What is a rickroll?', { model: 'gpt-4' });
+```
+
+### Cohere
+
+> [!WARNING]
+> Cohere is a new provider, and tool calling is not yet functional. The adapter is still in development and may not work as expected. Please use with caution.
+
+The Cohere adapter allows you to interact with the Cohere API. You can use this adapter to chat with the CommandR and Command models.
+
+```ts
+const c = Chat.with('cohere', { apiKey: process.env.COHERE_API_KEY });
+await c.chat('What is a rickroll?', { model: 'command-nightly' });
+```
+
+### Supported Providers and Models
+
+The following table lists the providers and models that Ragged supports. If the model is listed but marked with a red "❌", it means that the model is not yet supported but is on our roadmap.
+
+| Provider      | Models                  | Is Working                                          |
+| ------------- | ----------------------- | --------------------------------------------------- |
+| OpenAI        | GPT: 4o, 4T, 4, 3.5     | ✅                                                   |
+| Azure OpenAI  | GPT: 4, 4T, 3.5         | ❌                                                   |
+| Together      | Several OSS Models      | ❌                                                   |
+| Cohere        | CommandR, Command       | 🟡 - Chat is working. Tool calls not functional yet. |
+| Anthropic     | Claude 2, Claude 3      | ❌                                                   |
+| Mistral       | 7B, 8x7B, S, M & L      | ❌                                                   |
+| Groq          | Lama2-70B, Mixtral-8x7b | ❌                                                   |
+| DeepSeek      | Chat and Code           | ❌                                                   |
+| Ollama        | All models              | ❌                                                   |
+| Google Gemini | Gemini: Flash, Pro      | ❌                                                   |
+| Hugging Face  | OSS Model               | ❌                                                   |
+
+
 ## Custom LLM Adapters
 
 Usually, we would use `Chat.with` to create a new instance of the `Chat` class. This is the easiest way to create a new instance of the `Chat` class, as it automatically selects the correct adapter based on the provider name.
@@ -638,20 +685,3 @@ Ragged is currently in alpha. It is not yet ready for production use. We are act
 
 \* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
 
-### Providers and Models
-
-The following table lists the providers and models that Ragged supports.
-
-| Provider      | Models                  | Is Working |
-| ------------- | ----------------------- | ---------- |
-| OpenAI        | GPT: 4o, 4T, 4, 3.5     | ✅          |
-| Azure OpenAI  | GPT: 4, 4T, 3.5         | ❌          |
-| Together      | Several OSS Models      | ❌          |
-| Cohere        | CommandR, Command       | 🟡 - Chat is working. Tool calls not supported yet.          |
-| Anthropic     | Claude 2, Claude 3      | ❌          |
-| Mistral       | 7B, 8x7B, S, M & L      | ❌          |
-| Groq          | Lama2-70B, Mixtral-8x7b | ❌          |
-| DeepSeek      | Chat and Code           | ❌          |
-| Ollama        | All models              | ❌          |
-| Google Gemini | Gemini: Flash, Pro      | ❌          |
-| Hugging Face  | OSS Model               | ❌          |
