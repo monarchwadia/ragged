@@ -1,6 +1,6 @@
 import { OpenAiChatAdapter } from ".";
-import { ApiClient } from "../../../../support/ApiClient";
-import { startPollyRecording } from "../../../../../test/startPollyRecording";
+import { ApiClient } from "../../../support/ApiClient";
+import { startPollyRecording } from "../../../../test/startPollyRecording";
 
 describe("OpenAiChatAdapter", () => {
   let apiClient: ApiClient;

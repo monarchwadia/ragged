@@ -1,5 +1,5 @@
-import { Logger } from "../../../../support/logger/Logger";
-import { ObjectProp, Tool, ToolProp } from "../../../../tools";
+import { Logger } from "../../../support/logger/Logger";
+import { ObjectProp, Tool, ToolProp } from "../../../tools";
 import { OaiTool, OaiToolParam, OaiToolParamObject } from "./OpenAiApiTypes";
 
 export class OpenAiToolMapper {

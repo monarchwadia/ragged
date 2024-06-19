@@ -5,7 +5,7 @@ import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/index.type
 import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdapter";
 import { provideCohereChatAdapter } from "./adapter/cohere/provideCohereChatAdapter";
 import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
-import { OpenAiChatAdapterConfig } from "./adapter/openai/adapter";
+import { OpenAiChatAdapterConfig } from "./adapter/openai";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
