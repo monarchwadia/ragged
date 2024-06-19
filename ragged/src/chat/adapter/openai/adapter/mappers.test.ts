@@ -2,7 +2,7 @@ import { MappingError } from "../../../../support/CustomErrors";
 import {
   OpenAiChatCompletionRequestBody,
   OpenAiChatCompletionResponseBody,
-} from "../driver/OpenAiApiTypes";
+} from "./OpenAiApiTypes";
 import { ChatRequest, ChatResponse } from "../../index.types";
 import { mapFromOpenAi, mapToOpenAi } from "./mappers";
 import { OpenAiToolMapper } from "./ToolMapper";

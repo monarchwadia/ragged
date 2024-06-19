@@ -1,5 +1,4 @@
 import { OpenAiChatAdapter } from ".";
-import { OpenAiChatDriver } from "../driver";
 import { ApiClient } from "../../../../support/ApiClient";
 import { startPollyRecording } from "../../../../../test/startPollyRecording";
 
@@ -14,8 +13,7 @@ describe("OpenAiChatAdapter", () => {
     const config = {
       apiKey: process.env.OPENAI_API_KEY,
     };
-    const driver = new OpenAiChatDriver(apiClient, config);
-    adapter = new OpenAiChatAdapter(driver);
+    adapter = new OpenAiChatAdapter(apiClient, config);
   });
 
   afterEach(() => {

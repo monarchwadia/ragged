@@ -1,6 +1,6 @@
 import { MappingError } from "../../../../support/CustomErrors";
-import { BotMessage, MessageType } from "../../../index.types";
-import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "../driver/OpenAiApiTypes";
+import { BotMessage } from "../../../index.types";
+import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "./OpenAiApiTypes";
 import { ChatRequest, ChatResponse } from "../../index.types";
 import { Logger } from "../../../../support/logger/Logger";
 import { OpenAiToolMapper } from "./ToolMapper";
@@ -22,7 +22,8 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
                         content: message.text
                     });
                     break
-                case "bot":
+                case "bot": {
+
                     const asstMessage: OpenAiMessage = {
                         role: "assistant",
                         content: message.text,
@@ -30,7 +31,7 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
 
 
                     let toolResponses: OpenAiToolMessage[] = [];
-                    let tool_calls: ChoiceToolCall[] = [];
+                    const tool_calls: ChoiceToolCall[] = [];
 
                     if (message.toolCalls?.length) {
 
@@ -84,6 +85,7 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
                         messages.push(toolMessage);
                     }
                     break
+                }
                 case "system":
                     messages.push({
                         role: "system",
@@ -140,7 +142,7 @@ export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatR
                         text: choice.message.content
                     });
                     break
-                case "assistant":
+                case "assistant": {
                     const botMessage: BotMessage = {
                         type: "bot",
                         text: choice.message.content
@@ -165,6 +167,7 @@ export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatR
 
                     history.push(botMessage);
                     break
+                }
                 case "system":
                     history.push({
                         type: "system",

@@ -1,4 +1,4 @@
-import { OaiTool } from "../driver/OpenAiApiTypes";
+import { OaiTool } from "./OpenAiApiTypes";
 import { OpenAiToolMapper } from "./ToolMapper";
 
 describe("ToolMapper", () => {

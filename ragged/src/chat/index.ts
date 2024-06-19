@@ -1,12 +1,11 @@
 import { ParameterValidationError, UnknownError } from "../support/CustomErrors";
 import { Logger } from "../support/logger/Logger";
-import { Tool } from "../tools";
 import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./index.types";
 import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/index.types";
 import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdapter";
-import { OpenAiChatDriverConfig } from "./adapter/openai/driver";
 import { provideCohereChatAdapter } from "./adapter/cohere/provideCohereChatAdapter";
 import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
+import { OpenAiChatAdapterConfig } from "./adapter/openai/adapter";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
@@ -56,13 +55,13 @@ export class Chat {
             // OR
             // async chat(userMessage: string, config: ChatConfig): Promise<Message[]>;
             incomingMessages = [{ type: "user", text: args[0] }];
-            config = { ...config, ...args[1] } || config;
+            config = { ...(config || {}), ...args[1] };
         } else if (Array.isArray(args[0])) {
             // async chat(messages: Message[]): Promise<Message[]>;
             // OR
             // async chat(messages: Message[], config: ChatConfig): Promise<Message[]>;
             incomingMessages = args[0];
-            config = config = { ...config, ...args[1] } || config;
+            config = config = { ...(config || {}), ...args[1] };
         } else {
             throw new ParameterValidationError("Invalid arguments passed to Ragged.chat(). Please check the documentation or your editor's code autocomplete for more information on how to use Ragged.chat().");
         }
@@ -157,7 +156,7 @@ export class Chat {
         return Chat.cloneMessages(this._history)
     }
 
-    static with(provider: "openai", config: Partial<OpenAiChatDriverConfig>): Chat;
+    static with(provider: "openai", config: Partial<OpenAiChatAdapterConfig>): Chat;
     static with(provider: "cohere", config: Partial<CohereChatAdapterConfig>): Chat;
     static with(provider: string, config: any = {}) {
         let adapter: BaseChatAdapter;

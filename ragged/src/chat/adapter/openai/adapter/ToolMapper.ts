@@ -1,6 +1,6 @@
 import { Logger } from "../../../../support/logger/Logger";
 import { ObjectProp, Tool, ToolProp } from "../../../../tools";
-import { OaiTool, OaiToolParam, OaiToolParamObject } from "../driver/OpenAiApiTypes";
+import { OaiTool, OaiToolParam, OaiToolParamObject } from "./OpenAiApiTypes";
 
 export class OpenAiToolMapper {
     private static logger: Logger = new Logger("OpenAiToolMapper");
