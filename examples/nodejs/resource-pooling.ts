@@ -7,10 +7,11 @@ config();
 
 import { Chat } from "ragged/chat";
 import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
-import { CohereChatAdapter } from "../../ragged/src/chat/adapter/cohere/CohereChatAdapter";
-import { provideCohereChatAdapter } from "../../ragged/src/chat/adapter/cohere/provideCohereChatAdapter";
-import { ApiClient } from "../../ragged/src/support/ApiClient";
-import { OpenAiChatAdapter } from "../../ragged/src/chat/adapter/openai";
+import { CohereChatAdapter } from "ragged/chat/adapter/cohere";
+import { provideCohereChatAdapter } from "ragged/chat/adapter/cohere";
+import { OpenAiChatAdapter } from "ragged/chat/adapter/openai";
+import { provideOpenAiChatAdapter } from "ragged/chat/adapter/openai";
+import { ApiClient } from "ragged/support/api-client";
 
 export class PoolWrapperAdapter implements BaseChatAdapter {
     private index: number = 0;
