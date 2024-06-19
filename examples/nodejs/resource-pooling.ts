@@ -1,10 +1,12 @@
 import { Chat } from "ragged/chat";
 import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+import { CohereChatAdapter } from "../../ragged/src/chat/adapter/cohere/CohereChatAdapter";
+import { provideCohereChatAdapter } from "../../ragged/src/chat/adapter/cohere/provideCohereChatAdapter";
 
 /**
  * Implements a simple round robin pool of adapters.
  */
-class PoolWrapperAdapter implements BaseChatAdapter {
+export class PoolWrapperAdapter implements BaseChatAdapter {
     private index: number = 0;
     constructor(private pool: BaseChatAdapter[]) { }
 
@@ -14,7 +16,3 @@ class PoolWrapperAdapter implements BaseChatAdapter {
         return response;
     }
 }
-
-const c = new Chat(new PoolWrapperAdapter([
-
-]));

@@ -1,9 +1,7 @@
-import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { OpenAiChatAdapter } from ".";
 import { OpenAiChatDriver } from "../driver";
 import { ApiClient } from "../../../../support/ApiClient";
 import { startPollyRecording } from "../../../../../test/startPollyRecording";
-import { Message } from "../../../index.types";
 
 describe("OpenAiChatAdapter", () => {
   let apiClient: ApiClient;
@@ -74,7 +72,7 @@ describe("OpenAiChatAdapter", () => {
               },
             },
           },
-          handler: async (query) => {
+          handler: async () => {
             return "Here are today's news: ...";
           },
         },

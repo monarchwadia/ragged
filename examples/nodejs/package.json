@@ -5,6 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "test": "jest",
+    "tdd": "jest --watch",
     "dev": "tsx"
   },
   "type": "module",
