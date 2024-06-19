@@ -77,7 +77,7 @@ export type OpenAiChatCompletionRequestBody = {
 }
 
 export type OpenAiChatCompletionResponseBody = {
-  choices: Choice[];
+  choices?: Choice[];
   created: number;
   id: string;
   model: string;

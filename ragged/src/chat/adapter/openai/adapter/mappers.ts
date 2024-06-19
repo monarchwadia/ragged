@@ -106,7 +106,7 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
 
         if (request.tools) {
             tools = [] as OaiTool[];
-            for (let i = 0; i < request.tools.length; i++) {
+            for (let i = 0; i < request.tools?.length; i++) {
                 const tool = request.tools[i];
 
                 tools.push(OpenAiToolMapper.mapToOpenAi(tool));
@@ -127,7 +127,13 @@ export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatR
     try {
         const history: ChatResponse['history'] = [];
 
-        if (response.choices.length > 1) {
+        if (!response.choices) {
+            return {
+                history
+            }
+        }
+
+        if (response.choices?.length) {
             logger.warn(`Received more than one choice from OpenAI. This is not currently supported. Only the first choice will be included in history.`);
         }
 

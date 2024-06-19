@@ -143,6 +143,28 @@ describe("OpenAiChatAdapter Mappers", () => {
   });
 
   describe("mapFromOpenAi", () => {
+    it("should map null choices from OpenAi to ChatResponse", () => {
+      const response: OpenAiChatCompletionResponseBody = {
+        choices: [],
+        created: 0,
+        id: "some-id",
+        model: "some-model",
+        object: "some-object",
+        system_fingerprint: null,
+        usage: {
+          completion_tokens: 0,
+          prompt_tokens: 0,
+          total_tokens: 0,
+        },
+      };
+
+      const expected: ChatResponse = {
+        history: [],
+      };
+
+      const result = mapFromOpenAi(response);
+      expect(result).toEqual(expected);
+    });
     it("should map empty response from OpenAi to ChatResponse", () => {
       const response: OpenAiChatCompletionResponseBody = {
         choices: [],

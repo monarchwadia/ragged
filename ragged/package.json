@@ -14,6 +14,11 @@
       "require": "./build/cjs/chat/adapter/index.js",
       "types": "./build/src/public/chat/adapter/index.d.ts"
     },
+    "./chat/adapter/openai": {
+      "import": "./build/esm/chat/adapter/openai.js",
+      "require": "./build/cjs/chat/adapter/openai.js",
+      "types": "./build/src/public/chat/adapter/openai.d.ts"
+    },
     "./chat": {
       "import": "./build/esm/chat/index.js",
       "require": "./build/cjs/chat/index.js",
