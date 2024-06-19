@@ -36,6 +36,7 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
       - [Inline adapter](#inline-adapter)
       - [Object adapter](#object-adapter)
       - [Class adapter](#class-adapter)
+    - [Resource Pooling, or, how to use multiple LLMs in the same chat history](#resource-pooling-or-how-to-use-multiple-llms-in-the-same-chat-history)
 - [Development Instructions](#development-instructions)
   - [Prerequisites](#prerequisites)
   - [Development Instructions](#development-instructions-1)
@@ -531,6 +532,14 @@ class ExampleAdapter implements BaseChatAdapter {
 
 const c = new Chat(new ExampleAdapter());
 ```
+
+### Resource Pooling, or, how to use multiple LLMs in the same chat history
+
+Resource pooling is a technique used to manage resources efficiently. It allows you to use multiple LLMs with different API keys in the same chat history. This is useful if you want to use different models or different providers in the same chat session.
+
+Since every app will have some level of custom resource pooling, Ragged does not provide a built-in resource pooling mechanism. Instead, you can use the `Chat` class and its adapters mechanism to manage resource pooling in your app.
+
+See the [Resource Pooling](examples/nodejs/resource-pooling.ts) example in the examples folder for a working example of how to use resource pooling in Ragged.
 
 # Development Instructions
 
