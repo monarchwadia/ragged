@@ -4,6 +4,11 @@
   "description": "A simple library for easy LLM access.",
   "type": "module",
   "exports": {
+    "./chat/adapter/cohere": {
+      "import": "./build/esm/chat/adapter/cohere.js",
+      "require": "./build/cjs/chat/adapter/cohere.js",
+      "types": "./build/src/public/chat/adapter/cohere.d.ts"
+    },
     "./chat/adapter": {
       "import": "./build/esm/chat/adapter/index.js",
       "require": "./build/cjs/chat/adapter/index.js",
@@ -13,6 +18,16 @@
       "import": "./build/esm/chat/index.js",
       "require": "./build/cjs/chat/index.js",
       "types": "./build/src/public/chat/index.d.ts"
+    },
+    "./support/api-client": {
+      "import": "./build/esm/support/api-client.js",
+      "require": "./build/cjs/support/api-client.js",
+      "types": "./build/src/public/support/api-client.d.ts"
+    },
+    "./support/errors": {
+      "import": "./build/esm/support/errors.js",
+      "require": "./build/cjs/support/errors.js",
+      "types": "./build/src/public/support/errors.d.ts"
     },
     "./tools": {
       "import": "./build/esm/tools/index.js",
