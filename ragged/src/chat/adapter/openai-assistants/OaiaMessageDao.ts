@@ -1,8 +1,8 @@
 import { ApiClient } from "../../../support/ApiClient";
-import { OaiaConfigCommonContext } from "./Oaia.types";
+import { OaiaConfigCommons } from "./Oaia.types";
 
 export class OaiaMessageDao {
-    constructor(private ctx: OaiaConfigCommonContext, private apiClient: ApiClient) {
+    constructor(private ctx: OaiaConfigCommons, private apiClient: ApiClient) {
 
     }
 }

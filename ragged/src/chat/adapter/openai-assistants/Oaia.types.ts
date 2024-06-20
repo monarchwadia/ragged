@@ -1,7 +1,6 @@
 /**
- * Common context format for Oaia classes that contains the API key and assistant ID.
+ * Common context format for Oaia classes.
  */
-export type OaiaConfigCommonContext = {
+export type OaiaConfigCommons = {
     apiKey: string;
-    assistantId: string;
 }

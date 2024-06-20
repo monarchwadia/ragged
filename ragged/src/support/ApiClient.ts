@@ -17,7 +17,7 @@ export class ApiClient {
     static logger: Logger = new Logger('ApiClient');
 
     async post(url: string, request: PostOpts): Promise<any> {
-        let requestInit: RequestInit = {}
+        const requestInit: RequestInit = {}
 
         requestInit.method = "POST";
 
