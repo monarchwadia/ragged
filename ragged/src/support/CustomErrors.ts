@@ -72,3 +72,10 @@ export class ParameterValidationError extends BaseCustomError {
         this.name = "ParameterError";
     }
 }
+
+export class NotImplementedError extends BaseCustomError {
+    constructor(message: string) {
+        super(message);
+        this.name = "NotImplementedError";
+    }
+}
