@@ -16,10 +16,18 @@ type PostOpts = {
 export class ApiClient {
     static logger: Logger = new Logger('ApiClient');
 
+    async get(url: string, request: PostOpts): Promise<any> {
+        return this.doCall("GET", url, request);
+    }
+
     async post(url: string, request: PostOpts): Promise<any> {
+        return this.doCall("POST", url, request);
+    }
+
+    private async doCall(method: string, url: string, request: PostOpts): Promise<Response> {
         const requestInit: RequestInit = {}
 
-        requestInit.method = "POST";
+        requestInit.method = method;
 
         if (request.headers) {
             requestInit.headers = request.headers;

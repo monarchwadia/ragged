@@ -1,4 +1,4 @@
-export interface CreateMessageResponseBody {
+export interface OaiaMessage {
     assistant_id: string | null;
     attachments: any[];
     content: Content[];

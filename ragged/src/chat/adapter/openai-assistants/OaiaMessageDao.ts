@@ -1,5 +1,5 @@
 import { ApiClient } from "../../../support/ApiClient";
-import { CreateMessageResponseBody } from "./OaiaMessageDaoTypes"
+import { OaiaMessage } from "./OaiaMessageDaoTypes"
 
 export type CreateMessageParams = {
     threadId: any;
@@ -12,7 +12,7 @@ export type CreateMessageParams = {
 export class OaiaMessageDao {
     constructor(private apiClient: ApiClient) { }
 
-    createMessage(apiKey: string, params: CreateMessageParams): Promise<CreateMessageResponseBody> {
+    createMessage(apiKey: string, params: CreateMessageParams): Promise<OaiaMessage> {
         return this.apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/messages`, {
             headers: {
                 "Content-Type": "application/json",
@@ -20,6 +20,16 @@ export class OaiaMessageDao {
                 "OpenAI-Beta": "assistants=v2"
             },
             body: params.body
+        });
+    }
+
+    listMessagesForThread(apiKey: string, threadId: string): Promise<any> {
+        return this.apiClient.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`,
+                "OpenAI-Beta": "assistants=v2"
+            }
         });
     }
 }

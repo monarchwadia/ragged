@@ -5,8 +5,8 @@ import { OaiaThreadDao } from "./OaiaThreadDao";
 import { OaiaRunDao } from "./OaiaRunDao";
 import { OaiaAssistantDao } from "./OaiaAssistantDao";
 
-describe("OaiaMessageDao", () => {
-  describe("createMessage", () => {
+describe("OaiaRunDaoDao", () => {
+  describe("createRun", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
       const oaiaAssistantDao = new OaiaAssistantDao(apiClient);
@@ -15,7 +15,7 @@ describe("OaiaMessageDao", () => {
       const oaiaRunDao = new OaiaRunDao(apiClient);
 
       const polly = startPollyRecording(
-        "OaiaMessageDao > createMessage > can be created"
+        "OaiaRunDao > createRun > can be created"
       );
 
       const assistant = await oaiaAssistantDao.createAssistant(
