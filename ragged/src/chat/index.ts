@@ -16,7 +16,7 @@ type ToolCallMap = Record<string, {
 export class Chat {
     private static logger = new Logger("Chat");
 
-    private _history: Message[] = [];
+    public history: Message[] = [];
     private _isRecording: boolean = true;
     private _autoToolReply: boolean = true;
 
@@ -26,6 +26,38 @@ export class Chat {
      * Default: 3
      */
     public maxIterations = 3;
+
+    /**
+     * Whether to save the chat history or not.
+     * 
+     * @param record 
+     */
+    public record(record: boolean) {
+        this._isRecording = record;
+    }
+
+    get isRecording() {
+        return this._isRecording;
+    }
+
+    static with(provider: "openai", config: Partial<OpenAiChatAdapterConfig>): Chat;
+    static with(provider: "cohere", config: Partial<CohereChatAdapterConfig>): Chat;
+    static with(provider: string, config: any = {}) {
+        let adapter: BaseChatAdapter;
+
+        switch (provider) {
+            case "openai":
+                adapter = provideOpenAiChatAdapter({ config });
+                break;
+            case "cohere":
+                adapter = provideCohereChatAdapter({ config });
+                break;
+            default:
+                throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Chat.with().");
+        }
+
+        return new Chat(adapter);
+    }
 
     constructor(private adapter: BaseChatAdapter) { }
 
@@ -37,40 +69,12 @@ export class Chat {
     async chat(messages: Message[]): Promise<Message[]>;
     async chat(messages: Message[], config: ChatConfig): Promise<Message[]>;
     async chat(...args: any[]): Promise<Message[]> {
-        let incomingMessages = [];
-        let config: ChatConfig = {
-            tools: [],
-            // TODO: Make this configurable 
-            model: undefined
-        };
-
-        if (args.length === 0) {
-            // async chat(): Promise<Message[]>;
-            // Note: No-op, this is an experimental feature for continuing agentic chat
-        } else if (!Array.isArray(args[0]) && typeof args[0] === "object") {
-            // async chat(config: ChatConfig): Promise<Message[]>;
-            config = { ...config, ...args[0] };
-        } else if (typeof args[0] === "string") {
-            // async chat(userMessage: string): Promise<Message[]>;
-            // OR
-            // async chat(userMessage: string, config: ChatConfig): Promise<Message[]>;
-            incomingMessages = [{ type: "user", text: args[0] }];
-            config = { ...(config || {}), ...args[1] };
-        } else if (Array.isArray(args[0])) {
-            // async chat(messages: Message[]): Promise<Message[]>;
-            // OR
-            // async chat(messages: Message[], config: ChatConfig): Promise<Message[]>;
-            incomingMessages = args[0];
-            config = config = { ...(config || {}), ...args[1] };
-        } else {
-            throw new ParameterValidationError("Invalid arguments passed to Ragged.chat(). Please check the documentation or your editor's code autocomplete for more information on how to use Ragged.chat().");
-        }
-
-        let workingHistory = [...this.history, ...incomingMessages];
+        const initializedChatState = this.validatedChatParams(...args);
+        let { workingHistory } = initializedChatState;
+        const { config } = initializedChatState;
+        const { tools, model } = config;
 
         // ======= start of loop =======
-
-        const { tools, model } = config;
 
         let numIterations = 0;
         let shouldIterate = true;
@@ -82,29 +86,18 @@ export class Chat {
 
             let toolCallsWereResolved = false;
 
-            const request: ChatRequest = { history: Chat.cloneMessages(workingHistory) };
+            const request: ChatRequest = { history: workingHistory };
             if (tools && tools.length) {
                 request.tools = [...tools];
             }
+
             if (model) {
                 request.model = model;
             }
 
-            Chat.logger.debug("Chat request: ", JSON.stringify(request));
-            let response: ChatResponse = { history: [] }; // will be replaced soon
-            try {
-                response = await this.adapter.chat(request);
-            } catch (e: unknown) {
-                Chat.logger.error("Failed to chat", e);
+            const response: ChatResponse = await this.performChatRequest(request);
 
-                if (e instanceof Error) {
-                    response = { history: [{ type: "error", text: e.message }] };
-                } else {
-                    response = { history: [{ type: "error", text: "An unknown error occurred" }] };
-                }
-            }
-
-            workingHistory = Chat.cloneMessages([...workingHistory, ...response.history]);
+            workingHistory = [...workingHistory, ...response.history];
 
             if (this.isRecording) {
                 Chat.logger.debug("Recorded Response: ", JSON.stringify(workingHistory));
@@ -137,50 +130,24 @@ export class Chat {
             }
         }
 
-        return Chat.cloneMessages(workingHistory);
+        return workingHistory;
     }
 
-    public record(record: boolean) {
-        this._isRecording = record;
-    }
+    private async performChatRequest(request: ChatRequest) {
+        Chat.logger.debug("Chat request: ", JSON.stringify(request));
+        let response: ChatResponse = { history: [] }; // will be replaced soon
+        try {
+            response = await this.adapter.chat(request);
+        } catch (e: unknown) {
+            Chat.logger.error("Failed to chat", e);
 
-    get isRecording() {
-        return this._isRecording;
-    }
-
-    set history(history: Message[]) {
-        this._history = Chat.cloneMessages(history);
-    }
-
-    get history() {
-        return Chat.cloneMessages(this._history)
-    }
-
-    static with(provider: "openai", config: Partial<OpenAiChatAdapterConfig>): Chat;
-    static with(provider: "cohere", config: Partial<CohereChatAdapterConfig>): Chat;
-    static with(provider: string, config: any = {}) {
-        let adapter: BaseChatAdapter;
-
-        switch (provider) {
-            case "openai":
-                adapter = provideOpenAiChatAdapter({ config });
-                break;
-            case "cohere":
-                adapter = provideCohereChatAdapter({ config });
-                break;
-            default:
-                throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Chat.with().");
+            if (e instanceof Error) {
+                response = { history: [{ type: "error", text: e.message }] };
+            } else {
+                response = { history: [{ type: "error", text: "An unknown error occurred" }] };
+            }
         }
-
-        return new Chat(adapter);
-    }
-
-    private static cloneMessages(messages: Message[]): Message[] {
-        return messages.map(Chat.cloneMessage);
-    }
-
-    private static cloneMessage(message: Message): Message {
-        return { ...message };
+        return response;
     }
 
     private static getToolCallMap(workingHistory: Message[]): ToolCallMap {
@@ -329,5 +296,44 @@ export class Chat {
         // }
 
         return { toolCallsWereResolved };
+    }
+
+
+    private validatedChatParams(...args: any[]): { workingHistory: Message[], config: ChatConfig } {
+        let config: ChatConfig = {
+            tools: [],
+            // TODO: Make this configurable 
+            model: undefined
+        };
+
+        let incomingMessages = [];
+        if (args.length === 0) {
+            // async chat(): Promise<Message[]>;
+            // Note: No-op, this is an experimental feature for continuing agentic chat
+        } else if (!Array.isArray(args[0]) && typeof args[0] === "object") {
+            // async chat(config: ChatConfig): Promise<Message[]>;
+            config = { ...config, ...args[0] };
+        } else if (typeof args[0] === "string") {
+            // async chat(userMessage: string): Promise<Message[]>;
+            // OR
+            // async chat(userMessage: string, config: ChatConfig): Promise<Message[]>;
+            incomingMessages.push({ type: "user", text: args[0] });
+            config = { ...(config || {}), ...args[1] };
+        } else if (Array.isArray(args[0])) {
+            // async chat(messages: Message[]): Promise<Message[]>;
+            // OR
+            // async chat(messages: Message[], config: ChatConfig): Promise<Message[]>;
+            incomingMessages = args[0];
+            config = config = { ...(config || {}), ...args[1] };
+        } else {
+            throw new ParameterValidationError("Invalid arguments passed to Ragged.chat(). Please check the documentation or your editor's code autocomplete for more information on how to use Ragged.chat().");
+        }
+
+        const workingHistory = [...this.history, ...incomingMessages];
+
+        return {
+            workingHistory,
+            config
+        }
     }
 }

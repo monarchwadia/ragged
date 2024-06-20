@@ -1,6 +1,6 @@
 import { Chat } from ".";
 import { Tool } from "../tools";
-import { Message, UserMessage } from "./index.types";
+import { Message } from "./index.types";
 import { BaseChatAdapter } from "./adapter/index.types";
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { startPollyRecording } from "../../test/startPollyRecording";
@@ -374,52 +374,6 @@ describe("Chat", () => {
           text: "This is a test response from the adapter",
         },
       ] as Message[]);
-    });
-
-    describe("immutability", () => {
-      it("returns a new copy of history when .history is called", async () => {
-        c.record(true);
-
-        adapter.chat.mockResolvedValue({
-          history: [
-            {
-              type: "bot",
-              text: "This is a test response from the adapter",
-            },
-          ],
-        });
-
-        await c.chat(`This is a test message to the adapter`);
-
-        const history = c.history;
-
-        history.push({
-          type: "user",
-          text: "This is a new message",
-        });
-
-        expect(c.history).not.toEqual(history);
-      });
-
-      it("returns a new instance of the user message in the return value", async () => {
-        c.record(true);
-
-        adapter.chat.mockResolvedValue({
-          history: [
-            {
-              type: "bot",
-              text: "This is a test response from the adapter",
-            },
-          ],
-        });
-
-        const response = await c.chat(`This is a test message to the adapter`);
-
-        // sneakily manipulate the user's message in response
-        (response[0] as UserMessage).text = "This is a new message";
-
-        expect(c.history[0]).not.toEqual(response[0]);
-      });
     });
   });
 

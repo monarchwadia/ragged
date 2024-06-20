@@ -15,7 +15,6 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
   - [Installation](#installation)
   - [Simple chat](#simple-chat)
   - [Message History](#message-history)
-    - [History is immutable](#history-is-immutable)
     - [Accessing message history](#accessing-message-history)
     - [Setting message history](#setting-message-history)
   - [Freezing History](#freezing-history)
@@ -94,21 +93,13 @@ By default, each instance of the `Chat` object records the history of the conver
 console.log(c.history);
 ```
 
-This array gets updated with each call to the `chat` method. It is immutable, and a new copy of the history array is created on write as well as on read.
+This array gets updated with each call to the `chat` method.
 
-Because history is immutable, you can create a new instance of it by just assigning `c.history` to a new array.
+You can also set the history of the conversation by setting the `.history` property to an array of messages. This way, you can control the history of the conversation.
 
 ```ts
-// create a new instance of the history array
-// (we are using TS getters under the hood...)
 const history = c.history;
 ```
-
-### History is immutable
-
-Note that all message history is immutable. A new copy of the history array is created on write as well as on read. 
-
-Don't modify the history directly. Instead, set the `.history` property to a new array.
 
 ### Accessing message history
 
