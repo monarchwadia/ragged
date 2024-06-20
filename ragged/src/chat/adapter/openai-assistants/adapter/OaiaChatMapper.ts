@@ -1,8 +1,9 @@
 import { Message } from "../../../index.types";
 import { CreateMessageParams } from "../message/OaiaMessageDao";
+import { OaiaMessageList } from "../message/OaiaMessageDaoTypes";
 
 export class OaiaChatMapper {
-    static mapMessage = (threadId: string, messages: Message): CreateMessageParams | null => {
+    static mapMessageToOaia = (threadId: string, messages: Message): CreateMessageParams | null => {
         if (messages.type === "system" || messages.type === "error") {
             return null;
         };
@@ -16,9 +17,28 @@ export class OaiaChatMapper {
         }
     }
 
-    static mapMessages = (threadId: string, messages: Message[]): CreateMessageParams[] => {
+    static mapMessagesToOaia = (threadId: string, messages: Message[]): CreateMessageParams[] => {
         return messages
-            .map((message) => OaiaChatMapper.mapMessage(threadId, message))
+            .map((message) => OaiaChatMapper.mapMessageToOaia(threadId, message))
             .filter((message): message is CreateMessageParams => message !== null);
+    }
+
+    static mapMessagesFromOaia = (response: OaiaMessageList): Message[] => {
+        const messages: Message[] = [];
+
+        for (let i = 0; i < response.data.length; i++) {
+            const message = response.data[i];
+            const content = message.content.at(0);
+            if (!content) {
+                continue;
+            }
+
+            messages.push({
+                text: content.text.value,
+                type: message.role === "assistant" ? "user" : "bot"
+            });
+        }
+
+        return messages;
     }
 }

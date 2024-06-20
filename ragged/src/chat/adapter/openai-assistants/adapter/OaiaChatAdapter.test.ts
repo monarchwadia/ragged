@@ -1,3 +1,4 @@
+import { startPollyRecording } from "../../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
 import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
 import { OaiaMessageDao } from "../message/OaiaMessageDao";
@@ -6,8 +7,8 @@ import { OaiaThreadDao } from "../thread/OaiaThreadDao";
 import { OaiaChatAdapter } from "./OaiaChatAdapter";
 
 describe("OaiaChatAdapter", () => {
-    const apiKey: string = process.env.OPENAI_API_KEY as string;
-    // const apiKey: string = "not-real";
+    // const apiKey: string = process.env.OPENAI_API_KEY as string;
+    const apiKey: string = "not-real";
     let apiClient: ApiClient;
     let assistantDao: OaiaAssistantDao;
     let threadDao: OaiaThreadDao;
@@ -41,6 +42,12 @@ describe("OaiaChatAdapter", () => {
     })
 
     it.only("can chat", async () => {
+        const polly = startPollyRecording("OaiaChatAdapter > can chat", {
+            matchRequestsBy: {
+                order: true
+            }
+        });
+
         const response = await adapter.chat({
             history: [
                 { text: "Hello", type: "user" },
@@ -48,6 +55,10 @@ describe("OaiaChatAdapter", () => {
             model: "gpt-3.5-turbo",
             tools: [],
         });
+
+        polly.stop();
+
+        // expect(response).toMatchInlineSnapshot();
 
         console.log(response);
 

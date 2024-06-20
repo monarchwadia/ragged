@@ -2,7 +2,7 @@ import { Message } from "../../../index.types";
 import { OaiaChatMapper } from "./OaiaChatMapper";
 
 describe("OaiaChatMapper", () => {
-    describe("mapMessage", () => {
+    describe("mapMessageToOaia", () => {
         it("can map messages", () => {
             const threadId = "test";
             const message: Message = {
@@ -10,7 +10,7 @@ describe("OaiaChatMapper", () => {
                 type: "user"
             };
 
-            const mapped = OaiaChatMapper.mapMessage(threadId, message);
+            const mapped = OaiaChatMapper.mapMessageToOaia(threadId, message);
 
             expect(mapped).toEqual({
                 threadId: threadId,
@@ -32,7 +32,7 @@ describe("OaiaChatMapper", () => {
                     type: type
                 };
 
-                const mapped = OaiaChatMapper.mapMessage(threadId, message);
+                const mapped = OaiaChatMapper.mapMessageToOaia(threadId, message);
 
                 expect(mapped).toEqual({
                     threadId: threadId,
@@ -56,12 +56,12 @@ describe("OaiaChatMapper", () => {
                     type
                 };
 
-                expect(OaiaChatMapper.mapMessage(threadId, message)).toBe(null);
+                expect(OaiaChatMapper.mapMessageToOaia(threadId, message)).toBe(null);
             });
         });
     });
 
-    describe("mapMessages", () => {
+    describe("mapMessagesToOaia", () => {
         it("filters out messages that cannot be mapped", () => {
             const threadId = "test";
             const messages: Message[] = [
@@ -83,7 +83,7 @@ describe("OaiaChatMapper", () => {
                 }
             ];
 
-            const mapped = OaiaChatMapper.mapMessages(threadId, messages);
+            const mapped = OaiaChatMapper.mapMessagesToOaia(threadId, messages);
 
             expect(mapped).toEqual([
                 {
@@ -102,5 +102,9 @@ describe("OaiaChatMapper", () => {
                 },
             ]);
         });
-    })
+    });
+
+    // describe("mapMessageFromOaia", () => {
+    //     OaiaChatMapper.mapMessagesFromOaia()
+    // })
 });

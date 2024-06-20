@@ -1,12 +1,13 @@
 import { NotImplementedError, RetryError } from "../../../../support/CustomErrors";
 import { Logger } from "../../../../support/logger/Logger";
+import { Message } from "../../../index.types";
 import { BaseChatAdapter, ChatRequest, ChatResponse } from "../../index.types";
 import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
 import { OaiaMessageDao } from "../message/OaiaMessageDao";
 import { OaiaRunDao } from "../run/OaiaRunDao";
 import { OaiaRun } from "../run/OaiaRunDaoTypes";
 import { OaiaThreadDao } from "../thread/OaiaThreadDao";
-import { OaiaThread } from "../thread/OaiaThreadDaoTypes";
+import { OaiaChatMapper } from "./OaiaChatMapper";
 
 type AssistantConfig =
     | { assistantId: string; }
@@ -79,10 +80,10 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         OaiaChatAdapter.logger.debug("Fetching messages...");
         const messageList = await this.opts.messageDao.listMessagesForThread(this.opts.apiKey, thread.id);
 
-        // console.log(JSON.stringify(messages, null, 2));
+        const raggedMessages: Message[] = OaiaChatMapper.mapMessagesFromOaia(messageList);
 
         return {
-            history: request.history
+            history: raggedMessages
         }
     }
 
