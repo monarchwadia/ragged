@@ -428,19 +428,21 @@ await c.chat('What is a rickroll?', { model: 'command-nightly' });
 
 The following table lists the providers and models that Ragged supports. If the model is listed but marked with a red "❌", it means that the model is not yet supported but is on our roadmap.
 
-| Provider      | Models                  | Is Working                                          |
-| ------------- | ----------------------- | --------------------------------------------------- |
-| OpenAI        | GPT: 4o, 4T, 4, 3.5     | ✅                                                   |
-| Azure OpenAI  | GPT: 4, 4T, 3.5         | ❌                                                   |
-| Together      | Several OSS Models      | ❌                                                   |
-| Cohere        | CommandR, Command       | 🟡 - Chat is working. Tool calls not functional yet. |
-| Anthropic     | Claude 2, Claude 3      | ❌                                                   |
-| Mistral       | 7B, 8x7B, S, M & L      | ❌                                                   |
-| Groq          | Lama2-70B, Mixtral-8x7b | ❌                                                   |
-| DeepSeek      | Chat and Code           | ❌                                                   |
-| Ollama        | All models              | ❌                                                   |
-| Google Gemini | Gemini: Flash, Pro      | ❌                                                   |
-| Hugging Face  | OSS Model               | ❌                                                   |
+| Provider                | Models                  | Is Working                                          |
+| ----------------------- | ----------------------- | --------------------------------------------------- |
+| OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅                                                   |
+| OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | 🟡 - Chat is working. Tool calls not functional yet. |
+| Azure OpenAI            | GPT: 4, 4T, 3.5         | ❌                                                   |
+| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ❌                                                   |
+| Together                | Several OSS Models      | ❌                                                   |
+| Cohere                  | CommandR, Command       | 🟡 - Chat is working. Tool calls not functional yet. |
+| Anthropic               | Claude 2, Claude 3      | ❌                                                   |
+| Mistral                 | 7B, 8x7B, S, M & L      | ❌                                                   |
+| Groq                    | Lama2-70B, Mixtral-8x7b | ❌                                                   |
+| DeepSeek                | Chat and Code           | ❌                                                   |
+| Ollama                  | All models              | ❌                                                   |
+| Google Gemini           | Gemini: Flash, Pro      | ❌                                                   |
+| Hugging Face            | OSS Model               | ❌                                                   |
 
 
 ## Custom LLM Adapters
