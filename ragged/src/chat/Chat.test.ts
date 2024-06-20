@@ -18,6 +18,14 @@ describe("Chat", () => {
   });
 
   describe("Default behaviour", () => {
+    it('supports 0 args in the chat call', () => {
+      adapter.chat.mockResolvedValue({ history: [] });
+
+      c.chat();
+
+      expect(adapter.chat).toHaveBeenCalledWith({ history: [] });
+    })
+
     it("Calls the adapter with the correct request", async () => {
       adapter.chat.mockResolvedValue({ history: [] });
 
