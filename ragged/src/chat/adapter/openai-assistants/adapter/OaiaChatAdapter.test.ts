@@ -24,11 +24,14 @@ describe("OaiaChatAdapter", () => {
         runDao = new OaiaRunDao(apiClient);
 
         adapter = new OaiaChatAdapter({
-            apiKey,
-            assistantConfig: {
-                name: "test-agent",
-                instructions: "test",
-                model: "gpt-3.5-turbo",
+            config: {
+                apiKey,
+                assistant: {
+                    name: "test-agent",
+                    instructions: "test",
+                    model: "gpt-3.5-turbo",
+                    description: "test"
+                }
             },
             assistantDao,
             threadDao,

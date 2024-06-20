@@ -28,6 +28,7 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
   - [Official LLM Adapters](#official-llm-adapters)
     - [OpenAI](#openai)
     - [Cohere](#cohere)
+    - [OpenAI Assistants](#openai-assistants)
     - [Supported Providers and Models](#supported-providers-and-models)
   - [Custom LLM Adapters](#custom-llm-adapters)
     - [Rules for custom adapters](#rules-for-custom-adapters)
@@ -422,6 +423,18 @@ The Cohere adapter allows you to interact with the Cohere API. You can use this 
 ```ts
 const c = Chat.with('cohere', { apiKey: process.env.COHERE_API_KEY });
 await c.chat('What is a rickroll?', { model: 'command-nightly' });
+```
+
+### OpenAI Assistants
+
+> [!WARNING]
+> OpenAI Assistants is a new provider, and tool calling is not yet functional. The adapter is still in development and may not work as expected. Please use with caution.
+
+The OpenAI Assistants adapter allows you to interact with the OpenAI Assistants API. You can use this adapter to chat with the GPT-4o, GPT-4T, GPT-4, and GPT-3.5 models.
+
+```ts
+const c = Chat.with('openai-assistants', { apiKey: process.env.OPENAI_ASSISTANTS_API_KEY });
+await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 ```
 
 ### Supported Providers and Models

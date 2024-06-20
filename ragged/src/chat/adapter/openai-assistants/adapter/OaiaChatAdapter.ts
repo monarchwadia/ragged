@@ -1,4 +1,4 @@
-import { NotImplementedError, RetryError } from "../../../../support/CustomErrors";
+import { RetryError } from "../../../../support/CustomErrors";
 import { Logger } from "../../../../support/logger/Logger";
 import { Message } from "../../../index.types";
 import { BaseChatAdapter, ChatRequest, ChatResponse } from "../../index.types";
@@ -9,17 +9,34 @@ import { OaiaRun } from "../run/OaiaRunDaoTypes";
 import { OaiaThreadDao } from "../thread/OaiaThreadDao";
 import { OaiaChatMapper } from "./OaiaChatMapper";
 
-type AssistantConfig =
-    | { assistantId: string; }
-    | {
+export type OpenaiAssistantsChatAdapterConfig = {
+    apiKey: string;
+    /**
+     * This is the assistant configuration that will be used to create the assistant.
+     * It is a subset of the OpenAI Assistant configuration.
+     */
+    assistant: {
+        /**
+         * The name of the assistant
+         */
         name: string;
+        /**
+         * The model to use for the assistant. For example, "gpt-3.5-turbo"
+         */
         model: string;
+        /**
+         * The instructions for the assistant. For example, "Analyze my writing and give me some useful critique."
+         */
         instructions: string;
-    };
+        /**
+         * The description of the assistant. For example, "This assistant will analyze your writing and give you some useful critique."
+         */
+        description: string;
+    }
+};
 
 export type OaiaChatAdapterConstructorOpts = {
-    apiKey: string;
-    assistantConfig: AssistantConfig;
+    config: OpenaiAssistantsChatAdapterConfig;
     assistantDao: OaiaAssistantDao;
     threadDao: OaiaThreadDao;
     messageDao: OaiaMessageDao;
@@ -34,26 +51,22 @@ export class OaiaChatAdapter implements BaseChatAdapter {
     constructor(private opts: OaiaChatAdapterConstructorOpts) { }
 
     async chat(request: ChatRequest): Promise<ChatResponse> {
-        if ("assistantId" in this.opts.assistantConfig) {
-            throw new NotImplementedError("Not implemented. Currently, Ragged does not support re-using assistantId in OpenAI Assistant requests.");
-        }
-
         OaiaChatAdapter.logger.debug("Creating assistant...");
-        const assistant = await this.opts.assistantDao.createAssistant(this.opts.apiKey, {
-            instructions: this.opts.assistantConfig.instructions,
-            model: this.opts.assistantConfig.model,
-            name: this.opts.assistantConfig.name,
-            description: this.opts.assistantConfig.instructions,
+        const assistant = await this.opts.assistantDao.createAssistant(this.opts.config.apiKey, {
+            instructions: this.opts.config.assistant.instructions,
+            model: this.opts.config.assistant.model,
+            name: this.opts.config.assistant.name,
+            description: this.opts.config.assistant.description,
             // TODO: support oaia assistant tools
             tools: []
         });
 
         OaiaChatAdapter.logger.debug("Creating thread...");
-        const thread = await this.opts.threadDao.createThread(this.opts.apiKey);
+        const thread = await this.opts.threadDao.createThread(this.opts.config.apiKey);
 
         OaiaChatAdapter.logger.debug("Creating messages");
         for (const message of request.history) {
-            await this.opts.messageDao.createMessage(this.opts.apiKey, {
+            await this.opts.messageDao.createMessage(this.opts.config.apiKey, {
                 threadId: thread.id,
                 body: {
                     content: message.text || "",
@@ -63,11 +76,11 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         }
 
         OaiaChatAdapter.logger.debug("Running assistant...");
-        const run = await this.opts.runDao.createRun(this.opts.apiKey, {
+        const run = await this.opts.runDao.createRun(this.opts.config.apiKey, {
             threadId: thread.id,
             body: {
                 assistant_id: assistant.id,
-                instructions: this.opts.assistantConfig.instructions
+                instructions: this.opts.config.assistant.instructions
             },
         });
 
@@ -78,7 +91,7 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         }
 
         OaiaChatAdapter.logger.debug("Fetching messages...");
-        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(this.opts.apiKey, thread.id);
+        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(this.opts.config.apiKey, thread.id);
 
         // All new messages from OAI Assistants come back with a thread_id. But because the messages we
         // created did not originate inside a thread, i.e. they were created just a few lines ago for the first time,
@@ -88,8 +101,6 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         // Known limitation: all conversations will have new threads created for them. This is not ideal, but
         // it is a limitation of the current implementation. We can improve this in the future.
         const newResponseMessages = listMessageResponse.data.filter((message) => !!message.run_id);
-
-        console.log(newResponseMessages);
 
         const raggedMessages: Message[] = OaiaChatMapper.mapMessagesFromOaia(newResponseMessages);
 
@@ -119,7 +130,7 @@ export class OaiaChatAdapter implements BaseChatAdapter {
             try {
                 OaiaChatAdapter.logger.debug("Fetching run...");
 
-                latestRun = await this.opts.runDao.getRun(this.opts.apiKey, {
+                latestRun = await this.opts.runDao.getRun(this.opts.config.apiKey, {
                     runId: runId,
                     threadId: threadId
                 });
