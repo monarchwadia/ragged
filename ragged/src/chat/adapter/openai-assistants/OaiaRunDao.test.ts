@@ -58,13 +58,13 @@ describe("OaiaRunDaoDao", () => {
 
       expect(run).toMatchInlineSnapshot(`
         {
-          "assistant_id": "asst_Q2BllgAyTiUhgD0ZuBNpibyb",
+          "assistant_id": "asst_rLTm0LCjqA2vPolP579uAaD0",
           "cancelled_at": null,
           "completed_at": null,
-          "created_at": 1718856746,
-          "expires_at": 1718857346,
+          "created_at": 1718857836,
+          "expires_at": 1718858436,
           "failed_at": null,
-          "id": "run_oZawx6K9eO9WbsxXopPNGBVi",
+          "id": "run_9XQzr1lXBN0B0W3WxNGvG1YV",
           "incomplete_details": null,
           "instructions": "I need to solve the equation \`3x + 11 = 14\`. Can you help me?",
           "last_error": null,
@@ -79,7 +79,7 @@ describe("OaiaRunDaoDao", () => {
           "started_at": null,
           "status": "queued",
           "temperature": 1,
-          "thread_id": "thread_FXkzDdHGZ1SjyDDrkg8g2g7V",
+          "thread_id": "thread_tYtMyOfMHetTpXaJosgJbn5H",
           "tool_choice": "auto",
           "tool_resources": {},
           "tools": [],

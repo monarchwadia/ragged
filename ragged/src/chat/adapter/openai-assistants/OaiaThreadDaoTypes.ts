@@ -6,7 +6,7 @@ type Metadata = {
     // Define the structure of metadata if it has known properties
 };
 
-export interface ThreadCreateResponseBody {
+export interface OaiaThread {
     created_at: number;
     id: string;
     metadata: Metadata;

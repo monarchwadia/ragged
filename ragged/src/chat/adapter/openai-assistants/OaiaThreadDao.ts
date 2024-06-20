@@ -1,10 +1,10 @@
 import { ApiClient } from "../../../support/ApiClient";
-import { ThreadCreateResponseBody } from "./OaiaThreadDaoTypes"
+import { OaiaThread } from "./OaiaThreadDaoTypes"
 
 export class OaiaThreadDao {
     constructor(private apiClient: ApiClient) { }
 
-    createThread(apiKey: string): Promise<ThreadCreateResponseBody> {
+    createThread(apiKey: string): Promise<OaiaThread> {
         return this.apiClient.post("https://api.openai.com/v1/threads", {
             headers: {
                 "Content-Type": "application/json",

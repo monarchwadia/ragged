@@ -81,7 +81,7 @@ describe("ApiClient", () => {
 
       it("should have the correct message", () => {
         expect(caught?.message).toBe(
-          `Received a non-200 response from an API call. Status was ${status}.`
+          `Received a non-200 response from an API call while doing API call to . Status was ${status}.`
         );
       });
     });

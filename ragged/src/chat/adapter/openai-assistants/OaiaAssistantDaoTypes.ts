@@ -6,7 +6,7 @@ export type OaiaAssistantCreateRequestBody = {
     description?: string | null
 }
 
-export type OaiaAssistantCreateResponse = {
+export type OaiaAssistant = {
     created_at: number;
     description: string | null;
     id: string;
