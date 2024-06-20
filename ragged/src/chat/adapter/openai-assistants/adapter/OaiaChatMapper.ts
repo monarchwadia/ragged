@@ -23,11 +23,11 @@ export class OaiaChatMapper {
             .filter((message): message is CreateMessageParams => message !== null);
     }
 
-    static mapMessagesFromOaia = (response: OaiaMessageList): Message[] => {
+    static mapMessagesFromOaia = (messageListData: OaiaMessageList['data']): Message[] => {
         const messages: Message[] = [];
 
-        for (let i = 0; i < response.data.length; i++) {
-            const message = response.data[i];
+        for (let i = 0; i < messageListData.length; i++) {
+            const message = messageListData[i];
             const content = message.content.at(0);
             if (!content) {
                 continue;
@@ -35,7 +35,7 @@ export class OaiaChatMapper {
 
             messages.push({
                 text: content.text.value,
-                type: message.role === "assistant" ? "user" : "bot"
+                type: message.role === "assistant" ? "bot" : "user"
             });
         }
 

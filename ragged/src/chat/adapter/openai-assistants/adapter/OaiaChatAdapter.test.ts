@@ -52,16 +52,15 @@ describe("OaiaChatAdapter", () => {
             history: [
                 { text: "Hello", type: "user" },
             ],
-            model: "gpt-3.5-turbo",
-            tools: [],
+            model: "gpt-3.5-turbo"
         });
 
         polly.stop();
 
-        // expect(response).toMatchInlineSnapshot();
-
-        console.log(response);
-
-        // const response = await adapter.chat(request);
+        expect(response).toMatchObject({
+            history: [
+                { text: 'Hello! How can I assist you today?', type: 'bot' }
+            ]
+        });
     })
 });

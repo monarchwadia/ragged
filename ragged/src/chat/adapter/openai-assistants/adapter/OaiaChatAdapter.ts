@@ -78,9 +78,22 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         }
 
         OaiaChatAdapter.logger.debug("Fetching messages...");
-        const messageList = await this.opts.messageDao.listMessagesForThread(this.opts.apiKey, thread.id);
+        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(this.opts.apiKey, thread.id);
 
-        const raggedMessages: Message[] = OaiaChatMapper.mapMessagesFromOaia(messageList);
+        // All new messages from OAI Assistants come back with a thread_id. But because the messages we
+        // created did not originate inside a thread, i.e. they were created just a few lines ago for the first time,
+        // they will not have a thread_id. So we need to filter out the messages that don't have a thread_id,
+        // and only keep the ones that do have a thread_id.
+        //
+        // Known limitation: all conversations will have new threads created for them. This is not ideal, but
+        // it is a limitation of the current implementation. We can improve this in the future.
+        const newResponseMessages = listMessageResponse.data.filter((message) => !!message.run_id);
+
+        console.log(newResponseMessages);
+
+        const raggedMessages: Message[] = OaiaChatMapper.mapMessagesFromOaia(newResponseMessages);
+
+        // TODO: Delete the assistants, threads, messages, and runs after we are done with them.
 
         return {
             history: raggedMessages
