@@ -15,15 +15,20 @@ const logger = new Logger("startPollyRecording");
 type PollyOptions = {
     refresh?: boolean;
     persistErrors?: boolean;
+    matchRequestsBy?: {
+        headers?: boolean;
+        body?: boolean;
+        order?: boolean;
+    };
 }
 export const startPollyRecording = (recordingName: string, opts: PollyOptions = {}) => {
     const config: ConstructorParameters<typeof Polly>[1] = {
         adapters: ["fetch"],
         persister: "fs",
         matchRequestsBy: {
-            headers: false,
-            body: false,
-            order: false,
+            headers: opts.matchRequestsBy?.headers ?? false,
+            body: opts.matchRequestsBy?.body ?? false,
+            order: opts.matchRequestsBy?.order ?? false,
         },
         logLevel: "ERROR"
     };
