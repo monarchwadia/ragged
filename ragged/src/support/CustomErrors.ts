@@ -1,3 +1,5 @@
+import { Logger } from "./logger/Logger";
+
 /**
  * Custom errors for drivers. Drivers can throw these errors to indicate
  * that something went wrong.
@@ -37,9 +39,15 @@ export class FetchRequestFailedError extends BaseCustomError {
 }
 
 export class FetchResponseNotOkError extends BaseCustomError {
+    private static logger: Logger = new Logger("FetchResponseNotOkError");
     constructor(public response: Response, public status: number) {
         super("Received a non-200 response from an API call. Status was " + status + ".");
         this.name = "FetchResponseNotOkError";
+        response.text()
+            .then((txt) => FetchResponseNotOkError.logger.info(txt))
+            .catch((e) => {
+                FetchResponseNotOkError.logger.error("Failed to read response text.", e);
+            });
     }
 }
 
