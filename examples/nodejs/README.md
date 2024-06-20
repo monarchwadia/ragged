@@ -16,3 +16,10 @@ For example
 
 * `pnpm tsx simple.ts`
 * `pnpm tsx recording.ts`
+
+## How to run all
+
+```bash
+pnpm run-all
+```
+
