@@ -1,4 +1,4 @@
-import { ApiClient } from "../../../support/ApiClient";
+import { ApiClient } from "../../../../support/ApiClient";
 import { OaiaAssistantCreateRequestBody, OaiaAssistant } from "./OaiaAssistantDaoTypes"
 
 export class OaiaAssistantDao {

@@ -1,4 +1,4 @@
-import { ApiClient } from "../../../support/ApiClient";
+import { ApiClient } from "../../../../support/ApiClient";
 import { OaiaThread } from "./OaiaThreadDaoTypes"
 
 export class OaiaThreadDao {

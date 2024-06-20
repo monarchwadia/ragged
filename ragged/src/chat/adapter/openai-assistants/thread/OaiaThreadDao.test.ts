@@ -1,5 +1,5 @@
-import { startPollyRecording } from "../../../../test/startPollyRecording";
-import { ApiClient } from "../../../support/ApiClient";
+import { startPollyRecording } from "../../../../../test/startPollyRecording";
+import { ApiClient } from "../../../../support/ApiClient";
 import { OaiaThreadDao } from "./OaiaThreadDao";
 
 describe("OaiaThreadDao", () => {

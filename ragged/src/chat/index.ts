@@ -36,6 +36,9 @@ export class Chat {
         this._isRecording = record;
     }
 
+    /**
+     * Whether it is recording or not.
+     */
     get isRecording() {
         return this._isRecording;
     }

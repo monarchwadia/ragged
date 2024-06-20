@@ -1,9 +1,9 @@
-import { startPollyRecording } from "../../../../test/startPollyRecording";
-import { ApiClient } from "../../../support/ApiClient";
-import { OaiaMessageDao } from "./OaiaMessageDao";
-import { OaiaThreadDao } from "./OaiaThreadDao";
+import { startPollyRecording } from "../../../../../test/startPollyRecording";
+import { ApiClient } from "../../../../support/ApiClient";
+import { OaiaMessageDao } from "../message/OaiaMessageDao";
+import { OaiaThreadDao } from "../thread/OaiaThreadDao";
 import { OaiaRunDao } from "./OaiaRunDao";
-import { OaiaAssistantDao } from "./OaiaAssistantDao";
+import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
 
 describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {
