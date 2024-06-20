@@ -1,5 +1,5 @@
 import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaMessage } from "./OaiaMessageDaoTypes"
+import { OaiaMessage, OaiaMessageList } from "./OaiaMessageDaoTypes"
 
 export type CreateMessageParams = {
     threadId: any;
@@ -23,7 +23,7 @@ export class OaiaMessageDao {
         });
     }
 
-    listMessagesForThread(apiKey: string, threadId: string): Promise<any> {
+    listMessagesForThread(apiKey: string, threadId: string): Promise<OaiaMessageList> {
         return this.apiClient.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
             headers: {
                 "Content-Type": "application/json",

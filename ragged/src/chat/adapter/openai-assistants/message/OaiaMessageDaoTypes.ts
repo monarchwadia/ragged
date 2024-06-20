@@ -20,3 +20,11 @@ interface TextContent {
     annotations: any[];
     value: string;
 }
+
+export interface OaiaMessageList {
+    object: string;
+    data: OaiaMessage[];
+    first_id: string;
+    last_id: string;
+    has_more: boolean;
+}

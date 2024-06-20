@@ -1,11 +1,6 @@
 // LogLevel type to define various levels of logging
 type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'none';
 
-// Logger options interface
-interface LoggerOptions {
-    level: LogLevel;
-}
-
 /**
  * A simple logger class that logs messages to the console. It supports different log levels and namespaces.
  * 

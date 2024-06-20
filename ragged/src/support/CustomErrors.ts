@@ -79,3 +79,10 @@ export class NotImplementedError extends BaseCustomError {
         this.name = "NotImplementedError";
     }
 }
+
+export class RetryError extends BaseCustomError {
+    constructor(message: string) {
+        super(message);
+        this.name = "RetryError";
+    }
+}
