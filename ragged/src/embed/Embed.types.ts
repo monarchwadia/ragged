@@ -15,7 +15,7 @@ export type EmbeddingRequest = {
 /**
  * Response to get an embedding for a given text
  */
-export type EmbeddingResponse = {
+export type Embedding = {
     /**
      * The provider of the embedding. For example, OpenAI or Cohere.
      */
@@ -43,5 +43,5 @@ export type EmbeddingResponse = {
  * @throws Error if the API request fails.
  */
 export interface BaseEmbeddingAdapter {
-    embed(request: EmbeddingRequest): Promise<EmbeddingResponse>;
+    embed(request: EmbeddingRequest): Promise<Embedding>;
 }

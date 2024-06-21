@@ -7,8 +7,8 @@ import { OaiaThreadDao } from "../thread/OaiaThreadDao";
 import { OaiaChatAdapter } from "./OaiaChatAdapter";
 
 describe("OaiaChatAdapter", () => {
-    const apiKey: string = process.env.OPENAI_API_KEY as string;
-    // const apiKey: string = "not-real";
+    // const apiKey: string = process.env.OPENAI_API_KEY as string;
+    const apiKey: string = "not-real";
     let apiClient: ApiClient;
     let assistantDao: OaiaAssistantDao;
     let threadDao: OaiaThreadDao;
