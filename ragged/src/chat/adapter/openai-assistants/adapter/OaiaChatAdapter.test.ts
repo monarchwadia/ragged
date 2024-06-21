@@ -7,8 +7,8 @@ import { OaiaThreadDao } from "../thread/OaiaThreadDao";
 import { OaiaChatAdapter } from "./OaiaChatAdapter";
 
 describe("OaiaChatAdapter", () => {
-    // const apiKey: string = process.env.OPENAI_API_KEY as string;
-    const apiKey: string = "not-real";
+    const apiKey: string = process.env.OPENAI_API_KEY as string;
+    // const apiKey: string = "not-real";
     let apiClient: ApiClient;
     let assistantDao: OaiaAssistantDao;
     let threadDao: OaiaThreadDao;
@@ -30,40 +30,43 @@ describe("OaiaChatAdapter", () => {
                     name: "test-agent",
                     instructions: "test",
                     model: "gpt-3.5-turbo",
-                    description: "test"
-                }
+                    description: "test",
+                },
             },
             assistantDao,
             threadDao,
             messageDao,
-            runDao
+            runDao,
         });
     });
 
     it("can instantiate", () => {
         expect(adapter).toBeDefined();
-    })
+    });
 
-    it.only("can chat", async () => {
+    it("can chat", async () => {
         const polly = startPollyRecording("OaiaChatAdapter > can chat", {
             matchRequestsBy: {
-                order: true
+                order: true,
             }
         });
 
         const response = await adapter.chat({
-            history: [
-                { text: "Hello", type: "user" },
-            ],
-            model: "gpt-3.5-turbo"
+            history: [{ text: "Hello, whats your name?", type: "user" }],
+            model: "gpt-3.5-turbo",
         });
 
         polly.stop();
 
-        expect(response).toMatchObject({
-            history: [
-                { text: 'Hello! How can I assist you today?', type: 'bot' }
-            ]
-        });
-    })
+        expect(response).toMatchInlineSnapshot(`
+      {
+        "history": [
+          {
+            "text": "Hello! I am an AI assistant, you can call me Assistant. How can I help you today?",
+            "type": "bot",
+          },
+        ],
+      }
+    `);
+    });
 });
