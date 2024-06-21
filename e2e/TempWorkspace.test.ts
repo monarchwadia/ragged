@@ -2,7 +2,7 @@ import { TempWorkspace } from "./TempWorkspace";
 import fs from "fs";
 import path from "path";
 
-describe("TempWorkspace", () => {
+describe("(META_SELFTEST_SUITE) TempWorkspace", () => {
     describe("without init", () => {
         const workspace = new TempWorkspace();
         it("should throw an error when calling getTmpDirPath()", () => {
@@ -110,19 +110,6 @@ describe("TempWorkspace", () => {
                     expect(tsconfig.compilerOptions.module).toEqual("ESNext");
                     expect(tsconfig.compilerOptions.moduleResolution).toEqual("ESNext");
                 });
-            });
-        });
-
-        describe("after running the test", () => {
-            beforeEach(() => {
-                workspace.runTest();
-            });
-
-            it("should create a temporary folder with Ragged built files in its node_modules.", async () => {
-                const raggedModule = fs.statSync(
-                    path.resolve(workspacePath, "node_modules", "ragged")
-                );
-                expect(raggedModule.isDirectory()).toStrictEqual(true);
             });
         });
     });

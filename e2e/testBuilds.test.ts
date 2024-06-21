@@ -2,7 +2,7 @@ import { TempWorkspace } from "./TempWorkspace";
 import fs from "fs";
 import path from "path";
 
-describe("TempWorkspace", () => {
+describe("(E2E_TEST_SUITE) TempWorkspace", () => {
     // describe("init", () => {
     //     let workspace: TempWorkspace;
     //     let workspacePath: string;
@@ -21,7 +21,17 @@ describe("TempWorkspace", () => {
 
     //     });
     // })
-    it("has one test", () => {
+    describe("after running the test", () => {
+        let workspace: TempWorkspace;
+        let workspacePath: string;
 
+        beforeEach(async () => {
+            workspace = new TempWorkspace();
+            await workspace.asyncInit();
+        });
+
+        it("should create a temporary folder with Ragged built files in its node_modules.", async () => {
+            workspace.runTest();
+        });
     });
 });

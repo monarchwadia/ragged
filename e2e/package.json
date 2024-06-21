@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "tdd": "jest --watch"
+    "start": "jest --testNamePattern=E2E_TEST_SUITE",
+    "dev": "jest --watch --testNamePattern=E2E_TEST_SUITE",
+    "test": "jest --testNamePattern=META_SELFTEST_SUITE",
+    "tdd": "jest --watch --testNamePattern=META_SELFTEST_SUITE"
   },
   "keywords": [],
   "author": "",
