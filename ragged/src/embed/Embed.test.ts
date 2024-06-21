@@ -1,6 +1,7 @@
 import { ParameterValidationError } from "../support/CustomErrors";
 import { Embed } from "./Embed";
-import { BaseEmbeddingAdapter, EmbeddingRequest, Embedding } from "./Embed.types";
+import type { EmbeddingRequest, Embedding } from "./Embed.types";
+import type { BaseEmbeddingAdapter } from "./adapter/index.types";
 
 describe("Embed", () => {
     describe("with dummy adapter", () => {

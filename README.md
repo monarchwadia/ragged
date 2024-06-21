@@ -29,7 +29,8 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [OpenAI](#openai)
     - [Cohere](#cohere)
     - [OpenAI Assistants](#openai-assistants)
-    - [Supported Providers and Models](#supported-providers-and-models)
+  - [Feature Roadmap](#feature-roadmap)
+    - [Built-in Providers and Models](#built-in-providers-and-models)
   - [Custom LLM Adapters](#custom-llm-adapters)
     - [Rules for custom adapters](#rules-for-custom-adapters)
     - [Examples of custom adapters](#examples-of-custom-adapters)
@@ -46,7 +47,6 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [Understanding the folder structure](#understanding-the-folder-structure)
       - [Main folder](#main-folder)
       - [Supporting folders](#supporting-folders)
-  - [Feature Roadmap](#feature-roadmap)
 
 ## Installation
 
@@ -437,25 +437,46 @@ const c = Chat.with('openai-assistants', { apiKey: process.env.OPENAI_ASSISTANTS
 await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 ```
 
-### Supported Providers and Models
+## Feature Roadmap
 
-The following table lists the providers and models that Ragged supports. If the model is listed but marked with a red "❌", it means that the model is not yet supported but is on our roadmap.
+| Feature                            | Is Working | API Frozen* |
+| ---------------------------------- | ---------- | ----------- |
+| Chat Completion                    | 🟢 100%     | ❌           |
+| Embeddings Generation              | 🟢 100%     | ❌           |
+| In-built Message History           | 🟢 100%     | ❌           |
+| Write your own custom LLM adapters | 🟢 100%     | ❌           |
+| Tool Calling                       | 🟡 30%      | ❌           |
+| Autonomous Agents                  | 🟢 100%     | ❌           |
+| Message History                    | 🟢 100%     | ❌           |
+| Helpful Errors                     | 🟢 100%     | ❌           |
+| Streaming                          | 🔴 0%       | ❌           |
+| Model Fine-Tuning                  | 🔴 0%       | ❌           |
+| File Input                         | 🔴 0%       | ❌           |
+| Multimodal Input                   | 🔴 0%       | ❌           |
+| Multimodal Generation              | 🔴 0%       | ❌           |
 
-| Provider                | Models                  | Is Working                                          |
-| ----------------------- | ----------------------- | --------------------------------------------------- |
-| OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅                                                   |
-| OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | 🟡 - Chat is working. Tool calls not functional yet. |
-| Azure OpenAI            | GPT: 4, 4T, 3.5         | ❌                                                   |
-| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ❌                                                   |
-| Together                | Several OSS Models      | ❌                                                   |
-| Cohere                  | CommandR, Command       | 🟡 - Chat is working. Tool calls not functional yet. |
-| Anthropic               | Claude 2, Claude 3      | ❌                                                   |
-| Mistral                 | 7B, 8x7B, S, M & L      | ❌                                                   |
-| Groq                    | Lama2-70B, Mixtral-8x7b | ❌                                                   |
-| DeepSeek                | Chat and Code           | ❌                                                   |
-| Ollama                  | All models              | ❌                                                   |
-| Google Gemini           | Gemini: Flash, Pro      | ❌                                                   |
-| Hugging Face            | OSS Model               | ❌                                                   |
+\* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
+
+
+### Built-in Providers and Models
+
+The following table lists the providers and models that Ragged Comes with out of the box. If you want to use a different provider or model, you can create a custom adapter.
+
+| Provider                | Models                  | Chat | Embeddings | Tool Calls |
+| ----------------------- | ----------------------- | ---- | ---------- | ---------- |
+| OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅    | ✅          | ✅          |
+| OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | ✅    | ❌          | ❌          |
+| Azure OpenAI            | GPT: 4, 4T, 3.5         | ❌    | ❌          | ❌          |
+| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ❌    | ❌          | ❌          |
+| Together                | Several OSS Models      | ❌    | ❌          | ❌          |
+| Cohere                  | CommandR, Command       | ✅    | ❌          | ❌          |
+| Anthropic               | Claude 2, Claude 3      | ❌    | ❌          | ❌          |
+| Mistral                 | 7B, 8x7B, S, M & L      | ❌    | ❌          | ❌          |
+| Groq                    | Lama2-70B, Mixtral-8x7b | ❌    | ❌          | ❌          |
+| DeepSeek                | Chat and Code           | ❌    | ❌          | ❌          |
+| Ollama                  | All models              | ❌    | ❌          | ❌          |
+| Google Gemini           | Gemini: Flash, Pro      | ❌    | ❌          | ❌          |
+| Hugging Face            | OSS Model               | ❌    | ❌          | ❌          |
 
 
 ## Custom LLM Adapters
@@ -676,27 +697,4 @@ Within the `ragged` folder, you will find the following files and folders:
 - `examples` contains example code that demonstrates how to use Ragged. This is useful for testing and learning how to use Ragged. Please refer to the README in each examples folder for more information on how to run the examples.
 - `scratch` contains scratch files that are used for testing and debugging. These files are not part of the main codebase. They are used for quick testing and prototyping. You can ignore this folder if you are not familiar with it.
 
-## Feature Roadmap
-
-Ragged is currently in alpha. It is not yet ready for production use. We are actively working on it and will be releasing new features and improvements regularly.
-
-| Feature                            | Is Working | API Frozen* | Notes                                                                                   |
-| ---------------------------------- | ---------- | ----------- | --------------------------------------------------------------------------------------- |
-| Chat Completion                    | 🟢 100%     | ❌           |                                                                                         |
-| In-built Message History           | 🟢 100%     | ❌           |                                                                                         |
-| Write your own custom LLM adapters | 🟢 100%     | ❌           |                                                                                         |
-| Tool Calling                       | 🟢 100%     | ❌           |                                                                                         |
-| Autonomous Agents                  | 🟢 100%     | ❌           |                                                                                         |
-| Message History                    | 🟢 100%     | ❌           |                                                                                         |
-| Helpful Errors                     | 🟡 30%      | ❌           |                                                                                         |
-| Streaming                          | 🔴 0%       | ❌           |                                                                                         |
-| Embeddings Generation              | 🔴 0%       | ❌           |                                                                                         |
-| Image Input                        | 🔴 0%       | ❌           |                                                                                         |
-| Video Input                        | 🔴 0%       | ❌           |                                                                                         |
-| File Input                         | 🔴 0%       | ❌           | If your file is human-readable (XML, JSON, etc) then you can include it in your prompt. |
-| Image Generation                   | 🔴 0%       | ❌           |                                                                                         |
-| Video Generation                   | 🔴 0%       | ❌           |                                                                                         |
-| Model Fine-Tuning                  | 🔴 0%       | ❌           |                                                                                         |
-
-\* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
 

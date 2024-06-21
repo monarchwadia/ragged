@@ -1,6 +1,7 @@
 import { ParameterValidationError } from "../support/CustomErrors";
 import { Logger } from "../support/logger/Logger";
-import type { BaseEmbeddingAdapter, EmbeddingRequest, Embedding } from "./Embed.types";
+import type { EmbeddingRequest, Embedding } from "./Embed.types";
+import type { BaseEmbeddingAdapter } from "./adapter/index.types";
 
 export class Embed {
     private static logger = new Logger('Embed');

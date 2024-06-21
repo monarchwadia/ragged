@@ -6,7 +6,7 @@ import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdap
 import { provideCohereChatAdapter } from "./adapter/cohere/provideCohereChatAdapter";
 import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
 import { OpenAiChatAdapterConfig } from "./adapter/openai";
-import { OaiaChatAdapterConstructorOpts, OpenaiAssistantsChatAdapterConfig } from "./adapter/openai-assistants/adapter/OaiaChatAdapter";
+import { OpenaiAssistantsChatAdapterConfig } from "./adapter/openai-assistants/adapter/OaiaChatAdapter";
 import { provideOpenaiAssistantsChatAdapter } from "./adapter/openai-assistants/provideOpenaiAssistantsChatAdapter";
 
 type ToolCallMap = Record<string, {
