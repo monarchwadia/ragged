@@ -15,6 +15,11 @@ export const updatePackageJsonEntrypoints = async (params: Params) => {
         exports: packageJsonExports as any
     })
 
+    // remove the "type" field
+    if (pkgJson.content.type) {
+        delete pkgJson.content.type
+    }
+
     await pkgJson.save();
 }
 
