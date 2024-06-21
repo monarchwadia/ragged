@@ -221,7 +221,11 @@ const getHomepageTool: Tool = {
     }
 }
 
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+const c = Chat.with('openai', {
+    apiKey: process.env.OPENAI_API_KEY,
+    // You can also pass the organization ID here.
+    organizationId: process.env.OPENAI_ORGANIZATION_ID
+});
 
 const response = await c.chat("Get the contents of my homepage.", {
     // Pass the tool to the chat method.
