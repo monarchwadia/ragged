@@ -83,18 +83,6 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
 
-  e2e/project-template:
-    dependencies:
-      ragged:
-        specifier: ^0.4.16
-        version: 0.4.16
-      tsx:
-        specifier: ^4.7.1
-        version: 4.7.1
-      typescript:
-        specifier: ^5.5.2
-        version: 5.5.2
-
   examples/nodejs:
     dependencies:
       chalk:
@@ -5371,9 +5359,6 @@ packages:
 
   ragged@0.4.10:
     resolution: {integrity: sha512-djljgS/5rDqMUsuTtK4ejFfZBixq2tSV+LrgEBTXFEitPZmMOSu8K8T50wDW5Ef2N/UfGsVB4l+x1d+jm8NW8Q==}
-
-  ragged@0.4.16:
-    resolution: {integrity: sha512-16mai28t47UUa/bO6iamjN6VSS912CgPvQimKRPP4T8kReaxIEkaayLP0tvz2MTs5/EOFdvFcfaRA7EG0fhUnA==}
 
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
@@ -13297,8 +13282,6 @@ snapshots:
   quick-lru@5.1.1: {}
 
   ragged@0.4.10: {}
-
-  ragged@0.4.16: {}
 
   randombytes@2.1.0:
     dependencies:

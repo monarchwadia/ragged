@@ -13,16 +13,13 @@ describe("TempWorkspace", () => {
             workspacePath = workspace.getTmpDirPath() as string;
         });
 
+        afterAll(() => {
+            workspace.destroy();
+        });
+
         it("should provide a temporary directory path when calling getTmpDirPath()", () => {
             const workspacePath = workspace.getTmpDirPath();
             expect(workspacePath).toBeTruthy();
-        });
-
-        it("should create a temporary folder with Ragged built files in its node_modules.", async () => {
-            const raggedModule = fs.statSync(
-                path.resolve(workspacePath, "node_modules", "ragged")
-            );
-            expect(raggedModule.isDirectory()).toStrictEqual(true);
         });
 
         it("should have copied the basic project structure", () => {
@@ -32,14 +29,24 @@ describe("TempWorkspace", () => {
             "index.ts",
             "node_modules",
             "package.json",
-            "pnpm-lock.yaml",
             "tsconfig.json",
           ]
         `);
         });
 
-        it("should run the test", async () => {
 
-        });
+        describe("after running the test", () => {
+            beforeEach(() => {
+                workspace.runTest();
+            });
+
+
+            it("should create a temporary folder with Ragged built files in its node_modules.", async () => {
+                const raggedModule = fs.statSync(
+                    path.resolve(workspacePath, "node_modules", "ragged")
+                );
+                expect(raggedModule.isDirectory()).toStrictEqual(true);
+            });
+        })
     })
 });

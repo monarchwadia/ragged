@@ -8,8 +8,16 @@ import { exec, execSync } from "child_process";
 const doExecSync: typeof execSync = (...args: any[]) => {
     console.log("command: ", args[0]);
 
-    // @ts-expect-error - who cares, this clearly works.
-    return execSync(...args);
+    try {
+        // @ts-expect-error - who cares, this clearly works.
+        return execSync(...args);
+    } catch (e: any) {
+        if (e.output) {
+            console.error(e.output.toString());
+        }
+
+        throw e;
+    }
 }
 
 export class TempWorkspace {
@@ -25,32 +33,17 @@ export class TempWorkspace {
         // Create a temporary directory
         this.directoryPath = await mkdtemp(join(tmpdir(), 'build-'))
 
-        try {
-            // if we ever need to copy dotfiles, we can use this
-            // doExecSync(`cp -r "${join(__dirname, "project-template/.*")}" "${this.directoryPath}"`);
-            doExecSync(`cp -r ${join(__dirname, "project-template")}/* "${this.directoryPath}"`, { cwd: __dirname });
-            doExecSync(`pnpm install`, { cwd: this.directoryPath });
-        } catch (e: any) {
-            console.error(e);
-            if (e.output) {
-                console.error(e.output.toString());
-            }
-            throw new Error("Failed to initialize a new project in the temporary directory.");
-        }
+        // if we ever need to copy dotfiles, we can use this
+        // doExecSync(`cp -r "${join(__dirname, "project-template/.*")}" "${this.directoryPath}"`);
+        doExecSync(`cp -r ${join(__dirname, "project-template")}/* "${this.directoryPath}"`, { cwd: __dirname });
 
         // Copy Ragged's built files into it
-
-        try {
-            const raggedOriginPath = join(__dirname, "node_modules", "ragged");
-            console.log(raggedOriginPath);
-            const raggedDestinationPath = path.resolve(this.directoryPath, "node_modules", "ragged");
-            doExecSync(`rm -rf "${raggedDestinationPath}"`);
-            doExecSync(`mkdir -p "${raggedDestinationPath}/node_modules"`);
-            doExecSync(`cp -r "${raggedOriginPath}" "${raggedDestinationPath}"`);
-        } catch (e: any) {
-            console.error(e);
-            throw new Error("Failed to copy Ragged's built files into the temporary directory.");
-        }
+        // const raggedOriginPath = join(__dirname, "node_modules", "ragged");
+        // console.log(raggedOriginPath);
+        // const raggedDestinationPath = path.resolve(this.directoryPath, "node_modules", "ragged");
+        // doExecSync(`rm -rf "${raggedDestinationPath}"`);
+        // doExecSync(`mkdir -p "${raggedDestinationPath}/node_modules"`);
+        // doExecSync(`cp -r "${raggedOriginPath}" "${raggedDestinationPath}"`);
     }
 
     /**
@@ -61,15 +54,20 @@ export class TempWorkspace {
     }
 
     runTest() {
-        try {
-            doExecSync(`pnpm tsx index.ts`, { cwd: this.directoryPath });
-        } catch (e: any) {
-            console.error(e);
-            throw new Error("Failed to copy Ragged's built files into the temporary directory.");
-        }
+        doExecSync(`pnpm install`, { cwd: this.directoryPath });
+        doExecSync(`pnpm tsc --noEmit`, { cwd: this.directoryPath });
+        doExecSync(`pnpm tsx index.ts`, { cwd: this.directoryPath });
     }
 
-    // destroy() {
-    //     fs.rmdirSync(this.directoryPath, { recursive: true });
-    // }
+    destroy() {
+        if (!this.directoryPath) {
+            return;
+        }
+
+        if (!this.directoryPath.startsWith("/tmp/")) {
+            throw new Error("The temporary directory path does not start with /tmp/. This is a safety check to prevent deleting the wrong directory.");
+        }
+
+        fs.rmdirSync(this.directoryPath, { recursive: true });
+    }
 }
