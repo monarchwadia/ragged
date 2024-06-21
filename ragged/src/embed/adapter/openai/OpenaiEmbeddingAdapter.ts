@@ -42,6 +42,22 @@ export class OpenaiEmbeddingAdapter implements BaseEmbeddingAdapter {
         return responseObj;
     }
 
+    /**
+     * Calculates how similar two sets of numbers (embeddings) are.
+     * 
+     * Cosine similarity is a way to measure how similar two sets of numbers are.
+     * It's like checking the angle between two arrows pointing in a high-dimensional space.
+     * A cosine similarity of 1 means the arrows point in the same direction, 0 means they are
+     * completely different.
+     * 
+     * @param embedding1 - The first set of numbers and its details.
+     * @param embedding2 - The second set of numbers and its details.
+     * @returns A number between 0 and 1 indicating how similar the two sets of numbers are. If the
+     * two sets of numbers are exactly the same, the cosine similarity will be 1. If they are completely
+     * different, the cosine similarity will be 0. If one of the embeddings is all zeros, the cosine similarity
+     * will be 0 -- this is because the cosine similarity is undefined when the norm of one of the embeddings is 0.
+     * @throws ParameterValidationError if the sets of numbers are not the same length.
+     */
     cosineSimilarity(embedding1: Embedding, embedding2: Embedding): number {
         if (embedding1.embedding.length !== embedding2.embedding.length) {
             throw new ParameterValidationError('Embeddings must be of the same length to calculate cosine similarity');
