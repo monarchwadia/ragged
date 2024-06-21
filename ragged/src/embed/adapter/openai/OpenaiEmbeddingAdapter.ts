@@ -4,7 +4,7 @@ import type { EmbeddingRequest, Embedding } from "../../Embed.types";
 import type { BaseEmbeddingAdapter } from "../../adapter/index.types";
 import { OpenaiEmbeddingResponse } from "./OpenaiEmbeddingTypes";
 
-type OpenaiEmbeddingAdapterConstructorParams = {
+export type OpenaiEmbeddingAdapterConstructorParams = {
     apiKey: string;
     apiClient: ApiClient;
 }

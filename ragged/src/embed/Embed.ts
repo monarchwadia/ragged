@@ -2,11 +2,31 @@ import { ParameterValidationError } from "../support/CustomErrors";
 import { Logger } from "../support/logger/Logger";
 import type { EmbeddingRequest, Embedding } from "./Embed.types";
 import type { BaseEmbeddingAdapter } from "./adapter/index.types";
+import { OpenaiEmbeddingAdapterConstructorParams } from "./adapter/openai/OpenaiEmbeddingAdapter";
+import { provideOpenaiEmbeddingAdapter } from "./adapter/openai/provideOpenaiEmbeddingAdapter";
 
 export class Embed {
     private static logger = new Logger('Embed');
 
     constructor(private adapter: BaseEmbeddingAdapter) { }
+
+    static with(provider: "openai", config: Partial<OpenaiEmbeddingAdapterConstructorParams>): Embed;
+    static with(provider: string, config: any = {}) {
+        let adapter: BaseEmbeddingAdapter;
+
+        switch (provider) {
+            case "openai":
+                adapter = provideOpenaiEmbeddingAdapter({
+                    apiKey: config.apiKey || "",
+                    apiClient: config.apiClient
+                });
+                break;
+            default:
+                throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Embed.with().");
+        }
+
+        return new Embed(adapter);
+    }
 
     async embed(text: string): Promise<Embedding>;
     async embed(request: EmbeddingRequest): Promise<Embedding>;
