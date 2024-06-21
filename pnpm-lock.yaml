@@ -61,6 +61,9 @@ importers:
         specifier: workspace:*
         version: link:../ragged
     devDependencies:
+      '@types/deepmerge':
+        specifier: ^2.2.0
+        version: 2.2.0
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
@@ -70,6 +73,9 @@ importers:
       '@types/npmcli__package-json':
         specifier: ^4.0.4
         version: 4.0.4
+      deepmerge:
+        specifier: ^4.3.1
+        version: 4.3.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.13.0)
@@ -1779,6 +1785,10 @@ packages:
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
+
+  '@types/deepmerge@2.2.0':
+    resolution: {integrity: sha512-FEQYDHh6+Q+QXKSrIY46m+/lAmAj/bk4KpLaam+hArmzaVpMBHLcfwOH2Q2UOkWM7XsdY9PmZpGyPAjh/JRGhQ==}
+    deprecated: This is a stub types definition. deepmerge provides its own type definitions, so you do not need this installed.
 
   '@types/eslint-scope@3.7.7':
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -8845,6 +8855,10 @@ snapshots:
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 0.7.34
+
+  '@types/deepmerge@2.2.0':
+    dependencies:
+      deepmerge: 4.3.1
 
   '@types/eslint-scope@3.7.7':
     dependencies:

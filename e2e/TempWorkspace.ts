@@ -5,6 +5,7 @@ import { mkdtemp } from "node:fs/promises";
 import { join } from 'node:path'
 import { exec, execSync } from "child_process";
 import PackageJson from '@npmcli/package-json';
+import deepmerge from "deepmerge";
 
 export const PKGJSON_DELETE = Symbol();
 
@@ -25,8 +26,10 @@ const doExecSync: typeof execSync = (...args: any[]) => {
 
 type BuildSettings = {
     tsconfig?: {
-        moduleResolution?: "node"
-        module?: "commonjs"
+        compilerOptions?: {
+            moduleResolution?: "node" | "ESNext"
+            module?: "commonjs" | "ESNext"
+        }
     },
     packageJson?: {
         type?: "module" | "commonjs"
@@ -84,11 +87,18 @@ export class TempWorkspace {
         const tmpDirPath = this.getTmpDirPath()
 
         if (settings.packageJson) {
-            const pkgJson = await PackageJson.load(path.join(tmpDirPath, "package.json"));
+            const pkgJson = await PackageJson.load(path.join(tmpDirPath));
 
             pkgJson.update(settings.packageJson)
 
             await pkgJson.save();
+        }
+
+        if (settings.tsconfig) {
+            const tsconfigPath = path.join(tmpDirPath, "tsconfig.json");
+            let tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
+            tsconfig = deepmerge(tsconfig, settings.tsconfig);
+            fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2));
         }
     }
 
