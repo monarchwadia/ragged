@@ -3,6 +3,7 @@ import { ApiClient } from "../../../support/ApiClient";
 import { OpenAiChatAdapter as OpenAiChatDriver } from ".";
 import { objToReadableStream } from "../../../../test/objectToReadableStream";
 
+// TODO: merge with OpenAiChatAdapter.test.ts
 describe("OpenAiChatDriver", () => {
   let apiClient: ApiClient;
   let driver: OpenAiChatDriver;

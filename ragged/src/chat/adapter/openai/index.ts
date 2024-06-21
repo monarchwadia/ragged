@@ -7,12 +7,14 @@ import { mapFromOpenAi, mapToOpenAi } from "./mappers";
 
 export type OpenAiChatAdapterConfig = {
     apiKey: string | undefined;
+    organizationId: string | undefined;
     rootUrl: string;
 }
 
 const buildDefaultConfig = (): OpenAiChatAdapterConfig => {
     return {
         apiKey: undefined,
+        organizationId: undefined,
         rootUrl: "https://api.openai.com/v1/chat/completions"
     }
 }
@@ -34,13 +36,19 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
 
 
     private async chatCompletion(body: OpenAiChatCompletionRequestBody): Promise<OpenAiChatCompletionResponseBody> {
+        const headers: HeadersInit = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.config.apiKey}`
+        };
+
+        if (this.config.organizationId) {
+            headers['OpenAI-Organization'] = this.config.organizationId;
+        }
+
         return await this.driverApiClient.post(
             this.config.rootUrl,
             {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.config.apiKey}`
-                },
+                headers,
                 body
             }
         )
