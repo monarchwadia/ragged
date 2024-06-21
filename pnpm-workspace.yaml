@@ -8,3 +8,5 @@ packages:
   # - '!**/test/**'
   # Just a scratch project
   - 'scratch'
+  # End to end testing
+  - 'e2e'
