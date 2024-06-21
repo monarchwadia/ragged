@@ -40,28 +40,3 @@ export class OpenaiEmbeddingAdapter implements BaseEmbeddingAdapter {
         return responseObj;
     }
 }
-
-/*
-const fetch = require('node-fetch');  // This line is only needed if you're using Node.js
-
-const apiKey = 'YOUR_OPENAI_API_KEY';
-const url = 'https://api.openai.com/v1/embeddings';
-
-const data = {
-  input: 'Your text string goes here',
-  model: 'text-embedding-3-small'
-};
-
-fetch(url, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${apiKey}`
-  },
-  body: JSON.stringify(data)
-})
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
-
-  */
