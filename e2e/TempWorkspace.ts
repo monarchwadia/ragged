@@ -24,7 +24,7 @@ const doExecSync: typeof execSync = (...args: any[]) => {
     }
 }
 
-type BuildSettings = {
+export type BuildSettings = {
     tsconfig?: {
         compilerOptions?: {
             moduleResolution?: "node" | "ESNext"
@@ -83,7 +83,7 @@ export class TempWorkspace {
         doExecSync(`pnpm tsx index.ts`, { cwd: this.directoryPath });
     }
 
-    async asyncWithBuildSettings(settings: BuildSettings) {
+    async asyncChangeWorkspaceProjectSettings(settings: BuildSettings) {
         const tmpDirPath = this.getTmpDirPath()
 
         if (settings.packageJson) {

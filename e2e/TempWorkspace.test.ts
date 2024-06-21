@@ -27,7 +27,7 @@ describe("(META_SELFTEST_SUITE) TempWorkspace", () => {
 
         it("should throw an error when calling asyncWithBuildSettings()", async () => {
             await expect(
-                workspace.asyncWithBuildSettings({})
+                workspace.asyncChangeWorkspaceProjectSettings({})
             ).rejects.toThrowErrorMatchingInlineSnapshot(
                 `"The temporary directory path is not set. Have you initialized the TempWorkspace?"`
             );
@@ -66,7 +66,7 @@ describe("(META_SELFTEST_SUITE) TempWorkspace", () => {
 
         describe("asyncWithBuildSettings", () => {
             it.each([undefined, 'module', 'commonjs'])("should modify package.json type setting to %s", async (typeSetting) => {
-                await workspace.asyncWithBuildSettings({
+                await workspace.asyncChangeWorkspaceProjectSettings({
                     packageJson: {
                         type: typeSetting as any,
                     }
@@ -79,7 +79,7 @@ describe("(META_SELFTEST_SUITE) TempWorkspace", () => {
 
             describe("can modify tsconfig type setting", () => {
                 it("can set to commonjs/node", async () => {
-                    await workspace.asyncWithBuildSettings({
+                    await workspace.asyncChangeWorkspaceProjectSettings({
                         tsconfig: {
                             compilerOptions: {
                                 module: "commonjs",
@@ -96,7 +96,7 @@ describe("(META_SELFTEST_SUITE) TempWorkspace", () => {
 
                 it("can set to ESNext/ESNext", async () => {
 
-                    await workspace.asyncWithBuildSettings({
+                    await workspace.asyncChangeWorkspaceProjectSettings({
                         tsconfig: {
                             compilerOptions: {
                                 module: "ESNext",
