@@ -4,6 +4,9 @@ import path from "path";
 import { mkdtemp } from "node:fs/promises";
 import { join } from 'node:path'
 import { exec, execSync } from "child_process";
+import PackageJson from '@npmcli/package-json';
+
+export const PKGJSON_DELETE = Symbol();
 
 const doExecSync: typeof execSync = (...args: any[]) => {
     console.log("command: ", args[0]);
@@ -20,6 +23,16 @@ const doExecSync: typeof execSync = (...args: any[]) => {
     }
 }
 
+type BuildSettings = {
+    tsconfig?: {
+        moduleResolution?: "node"
+        module?: "commonjs"
+    },
+    packageJson?: {
+        type?: "module" | "commonjs"
+    }
+}
+
 export class TempWorkspace {
     private directoryPath: string | undefined;
 
@@ -29,7 +42,7 @@ export class TempWorkspace {
      * Creates a temporary directory and copies Ragged's built files into it.
      * The Ragged file are the same ones as installed in this e2e project.
      */
-    async init() {
+    async asyncInit() {
         // Create a temporary directory
         this.directoryPath = await mkdtemp(join(tmpdir(), 'build-'))
 
@@ -49,25 +62,43 @@ export class TempWorkspace {
     /**
      * Returns the path of the temporary directory.
      */
-    getTmpDirPath() {
-        return this.directoryPath;
+    getTmpDirPath(): string {
+        this.validateTmpDirPath();
+        return this.directoryPath as string;
+    }
+
+    validateTmpDirPath() {
+        if (!this.directoryPath) {
+            throw new Error("The temporary directory path is not set. Have you initialized the TempWorkspace?");
+        }
     }
 
     runTest() {
+        this.validateTmpDirPath();
         doExecSync(`pnpm install`, { cwd: this.directoryPath });
         doExecSync(`pnpm tsc --noEmit`, { cwd: this.directoryPath });
         doExecSync(`pnpm tsx index.ts`, { cwd: this.directoryPath });
     }
 
-    destroy() {
-        if (!this.directoryPath) {
-            return;
-        }
+    async asyncWithBuildSettings(settings: BuildSettings) {
+        const tmpDirPath = this.getTmpDirPath()
 
-        if (!this.directoryPath.startsWith("/tmp/")) {
+        if (settings.packageJson) {
+            const pkgJson = await PackageJson.load(path.join(tmpDirPath, "package.json"));
+
+            pkgJson.update(settings.packageJson)
+
+            await pkgJson.save();
+        }
+    }
+
+    destroy() {
+        const directoryPath = this.getTmpDirPath();
+
+        if (!directoryPath.startsWith("/tmp/")) {
             throw new Error("The temporary directory path does not start with /tmp/. This is a safety check to prevent deleting the wrong directory.");
         }
 
-        fs.rmdirSync(this.directoryPath, { recursive: true });
+        fs.rmdirSync(directoryPath, { recursive: true });
     }
 }

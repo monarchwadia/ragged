@@ -67,6 +67,9 @@ importers:
       '@types/node':
         specifier: ^20.13.0
         version: 20.13.0
+      '@types/npmcli__package-json':
+        specifier: ^4.0.4
+        version: 4.0.4
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.13.0)
