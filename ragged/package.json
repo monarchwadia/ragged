@@ -14,6 +14,11 @@
       "require": "./build/cjs/chat/adapter/index.js",
       "types": "./build/src/public/chat/adapter/index.d.ts"
     },
+    "./chat/adapter/openai-assistants": {
+      "import": "./build/esm/chat/adapter/openai-assistants.js",
+      "require": "./build/cjs/chat/adapter/openai-assistants.js",
+      "types": "./build/src/public/chat/adapter/openai-assistants.d.ts"
+    },
     "./chat/adapter/openai": {
       "import": "./build/esm/chat/adapter/openai.js",
       "require": "./build/cjs/chat/adapter/openai.js",
@@ -23,6 +28,16 @@
       "import": "./build/esm/chat/index.js",
       "require": "./build/cjs/chat/index.js",
       "types": "./build/src/public/chat/index.d.ts"
+    },
+    "./embed/adapter": {
+      "import": "./build/esm/embed/adapter/index.js",
+      "require": "./build/cjs/embed/adapter/index.js",
+      "types": "./build/src/public/embed/adapter/index.d.ts"
+    },
+    "./embed": {
+      "import": "./build/esm/embed/index.js",
+      "require": "./build/cjs/embed/index.js",
+      "types": "./build/src/public/embed/index.d.ts"
     },
     "./support/api-client": {
       "import": "./build/esm/support/api-client.js",
