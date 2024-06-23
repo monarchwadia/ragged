@@ -25,14 +25,14 @@ const doExecSync: typeof execSync = (...args: any[]) => {
 }
 
 export type BuildSettings = {
-    tsconfig?: {
-        compilerOptions?: {
-            moduleResolution?: "node" | "ESNext"
-            module?: "commonjs" | "ESNext"
+    tsconfig: {
+        compilerOptions: {
+            moduleResolution: "node" | "ESNext"
+            module: "commonjs" | "ESNext"
         }
     },
-    packageJson?: {
-        type?: "module" | "commonjs"
+    packageJson: {
+        type: "module" | "commonjs"
     }
 }
 
@@ -52,14 +52,6 @@ export class TempWorkspace {
         // if we ever need to copy dotfiles, we can use this
         // doExecSync(`cp -r "${join(__dirname, "project-template/.*")}" "${this.directoryPath}"`);
         doExecSync(`cp -r ${join(__dirname, "project-template")}/* "${this.directoryPath}"`, { cwd: __dirname });
-
-        // Copy Ragged's built files into it
-        // const raggedOriginPath = join(__dirname, "node_modules", "ragged");
-        // console.log(raggedOriginPath);
-        // const raggedDestinationPath = path.resolve(this.directoryPath, "node_modules", "ragged");
-        // doExecSync(`rm -rf "${raggedDestinationPath}"`);
-        // doExecSync(`mkdir -p "${raggedDestinationPath}/node_modules"`);
-        // doExecSync(`cp -r "${raggedOriginPath}" "${raggedDestinationPath}"`);
     }
 
     /**
@@ -78,6 +70,9 @@ export class TempWorkspace {
 
     runTest() {
         this.validateTmpDirPath();
+        if (process.env.RAGGED_SOURCE === "globally-linked") {
+            doExecSync(`pnpm link --global ragged`, { cwd: this.directoryPath });
+        }
         doExecSync(`pnpm install`, { cwd: this.directoryPath });
         doExecSync(`pnpm tsc --noEmit`, { cwd: this.directoryPath });
         doExecSync(`pnpm tsx index.ts`, { cwd: this.directoryPath });

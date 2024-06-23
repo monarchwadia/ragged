@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "jest --testNamePattern=E2E_TEST_SUITE",
-    "dev": "jest --watch --testNamePattern=E2E_TEST_SUITE",
+    "start": "tsx testBuilds.ts",
     "test": "jest --testNamePattern=META_SELFTEST_SUITE",
     "tdd": "jest --watch --testNamePattern=META_SELFTEST_SUITE"
   },
@@ -26,6 +25,7 @@
   },
   "dependencies": {
     "@npmcli/package-json": "^5.1.1",
+    "chalk": "^5.3.0",
     "ragged": "workspace:*"
   }
 }

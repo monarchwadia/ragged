@@ -19,12 +19,7 @@ pnpm run tdd
 
 ### Testing a specific version
 
-If you would like to test the latest version of the Ragged module, you can do so by setting `RAGGED_SOURCE=npm`.
-```bash
-RAGGED_SOURCE=npm pnpm run start
-```
-
-If you would like to test a locally `pnpm link`ed version of the Ragged module, you can do so by setting `RAGGED_SOURCE=globally-linked`. 
+By default, the tests will use the latest version of the Ragged module from npm. If you would like to test a locally `pnpm link`ed version of the Ragged module, you can do so by setting `RAGGED_SOURCE=globally-linked`. 
 
 ```bash
 # make sure you link ragged
