@@ -25,13 +25,13 @@ const doExecSync: typeof execSync = (...args: any[]) => {
 }
 
 export type BuildSettings = {
-    tsconfig: {
+    tsconfig?: {
         compilerOptions: {
-            moduleResolution: "node" | "ESNext"
-            module: "commonjs" | "ESNext"
+            moduleResolution?: "node" | "ESNext"
+            module?: "commonjs" | "ESNext"
         }
     },
-    packageJson: {
+    packageJson?: {
         type: "module" | "commonjs"
     }
 }
