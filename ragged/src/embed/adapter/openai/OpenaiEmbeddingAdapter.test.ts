@@ -1,7 +1,7 @@
-import { startPollyRecording } from "../../../../test/startPollyRecording";
-import { ApiClient } from "../../../support/ApiClient";
-import { FetchRequestFailedError } from "../../../support/CustomErrors";
-import { OpenaiEmbeddingAdapter } from "./OpenaiEmbeddingAdapter";
+import { startPollyRecording } from "../../../../test/startPollyRecording.js";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { FetchRequestFailedError } from "../../../support/CustomErrors.js";
+import { OpenaiEmbeddingAdapter } from "./OpenaiEmbeddingAdapter.js";
 
 describe("OpenaiEmbedAdapter", () => {
     let adapter: OpenaiEmbeddingAdapter;

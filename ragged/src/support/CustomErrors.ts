@@ -1,4 +1,4 @@
-import { Logger } from "./logger/Logger";
+import { Logger } from "./logger/Logger.js";
 
 /**
  * Custom errors for drivers. Drivers can throw these errors to indicate

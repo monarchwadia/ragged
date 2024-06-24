@@ -1,12 +1,13 @@
-// import { ApiClient } from "../../../support/ApiClient";
-// import { OpenAiChatAdapter, OpenAiChatAdapterConfig } from ".";
+// import { ApiClient } from "../../../support/ApiClient.js";
+// import { OpenAiChatAdapter, OpenAiChatAdapterConfig } from "..js";
 
-import { ApiClient } from "../../../support/ApiClient";
-import { OaiaChatAdapter, OpenaiAssistantsChatAdapterConfig } from "./adapter/OaiaChatAdapter";
-import { OaiaAssistantDao } from "./assistant/OaiaAssistantDao";
-import { OaiaMessageDao } from "./message/OaiaMessageDao";
-import { OaiaRunDao } from "./run/OaiaRunDao";
-import { OaiaThreadDao } from "./thread/OaiaThreadDao";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { OaiaChatAdapter } from "./adapter/OaiaChatAdapter.js";
+import type { OpenaiAssistantsChatAdapterConfig } from "./adapter/OaiaChatAdapter.js";
+import { OaiaAssistantDao } from "./assistant/OaiaAssistantDao.js";
+import { OaiaMessageDao } from "./message/OaiaMessageDao.js";
+import { OaiaRunDao } from "./run/OaiaRunDao.js";
+import { OaiaThreadDao } from "./thread/OaiaThreadDao.js";
 
 // export type OpenAiChatProviderParam = {
 //     config?: Partial<OpenAiChatAdapterConfig>;

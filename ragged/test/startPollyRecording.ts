@@ -1,13 +1,15 @@
 import { Polly } from "@pollyjs/core";
 import FetchAdapter from "@pollyjs/adapter-fetch";
 import FSPersister from "@pollyjs/persister-fs";
-import { Logger } from "../src/support/logger/Logger";
+import { Logger } from "../src/support/logger/Logger.js";
 
 /*
   Register the adapters and persisters we want to use. This way all future
   polly instances can access them by name.
 */
+// @ts-expect-error - type failure, it's fine though, it's used just here an not in the rest of the codebase
 Polly.register(FetchAdapter);
+// @ts-expect-error - type failure, it's fine though, it's used just here an not in the rest of the codebase
 Polly.register(FSPersister);
 
 const logger = new Logger("startPollyRecording");

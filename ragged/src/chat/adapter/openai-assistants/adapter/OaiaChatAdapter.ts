@@ -1,13 +1,13 @@
-import { RetryError } from "../../../../support/CustomErrors";
-import { Logger } from "../../../../support/logger/Logger";
-import { Message } from "../../../Chat.types";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "../../BaseChatAdapter.types";
-import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
-import { OaiaMessageDao } from "../message/OaiaMessageDao";
-import { OaiaRunDao } from "../run/OaiaRunDao";
-import { OaiaRun } from "../run/OaiaRunDaoTypes";
-import { OaiaThreadDao } from "../thread/OaiaThreadDao";
-import { OaiaChatMapper } from "./OaiaChatMapper";
+import { RetryError } from "../../../../support/CustomErrors.js";
+import { Logger } from "../../../../support/logger/Logger.js";
+import type { Message } from "../../../Chat.types.js";
+import type { BaseChatAdapter, ChatRequest, ChatResponse } from "../../BaseChatAdapter.types.js";
+import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao.js";
+import { OaiaMessageDao } from "../message/OaiaMessageDao.js";
+import { OaiaRunDao } from "../run/OaiaRunDao.js";
+import type { OaiaRun } from "../run/OaiaRunDaoTypes.js";
+import { OaiaThreadDao } from "../thread/OaiaThreadDao.js";
+import { OaiaChatMapper } from "./OaiaChatMapper.js";
 
 export type OpenaiAssistantsChatAdapterConfig = {
     apiKey: string;

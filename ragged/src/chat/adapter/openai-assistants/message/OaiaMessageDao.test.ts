@@ -1,7 +1,7 @@
-import { startPollyRecording } from "../../../../../test/startPollyRecording";
-import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaMessageDao } from "./OaiaMessageDao";
-import { OaiaThreadDao } from "../thread/OaiaThreadDao";
+import { startPollyRecording } from "../../../../../test/startPollyRecording.js";
+import { ApiClient } from "../../../../support/ApiClient.js";
+import { OaiaMessageDao } from "./OaiaMessageDao.js";
+import { OaiaThreadDao } from "../thread/OaiaThreadDao.js";
 
 describe("OaiaMessageDao", () => {
   describe("createMessage", () => {

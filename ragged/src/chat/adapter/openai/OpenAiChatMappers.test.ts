@@ -1,14 +1,11 @@
-import { MappingError } from "../../../support/CustomErrors";
-import {
+import type {
   OpenAiChatCompletionRequestBody,
   OpenAiChatCompletionResponseBody,
-} from "./OpenAiApiTypes";
-import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
-import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers";
-import { OpenAiToolMapper } from "./ToolMapper";
-import { OpenAiChatAdapter } from "./OpenAiChatAdapter";
-import { Message } from "../../Chat.types";
-import { Tool } from "../../../tools/Tools.types";
+} from "./OpenAiApiTypes.js";
+import type { ChatRequest, ChatResponse } from "../BaseChatAdapter.types.js";
+import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers.js";
+import type { Message } from "../../Chat.types.js";
+import type { Tool } from "../../../tools/Tools.types.js";
 
 describe("OpenAiChatAdapter Mappers", () => {
   afterEach(() => {

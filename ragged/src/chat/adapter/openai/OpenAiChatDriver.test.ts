@@ -1,7 +1,7 @@
-import { startPollyRecording } from "../../../../test/startPollyRecording";
-import { ApiClient } from "../../../support/ApiClient";
-import { OpenAiChatAdapter as OpenAiChatDriver } from "./OpenAiChatAdapter";
-import { objToReadableStream } from "../../../../test/objectToReadableStream";
+import { startPollyRecording } from "../../../../test/startPollyRecording.js";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { OpenAiChatAdapter as OpenAiChatDriver } from "./OpenAiChatAdapter.js";
+import { objToReadableStream } from "../../../../test/objectToReadableStream.js";
 
 // TODO: merge with OpenAiChatAdapter.test.ts
 describe("OpenAiChatDriver", () => {

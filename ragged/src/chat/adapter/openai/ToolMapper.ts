@@ -1,6 +1,6 @@
-import { Logger } from "../../../support/logger/Logger";
-import { ObjectProp, Tool, ToolProp } from "../../../tools/Tools.types";
-import { OaiTool, OaiToolParam, OaiToolParamObject } from "./OpenAiApiTypes";
+import { Logger } from "../../../support/logger/Logger.js";
+import type { ObjectProp, Tool, ToolProp } from "../../../tools/Tools.types.js";
+import type { OaiTool, OaiToolParam, OaiToolParamObject } from "./OpenAiApiTypes.js";
 
 export class OpenAiToolMapper {
     private static logger: Logger = new Logger("OpenAiToolMapper");

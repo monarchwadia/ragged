@@ -1,6 +1,6 @@
-import { Message } from "../../../Chat.types";
-import { CreateMessageParams } from "../message/OaiaMessageDao";
-import { OaiaMessageList } from "../message/OaiaMessageDaoTypes";
+import type { Message } from "../../../Chat.types.js";
+import type { CreateMessageParams } from "../message/OaiaMessageDao.js";
+import type { OaiaMessageList } from "../message/OaiaMessageDaoTypes.js";
 
 export class OaiaChatMapper {
     static mapMessageToOaia = (threadId: string, messages: Message): CreateMessageParams | null => {

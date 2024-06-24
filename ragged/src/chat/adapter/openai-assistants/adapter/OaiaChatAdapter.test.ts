@@ -1,10 +1,10 @@
-import { startPollyRecording } from "../../../../../test/startPollyRecording";
-import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
-import { OaiaMessageDao } from "../message/OaiaMessageDao";
-import { OaiaRunDao } from "../run/OaiaRunDao";
-import { OaiaThreadDao } from "../thread/OaiaThreadDao";
-import { OaiaChatAdapter } from "./OaiaChatAdapter";
+import { startPollyRecording } from "../../../../../test/startPollyRecording.js";
+import { ApiClient } from "../../../../support/ApiClient.js";
+import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao.js";
+import { OaiaMessageDao } from "../message/OaiaMessageDao.js";
+import { OaiaRunDao } from "../run/OaiaRunDao.js";
+import { OaiaThreadDao } from "../thread/OaiaThreadDao.js";
+import { OaiaChatAdapter } from "./OaiaChatAdapter.js";
 
 describe("OaiaChatAdapter", () => {
     // const apiKey: string = process.env.OPENAI_API_KEY as string;

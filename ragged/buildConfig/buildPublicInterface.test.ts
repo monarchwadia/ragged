@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { buildPublicInterface } from "./buildPublicInterface";
+import { buildPublicInterface } from "./buildPublicInterface.js";
 
 describe("buildPublicInterface", () => {
   it("should build the public interface", () => {

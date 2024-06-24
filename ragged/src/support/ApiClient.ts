@@ -1,6 +1,6 @@
-import { ApiJsonHandler } from "./ApiJsonHandler";
-import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors";
-import { Logger } from "./logger/Logger";
+import { ApiJsonHandler } from "./ApiJsonHandler.js";
+import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors.js";
+import { Logger } from "./logger/Logger.js";
 
 
 type PostOpts = {

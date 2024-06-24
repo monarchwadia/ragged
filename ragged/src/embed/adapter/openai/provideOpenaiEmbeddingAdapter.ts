@@ -1,5 +1,5 @@
-import { ApiClient } from "../../../support/ApiClient";
-import { OpenaiEmbeddingAdapter } from "./OpenaiEmbeddingAdapter";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { OpenaiEmbeddingAdapter } from "./OpenaiEmbeddingAdapter.js";
 
 export type OpenaiEmbeddingAdapterProviderParam = {
     apiClient?: ApiClient;

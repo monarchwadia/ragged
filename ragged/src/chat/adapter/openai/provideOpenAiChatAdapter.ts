@@ -1,5 +1,6 @@
-import { ApiClient } from "../../../support/ApiClient";
-import { OpenAiChatAdapter, OpenAiChatAdapterConfig } from "./OpenAiChatAdapter";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { OpenAiChatAdapter } from "./OpenAiChatAdapter.js";
+import type { OpenAiChatAdapterConfig } from "./OpenAiChatAdapter.js";
 
 export type OpenAiChatProviderParam = {
     config?: Partial<OpenAiChatAdapterConfig>;

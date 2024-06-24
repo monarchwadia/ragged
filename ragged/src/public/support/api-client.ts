@@ -1,1 +1,1 @@
-export * from "../../../src/support/ApiClient";
+export * from "../../../src/support/ApiClient.js";

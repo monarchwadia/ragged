@@ -1,5 +1,5 @@
-import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaThread } from "./OaiaThreadDaoTypes"
+import { ApiClient } from "../../../../support/ApiClient.js";
+import type { OaiaThread } from "./OaiaThreadDaoTypes.js"
 
 export class OaiaThreadDao {
     constructor(private apiClient: ApiClient) { }

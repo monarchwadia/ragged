@@ -1,5 +1,5 @@
-import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaAssistantCreateRequestBody, OaiaAssistant } from "./OaiaAssistantDaoTypes"
+import { ApiClient } from "../../../../support/ApiClient.js";
+import type { OaiaAssistantCreateRequestBody, OaiaAssistant } from "./OaiaAssistantDaoTypes.js"
 
 export class OaiaAssistantDao {
     constructor(private apiClient: ApiClient) { }

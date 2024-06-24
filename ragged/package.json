@@ -2,6 +2,7 @@
   "name": "ragged",
   "version": "0.4.16",
   "description": "A simple library for easy LLM access.",
+  "type": "module",
   "exports": {
     "./chat/adapter/cohere": {
       "import": "./build/esm/chat/adapter/cohere.js",

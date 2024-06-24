@@ -1,7 +1,7 @@
-import { MappingError } from "../../../support/CustomErrors";
-import { ChatRequest } from "../BaseChatAdapter.types";
-import { CohereChatResponseRoot } from "./CohereApiResponseTypes";
-import { CohereChatMapper } from "./CohereChatMapper";
+import { MappingError } from "../../../support/CustomErrors.js";
+import type { ChatRequest } from "../BaseChatAdapter.types.js";
+import type { CohereChatResponseRoot } from "./CohereApiResponseTypes.js";
+import { CohereChatMapper } from "./CohereChatMapper.js";
 
 describe("CohereChatMapper", () => {
     describe("mapChatRequestToApiRequest", () => {
