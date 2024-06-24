@@ -6,5 +6,18 @@ describe("AzureOpenAiChatAdapter", () => {
         const apiClient = new ApiClient();
         const adapter = new AzureOpenAiChatAdapter(apiClient);
     });
+
+    it("makes a call to the api", async () => {
+        const apiClient = new ApiClient();
+        const adapter = new AzureOpenAiChatAdapter(apiClient);
+        const response = await adapter.chat({
+            history: [
+                {
+                    type: "user",
+                    text: "Hello"
+                }
+            ]
+        });
+    });
 })
 
