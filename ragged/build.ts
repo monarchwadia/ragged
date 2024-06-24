@@ -22,7 +22,7 @@ async function main() {
         target: ["node14.16.0"],
         format: "cjs",
         minify: true,
-        tsconfig: "./tsconfig.json"
+        tsconfig: "./tsconfig.build.json"
     });
 }
 

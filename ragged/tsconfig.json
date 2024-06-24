@@ -1,14 +1,8 @@
 {
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
     "node_modules",
     "build",
-    "**/*.test.ts",
-    "buildConfig/**/*",
     "recordings/**/*",
-    "test/**/*.ts",
     "build.ts"
   ],
   "compilerOptions": {
