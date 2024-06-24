@@ -4,7 +4,7 @@
 
 import { config } from 'dotenv';
 config();
-import { Chat } from "ragged/chat"
+import { Chat } from "ragged"
 
 const c = Chat.with('cohere', { apiKey: process.env.COHERE_API_KEY, model: 'command-light' });
 

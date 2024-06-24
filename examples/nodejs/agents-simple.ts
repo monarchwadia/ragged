@@ -18,7 +18,7 @@
 
 import { config } from 'dotenv';
 config();
-import { Chat } from "ragged/chat"
+import { Chat } from "ragged"
 
 // Define the main function
 async function main() {

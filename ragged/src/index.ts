@@ -1,5 +1,5 @@
 // =================== CHAT ===================
-export { Chat } from './chat/Chat';
+import { Chat } from './chat/Chat';
 
 // =================== CHAT TYPES ===================
 import {
@@ -69,7 +69,7 @@ export type ChatAdapterTypes = {
 
 // =================== EMBED ===================
 
-export { Embed } from './embed/Embed';
+import { Embed } from './embed/Embed';
 
 // =================== EMBED TYPES ===================
 
@@ -93,4 +93,4 @@ import * as RaggedErrors from "./support/RaggedErrors"
 import { ApiJsonHandler } from "./support/ApiJsonHandler";
 import { Tool, ToolInputValidator, ToolProp } from './tools/Tools.types';
 
-export { ApiClient, ApiJsonHandler, RaggedErrors }
+export { ApiClient, ApiJsonHandler, RaggedErrors, Embed, Chat }

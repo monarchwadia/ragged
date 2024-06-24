@@ -2,13 +2,15 @@
  * This example demonstrates how to create a custom class-based adapter and use it with the Chat class. 
  */
 
-import { Chat } from "ragged/chat"
-import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+import { Chat } from "ragged"
+import type { ChatAdapterTypes } from "ragged"
+
+type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
 
 class AppendingAdapter implements BaseChatAdapter {
     constructor(private history: string = "") { }
 
-    async chat(request: ChatRequest): Promise<ChatResponse> {
+    async chat(request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> {
 
         this.history += "\n" + request.history.map(message => message.text).join("n");
 

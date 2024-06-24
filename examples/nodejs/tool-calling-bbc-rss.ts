@@ -4,8 +4,9 @@
 
 import { config } from 'dotenv';
 config();
-import { Chat } from "ragged/chat"
-import { Tool } from "ragged/tools";
+import { Chat, ChatTypes } from "ragged"
+
+type Tool = ChatTypes['Tool']
 
 // Instantiate the Chat object with the OpenAI provider
 const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });

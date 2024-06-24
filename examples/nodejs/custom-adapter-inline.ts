@@ -2,11 +2,11 @@
  * This example demonstrates how to create a custom inline adapter and use it with the Chat class. 
  */
 
-import { Chat } from "ragged/chat"
-import type { ChatRequest, ChatResponse } from "ragged/chat/adapter"
+import { Chat } from "ragged"
+import type { ChatAdapterTypes } from "ragged"
 
 const echo = new Chat({
-    chat: async (request: ChatRequest): Promise<ChatResponse> => {
+    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
         return {
             history: request.history.map(message => ({ type: "bot", text: message.text }))
         };

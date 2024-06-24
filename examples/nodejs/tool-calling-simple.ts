@@ -4,8 +4,8 @@
 
 import { config } from 'dotenv';
 config();
-import { Chat } from "ragged/chat"
-import { Tool } from "ragged/tools";
+import { Chat, ChatTypes } from "ragged"
+type Tool = ChatTypes['Tool']
 
 // Defines a simple tool that fetches some mock homepage contents.
 const getHomepageTool: Tool = {
@@ -15,6 +15,10 @@ const getHomepageTool: Tool = {
     description: "Gets the contents of my homepage.",
     // The handler function processes any input props (not shown here) and returns the output.
     // The output must always be a string. The output will be read by the LLM and used in the conversation.
+    props: {
+        type: "object",
+        props: {}
+    },
     handler: async () => {
         // This is where you would actually fetch the contents of your homepage.
         // You could also do other actions here, like querying a database or calling an API.

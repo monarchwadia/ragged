@@ -6,7 +6,7 @@
 import { config } from 'dotenv';
 config();
 
-import { Chat } from "ragged/chat"
+import { Chat } from "ragged"
 const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
 
 c.record(true);

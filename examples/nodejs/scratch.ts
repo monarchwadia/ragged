@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 config();
 
 // import the Chat class from the ragged/chat module
-import { Chat } from "ragged/chat"
+import { Chat } from "ragged"
 
 // create a new Chat instance with the OpenAI provider
 const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });

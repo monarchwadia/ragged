@@ -2,11 +2,15 @@
  * This example demonstrates how to create a custom object adapter and use it with the Chat class. 
  */
 
-import { Chat } from "ragged/chat"
-import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+import { Chat } from "ragged"
+// import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+
+import type { ChatAdapterTypes } from "ragged";
+
+type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
 
 const countingAdapter: BaseChatAdapter = {
-    chat: async (request: ChatRequest): Promise<ChatResponse> => {
+    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
         let totalCharacters = 0;
 
         for (const message of request.history) {

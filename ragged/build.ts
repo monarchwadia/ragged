@@ -17,9 +17,9 @@ async function main() {
         ],
         outdir: 'build',
         bundle: true,
-        platform: "neutral",
+        platform: "node",
         logLevel: "info",
-        target: ["node14.16.0"],
+        target: ["node18.16.0"],
         format: "cjs",
         minify: true,
         tsconfig: "./tsconfig.build.json"
