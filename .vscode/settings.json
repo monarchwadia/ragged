@@ -7,14 +7,14 @@
         "**/Thumbs.db": true,
         "**/node_modules": true,
         "**/pnpm-lock.yaml": true,
-        "**/build/": true
+        // "**/build/": true
     },
     "editor.formatOnSave": true,
     "editor.formatOnSaveMode": "file",
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "typescript.preferences.autoImportFileExcludePatterns": [
-        "build"
-    ],
+    // "typescript.preferences.autoImportFileExcludePatterns": [
+    //     "build"
+    // ],
     "[typescript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features",
     },
