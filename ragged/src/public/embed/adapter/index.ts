@@ -1,2 +1,2 @@
-export type { BaseEmbeddingAdapter } from "../../../../src/embed/adapter/index.types";
+export type { BaseEmbeddingAdapter } from "../../../embed/adapter/BaseEmbeddingAdapter.types";
 export type { EmbeddingRequest, Embedding } from "../../../../src/embed/Embed.types";

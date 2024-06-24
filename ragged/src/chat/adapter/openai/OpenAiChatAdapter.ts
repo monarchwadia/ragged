@@ -1,8 +1,8 @@
 import { ApiClient } from "../../../support/ApiClient";
 import { Logger } from "../../../support/logger/Logger";
-import { BaseChatAdapter, ChatRequest } from "../index.types";
+import { BaseChatAdapter, ChatRequest } from "../BaseChatAdapter.types";
 import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
-import { mapFromOpenAi, mapToOpenAi } from "./mappers";
+import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers";
 
 
 export type OpenAiChatAdapterConfig = {

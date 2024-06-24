@@ -1,5 +1,5 @@
 import { MappingError } from "../../../support/CustomErrors";
-import { ChatRequest } from "../index.types";
+import { ChatRequest } from "../BaseChatAdapter.types";
 import { CohereChatResponseRoot } from "./CohereApiResponseTypes";
 import { CohereChatMapper } from "./CohereChatMapper";
 

@@ -1,7 +1,7 @@
 import { RetryError } from "../../../../support/CustomErrors";
 import { Logger } from "../../../../support/logger/Logger";
-import { Message } from "../../../index.types";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "../../index.types";
+import { Message } from "../../../Chat.types";
+import { BaseChatAdapter, ChatRequest, ChatResponse } from "../../BaseChatAdapter.types";
 import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
 import { OaiaMessageDao } from "../message/OaiaMessageDao";
 import { OaiaRunDao } from "../run/OaiaRunDao";

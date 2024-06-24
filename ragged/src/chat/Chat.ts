@@ -1,11 +1,11 @@
 import { ParameterValidationError, UnknownError } from "../support/CustomErrors";
 import { Logger } from "../support/logger/Logger";
-import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./index.types";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/index.types";
+import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./Chat.types";
+import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/BaseChatAdapter.types";
 import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdapter";
 import { provideCohereChatAdapter } from "./adapter/cohere/provideCohereChatAdapter";
 import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
-import { OpenAiChatAdapterConfig } from "./adapter/openai";
+import { OpenAiChatAdapterConfig } from "./adapter/openai/OpenAiChatAdapter";
 import { OpenaiAssistantsChatAdapterConfig } from "./adapter/openai-assistants/adapter/OaiaChatAdapter";
 import { provideOpenaiAssistantsChatAdapter } from "./adapter/openai-assistants/provideOpenaiAssistantsChatAdapter";
 

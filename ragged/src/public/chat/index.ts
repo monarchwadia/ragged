@@ -1,3 +1,3 @@
-export { Chat } from "../../chat";
+export { Chat } from "../../chat/Chat";
 
-export type * from "../../chat/index.types.d.ts";
+export type * from "../../chat/Chat.types";

@@ -3,12 +3,12 @@ import {
   OpenAiChatCompletionRequestBody,
   OpenAiChatCompletionResponseBody,
 } from "./OpenAiApiTypes";
-import { ChatRequest, ChatResponse } from "../index.types";
-import { mapFromOpenAi, mapToOpenAi } from "./mappers";
+import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
+import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers";
 import { OpenAiToolMapper } from "./ToolMapper";
-import { OpenAiChatAdapter } from ".";
-import { Message } from "../../index.types";
-import { Tool } from "../../../tools";
+import { OpenAiChatAdapter } from "./OpenAiChatAdapter";
+import { Message } from "../../Chat.types";
+import { Tool } from "../../../tools/Tools.types";
 
 describe("OpenAiChatAdapter Mappers", () => {
   afterEach(() => {

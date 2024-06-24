@@ -1,5 +1,5 @@
-import { Message } from "../index.types";
-import { Tool } from "../../tools"
+import { Message } from "../Chat.types";
+import { Tool } from "../../tools/Tools.types"
 
 export type ChatRequest = {
     history: Message[];

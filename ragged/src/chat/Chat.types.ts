@@ -1,4 +1,4 @@
-import { Tool } from "../tools";
+import { Tool } from "../tools/Tools.types";
 
 export type UserMessage = {
     type: "user";

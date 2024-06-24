@@ -1,7 +1,7 @@
-import { Chat } from ".";
-import { Tool } from "../tools";
-import { Message } from "./index.types";
-import { BaseChatAdapter } from "./adapter/index.types";
+import { Chat } from "./Chat";
+import { Tool } from "../tools/Tools.types";
+import { Message } from "./Chat.types";
+import { BaseChatAdapter } from "./adapter/BaseChatAdapter.types";
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { startPollyRecording } from "../../test/startPollyRecording";
 import {

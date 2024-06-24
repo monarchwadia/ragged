@@ -1,4 +1,4 @@
-import { Message } from "../../../index.types";
+import { Message } from "../../../Chat.types";
 import { OaiaChatMapper } from "./OaiaChatMapper";
 
 describe("OaiaChatMapper", () => {

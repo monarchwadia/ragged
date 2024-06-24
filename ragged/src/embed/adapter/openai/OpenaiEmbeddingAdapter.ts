@@ -1,7 +1,7 @@
 import { ApiClient } from "../../../support/ApiClient";
 import { Logger } from "../../../support/logger/Logger";
 import type { EmbeddingRequest, Embedding } from "../../Embed.types";
-import type { BaseEmbeddingAdapter } from "../../adapter/index.types";
+import type { BaseEmbeddingAdapter } from "../BaseEmbeddingAdapter.types";
 import { OpenaiEmbeddingResponse } from "./OpenaiEmbeddingTypes";
 
 export type OpenaiEmbeddingAdapterConstructorParams = {

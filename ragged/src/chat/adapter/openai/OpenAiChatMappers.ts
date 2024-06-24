@@ -1,7 +1,7 @@
 import { MappingError } from "../../../support/CustomErrors";
-import { BotMessage } from "../../index.types";
+import { BotMessage } from "../../Chat.types";
 import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "./OpenAiApiTypes";
-import { ChatRequest, ChatResponse } from "../index.types";
+import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
 import { Logger } from "../../../support/logger/Logger";
 import { OpenAiToolMapper } from "./ToolMapper";
 

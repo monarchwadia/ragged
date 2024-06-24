@@ -1,7 +1,7 @@
 import { ParameterValidationError } from "../support/CustomErrors";
 import { Logger } from "../support/logger/Logger";
 import type { EmbeddingRequest, Embedding } from "./Embed.types";
-import type { BaseEmbeddingAdapter } from "./adapter/index.types";
+import type { BaseEmbeddingAdapter } from "./adapter/BaseEmbeddingAdapter.types";
 import { OpenaiEmbeddingAdapterConstructorParams } from "./adapter/openai/OpenaiEmbeddingAdapter";
 import { provideOpenaiEmbeddingAdapter } from "./adapter/openai/provideOpenaiEmbeddingAdapter";
 

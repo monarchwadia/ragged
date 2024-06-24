@@ -1,6 +1,6 @@
 import { provideCohereChatAdapter } from "./provideCohereChatAdapter";
 import { startPollyRecording } from "../../../../test/startPollyRecording";
-import { ChatRequest } from "../index.types";
+import { ChatRequest } from "../BaseChatAdapter.types";
 import { CohereChatAdapter } from "./CohereChatAdapter";
 
 describe("cohereChatAdapterProvider", () => {

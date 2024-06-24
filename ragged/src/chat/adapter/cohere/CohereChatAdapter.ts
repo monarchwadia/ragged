@@ -1,6 +1,6 @@
 import { ApiClient } from "../../../support/ApiClient";
 import { NotImplementedError } from "../../../support/CustomErrors";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "../index.types";
+import { BaseChatAdapter, ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
 import { CohereChatMapper } from "./CohereChatMapper";
 
 export type CohereChatAdapterConfig = {

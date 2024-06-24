@@ -1,4 +1,4 @@
-import { Message } from "../../../index.types";
+import { Message } from "../../../Chat.types";
 import { CreateMessageParams } from "../message/OaiaMessageDao";
 import { OaiaMessageList } from "../message/OaiaMessageDaoTypes";
 

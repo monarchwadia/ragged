@@ -1,1 +1,1 @@
-export type { BaseChatAdapter, ChatRequest, ChatResponse } from "../../../chat/adapter/index.types.js";
+export type { BaseChatAdapter, ChatRequest, ChatResponse } from "../../../chat/adapter/BaseChatAdapter.types.js";

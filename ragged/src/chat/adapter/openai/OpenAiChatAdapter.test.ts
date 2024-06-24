@@ -1,4 +1,4 @@
-import { OpenAiChatAdapter } from ".";
+import { OpenAiChatAdapter } from "./OpenAiChatAdapter";
 import { ApiClient } from "../../../support/ApiClient";
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { mockDeep } from "jest-mock-extended";

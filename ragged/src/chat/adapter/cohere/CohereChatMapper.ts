@@ -1,8 +1,8 @@
 
 import { MappingError } from "../../../support/CustomErrors";
 import { Logger } from "../../../support/logger/Logger";
-import { Message } from "../../index.types";
-import { ChatRequest, ChatResponse } from "../index.types";
+import { Message } from "../../Chat.types";
+import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
 import { CohereChatItem, CohereChatRequestRoot } from "./CohereApiRequestTypes";
 import { CohereChatResponseRoot } from "./CohereApiResponseTypes";
 
