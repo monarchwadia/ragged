@@ -36,8 +36,8 @@ export type ChatTypes = {
 
 import { CohereChatAdapter } from "./chat/adapter/cohere/CohereChatAdapter"
 import { provideCohereChatAdapter } from './chat/adapter/cohere/provideCohereChatAdapter';
-import { OpenAiChatAdapter } from './chat/adapter/openai/OpenAiChatAdapter';
-import { provideOpenAiChatAdapter } from './chat/adapter/openai/provideOpenAiChatAdapter';
+import { OaiaChatAdapter } from './chat/adapter/openai-assistants/adapter/OaiaChatAdapter';
+import { provideOpenaiAssistantsChatAdapter } from './chat/adapter/openai-assistants/provideOpenaiAssistantsChatAdapter';
 
 export const ChatAdapters = {
     Cohere: {
@@ -49,8 +49,8 @@ export const ChatAdapters = {
         provideOpenAiChatAdapter
     },
     OpenAiAssistants: {
-        OpenAiChatAdapter,
-        provideOpenAiChatAdapter
+        OaiaChatAdapter,
+        provideOpenaiAssistantsChatAdapter
     }
 }
 
@@ -92,5 +92,7 @@ import { ApiClient } from "./support/ApiClient";
 import * as RaggedErrors from "./support/RaggedErrors"
 import { ApiJsonHandler } from "./support/ApiJsonHandler";
 import { Tool, ToolInputValidator, ToolProp } from './tools/Tools.types';
+import { OpenAiChatAdapter } from './chat/adapter/openai/OpenAiChatAdapter';
+import { provideOpenAiChatAdapter } from './chat/adapter/openai/provideOpenAiChatAdapter';
 
 export { ApiClient, ApiJsonHandler, RaggedErrors, Embed, Chat }
