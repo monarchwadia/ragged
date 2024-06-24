@@ -68,7 +68,7 @@ That's it. You're ready to go!
 Ragged is very easy to use. Here is a complete application that shows chat completion.
 
 ```ts
-import { Chat } from "ragged/chat"
+import { Chat } from "ragged"
 
 // create a new Chat instance with the OpenAI provider
 const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
@@ -177,9 +177,9 @@ Tools are very powerful! You can use tools to fetch data from external APIs, per
 To define a tool, first we import the Tool type from Ragged and then define a tool object.
 
 ```ts
-import { Tool } from "ragged/tools";
+import { ChatTypes } from "ragged";
 
-const getHomepageTool: Tool = {
+const getHomepageTool: ChatTypes['Tool'] = {
     id: "get-homepage-contents",
     description: "Gets the contents of my homepage.",
     handler: async () => {
@@ -210,12 +210,17 @@ console.log(response.at(-1)?.text);
 Putting it all together, here's what it looks like:
 
 ```ts
-import { Chat } from "ragged/chat"
-import { Tool } from "ragged/tools";
+import { Chat } from "ragged"
+import { ChatTypes } from "ragged";
 
-const getHomepageTool: Tool = {
+const getHomepageTool: ChatTypes['Tool'] = {
     id: "get-homepage-contents",
     description: "Gets the contents of my homepage.",
+    props: {
+        type: "object",
+        description: "The properties of the tool.",
+        props: {}
+    },
     handler: async () => {
         return Promise.resolve("Hello! My name is John! I'm a student at a community college!")
     }
@@ -245,9 +250,9 @@ The `Tool` object can also take an optional `props` object. This object allows t
 Here is an example of how to use the `props` object:
 
 ```ts
-import { Tool } from "ragged/tools";
+import { ChatTypes } from "ragged";
 
-const fetchTool: Tool = {
+const fetchTool: ChatTypes['Tool'] = {
     id: "fetch",
     description: "Do a simple GET call and retrieve the contents of a URL.",
     // The props object describes the expected input for the tool.
@@ -321,7 +326,7 @@ Here is an example of a simple agent that generates a conversation with an LLM. 
 
 import { config } from 'dotenv';
 config();
-import { Chat } from "ragged/chat"
+import { Chat } from "ragged"
 
 // Define the main function
 async function main() {
@@ -509,16 +514,17 @@ Here are some examples of how to create a new instance of the `Chat` class using
 An inline adapter is a simple way to create a custom adapter. You can define the adapter inline when you create a new instance of the `Chat` class.
 
 ```ts
-import { Chat } from "ragged/chat"
-import type { ChatRequest, ChatResponse } from "ragged/chat/adapter"
+import { Chat } from "ragged"
+import type { ChatAdapterTypes } from "ragged"
 
 const c = new Chat({
-    chat: async (request: ChatRequest): Promise<ChatResponse> => {
+    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
         // Make your API calls here, then return the mapped response.
         return { history: [] };
-    });
-})
+    }
+});
 
+console.log(c);
 ```
 
 #### Object adapter
@@ -529,11 +535,11 @@ const c = new Chat({
 You could also create a custom adapter as an object and pass it to the constructor. This is useful if you want to store the adapter in a separate variable or if you want to reuse the adapter in multiple places.
 
 ```ts
-import { Chat } from "ragged/chat"
-import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+import { Chat } from "ragged"
+import type { ChatAdapterTypes } from "ragged"
 
-const adapter: BaseChatAdapter = {
-    chat: async (request: ChatRequest): Promise<ChatResponse> => {
+const adapter: ChatAdapterTypes['BaseChatAdapter'] = {
+    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
         // Make your API calls here, then return the mapped response.
         return { history: [] };
     }
@@ -550,12 +556,12 @@ const c = new Chat(adapter);
 You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
 
 ```ts
+import { Chat, ChatAdapterTypes } from "ragged"
 
-import { Chat } from "ragged/chat"
-import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
+type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
 
 class ExampleAdapter implements BaseChatAdapter {
-    async chat(request: ChatRequest): Promise<ChatResponse> {
+    async chat(request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> {
         // Make your API calls here, then return the mapped response.
         return { history: [] };
     }
