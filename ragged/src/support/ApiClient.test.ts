@@ -1,7 +1,7 @@
 import { before } from "node:test";
-import { ApiClient } from "./ApiClient";
-import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors";
-import { objToReadableStream } from "../../test/objectToReadableStream";
+import { ApiClient } from "./ApiClient.js";
+import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors.js";
+import { objToReadableStream } from "../../test/objectToReadableStream.js";
 
 describe("ApiClient", () => {
   describe("post", () => {

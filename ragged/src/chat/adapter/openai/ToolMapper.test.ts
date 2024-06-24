@@ -1,5 +1,5 @@
-import { OaiTool } from "./OpenAiApiTypes";
-import { OpenAiToolMapper } from "./ToolMapper";
+import { OaiTool } from "./OpenAiApiTypes.js";
+import { OpenAiToolMapper } from "./ToolMapper.js";
 
 describe("ToolMapper", () => {
     it("should map from a Ragged Tool to an OpenAI Tool correctly", () => {

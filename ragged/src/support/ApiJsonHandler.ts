@@ -1,5 +1,5 @@
-import { JsonParseError, JsonStringifyError } from "./CustomErrors";
-import { Logger } from "./logger/Logger";
+import { JsonParseError, JsonStringifyError } from "./CustomErrors.js";
+import { Logger } from "./logger/Logger.js";
 
 export class ApiJsonHandler {
     static logger: Logger = new Logger('AdapterJsonHandler');

@@ -3,8 +3,8 @@
 import * as esbuild from "esbuild";
 import fs from "fs";
 
-import { buildPublicInterface } from "./buildConfig/buildPublicInterface";
-import { updatePackageJsonEntrypoints } from "./buildConfig/updatePackageJsonEntrypoints";
+import { buildPublicInterface } from "./buildConfig/buildPublicInterface.js";
+import { updatePackageJsonEntrypoints } from "./buildConfig/updatePackageJsonEntrypoints.js";
 
 // const entryPoints = {
 //     'chat/index': './src/public/chat/index.ts',
@@ -32,7 +32,7 @@ async function main() {
         target: ["es6"],
         format: "esm",
         minify: true,
-        tsconfig: "./buildConfig/tsconfig.esm.json"
+        tsconfig: "./tsconfig.esm.json"
     });
 
     // Build CommonJS minified
@@ -40,12 +40,12 @@ async function main() {
         entryPoints: esbuildEntryPoints,
         outdir: 'build/cjs',
         bundle: true,
-        platform: "neutral",
+        platform: "node",
         logLevel: "info",
         target: ["es6"],
         format: "cjs",
         minify: true,
-        tsconfig: "./buildConfig/tsconfig.cjs.json"
+        tsconfig: "./tsconfig.cjs.json"
     });
 
     fs.copyFileSync('./buildConfig/cjs.package.json', './build/cjs/package.json');

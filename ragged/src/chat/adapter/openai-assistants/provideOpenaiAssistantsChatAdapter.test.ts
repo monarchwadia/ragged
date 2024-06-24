@@ -1,4 +1,4 @@
-import { provideOpenaiAssistantsChatAdapter } from "./provideOpenaiAssistantsChatAdapter";
+import { provideOpenaiAssistantsChatAdapter } from "./provideOpenaiAssistantsChatAdapter.js";
 
 describe("provideOpenaiAssistantsChatAdapter", () => {
     it("can instantiate", () => {

@@ -1,8 +1,8 @@
-import { ApiClient } from "../../../support/ApiClient";
-import { Logger } from "../../../support/logger/Logger";
-import { BaseChatAdapter, ChatRequest } from "../index.types";
-import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
-import { mapFromOpenAi, mapToOpenAi } from "./mappers";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { Logger } from "../../../support/logger/Logger.js";
+import { BaseChatAdapter, ChatRequest } from "../index.types.js";
+import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes.js";
+import { mapFromOpenAi, mapToOpenAi } from "./mappers.js";
 
 
 export type OpenAiChatAdapterConfig = {

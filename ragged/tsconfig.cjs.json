@@ -1,0 +1,33 @@
+{
+  "exclude": [
+    "./buildConfig/*.ts",
+    "./**/*.test.ts",
+    "./build/**/*"
+  ],
+  "include": [
+    "./src/**/*.ts",
+    "./tests/**/*.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "./build/cjs",
+    "rootDir": "./src",
+    "sourceRoot": "./src",
+    "declarationDir": "./build/esm",
+    // CommonJS + Node-8 + ES5 (Early Support)
+    "target": "ES2015",
+    "module": "node16",
+    "moduleResolution": "Node16",
+    "esModuleInterop": true,
+    // STRUCTURE
+    "isolatedModules": false,
+    "composite": true,
+    "strict": true,
+    // EMISSIONS
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "noEmitOnError": true,
+    "noEmit": false,
+  }
+}

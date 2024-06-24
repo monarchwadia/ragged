@@ -1,9 +1,9 @@
-import { MappingError } from "../../../support/CustomErrors";
-import { BotMessage } from "../../index.types";
-import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "./OpenAiApiTypes";
-import { ChatRequest, ChatResponse } from "../index.types";
-import { Logger } from "../../../support/logger/Logger";
-import { OpenAiToolMapper } from "./ToolMapper";
+import { MappingError } from "../../../support/CustomErrors.js";
+import { BotMessage } from "../../index.types.js";
+import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "./OpenAiApiTypes.js";
+import { ChatRequest, ChatResponse } from "../index.types.js";
+import { Logger } from "../../../support/logger/Logger.js";
+import { OpenAiToolMapper } from "./ToolMapper.js";
 
 const logger: Logger = new Logger("openai.adapter.mappers");
 

@@ -1,10 +1,10 @@
 
-import { MappingError } from "../../../support/CustomErrors";
-import { Logger } from "../../../support/logger/Logger";
-import { Message } from "../../index.types";
-import { ChatRequest, ChatResponse } from "../index.types";
-import { CohereChatItem, CohereChatRequestRoot } from "./CohereApiRequestTypes";
-import { CohereChatResponseRoot } from "./CohereApiResponseTypes";
+import { MappingError } from "../../../support/CustomErrors.js";
+import { Logger } from "../../../support/logger/Logger.js";
+import { Message } from "../../index.types.js";
+import { ChatRequest, ChatResponse } from "../index.types.js";
+import { CohereChatItem, CohereChatRequestRoot } from "./CohereApiRequestTypes.js";
+import { CohereChatResponseRoot } from "./CohereApiResponseTypes.js";
 
 const roleMapCohereRagged: Record<CohereChatItem['role'], Message['type']> = {
     "CHATBOT": "bot",

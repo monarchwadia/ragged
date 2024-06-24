@@ -1,7 +1,7 @@
-import { provideCohereChatAdapter } from "./provideCohereChatAdapter";
-import { startPollyRecording } from "../../../../test/startPollyRecording";
-import { ChatRequest } from "../index.types";
-import { CohereChatAdapter } from "./CohereChatAdapter";
+import { provideCohereChatAdapter } from "./provideCohereChatAdapter.js";
+import { startPollyRecording } from "../../../../test/startPollyRecording.js";
+import { ChatRequest } from "../index.types.js";
+import { CohereChatAdapter } from "./CohereChatAdapter.js";
 
 describe("cohereChatAdapterProvider", () => {
   let adapter: CohereChatAdapter;

@@ -1,1 +1,1 @@
-export type * from "../../tools/index";
+export type * from "../../tools/index.js";

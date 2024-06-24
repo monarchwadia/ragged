@@ -1,8 +1,8 @@
-import { ApiClient } from "../../../support/ApiClient";
-import { Logger } from "../../../support/logger/Logger";
-import type { EmbeddingRequest, Embedding } from "../../Embed.types";
-import type { BaseEmbeddingAdapter } from "../../adapter/index.types";
-import { OpenaiEmbeddingResponse } from "./OpenaiEmbeddingTypes";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { Logger } from "../../../support/logger/Logger.js";
+import type { EmbeddingRequest, Embedding } from "../../Embed.types.js";
+import type { BaseEmbeddingAdapter } from "../../adapter/index.types.js";
+import { OpenaiEmbeddingResponse } from "./OpenaiEmbeddingTypes.js";
 
 export type OpenaiEmbeddingAdapterConstructorParams = {
     apiKey: string;

@@ -1,6 +1,6 @@
-import { startPollyRecording } from "../../../../../test/startPollyRecording";
-import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaAssistantDao } from "./OaiaAssistantDao";
+import { startPollyRecording } from "../../../../../test/startPollyRecording.js";
+import { ApiClient } from "../../../../support/ApiClient.js";
+import { OaiaAssistantDao } from "./OaiaAssistantDao.js";
 
 describe("OaiaAssistantDao", () => {
   describe("createAssistant", () => {

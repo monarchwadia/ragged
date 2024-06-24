@@ -1,13 +1,13 @@
-import { ParameterValidationError, UnknownError } from "../support/CustomErrors";
-import { Logger } from "../support/logger/Logger";
-import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./index.types";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/index.types";
-import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdapter";
-import { provideCohereChatAdapter } from "./adapter/cohere/provideCohereChatAdapter";
-import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
-import { OpenAiChatAdapterConfig } from "./adapter/openai";
-import { OpenaiAssistantsChatAdapterConfig } from "./adapter/openai-assistants/adapter/OaiaChatAdapter";
-import { provideOpenaiAssistantsChatAdapter } from "./adapter/openai-assistants/provideOpenaiAssistantsChatAdapter";
+import { ParameterValidationError, UnknownError } from "../support/CustomErrors.js";
+import { Logger } from "../support/logger/Logger.js";
+import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./index.types.js";
+import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/index.types.js";
+import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdapter.js";
+import { provideCohereChatAdapter } from "./adapter/cohere/provideCohereChatAdapter.js";
+import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter.js";
+import { OpenAiChatAdapterConfig } from "./adapter/openai/index.js";
+import { OpenaiAssistantsChatAdapterConfig } from "./adapter/openai-assistants/adapter/OaiaChatAdapter.js";
+import { provideOpenaiAssistantsChatAdapter } from "./adapter/openai-assistants/provideOpenaiAssistantsChatAdapter.js";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,

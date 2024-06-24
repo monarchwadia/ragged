@@ -1,5 +1,5 @@
-import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaMessage, OaiaMessageList } from "./OaiaMessageDaoTypes"
+import { ApiClient } from "../../../../support/ApiClient.js";
+import { OaiaMessage, OaiaMessageList } from "./OaiaMessageDaoTypes.js"
 
 export type CreateMessageParams = {
     threadId: any;

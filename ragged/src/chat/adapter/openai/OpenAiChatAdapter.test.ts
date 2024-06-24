@@ -1,6 +1,6 @@
-import { OpenAiChatAdapter } from ".";
-import { ApiClient } from "../../../support/ApiClient";
-import { startPollyRecording } from "../../../../test/startPollyRecording";
+import { OpenAiChatAdapter } from "./index.js";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { startPollyRecording } from "../../../../test/startPollyRecording.js";
 import { mockDeep } from "jest-mock-extended";
 
 describe("OpenAiChatAdapter", () => {

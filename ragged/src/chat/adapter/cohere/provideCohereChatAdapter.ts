@@ -1,5 +1,5 @@
-import { ApiClient } from "../../../support/ApiClient";
-import { CohereChatAdapter, CohereChatAdapterConfig } from "./CohereChatAdapter";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { CohereChatAdapter, CohereChatAdapterConfig } from "./CohereChatAdapter.js";
 
 export type CohereChatProviderParam = {
     config?: Partial<CohereChatAdapterConfig>;

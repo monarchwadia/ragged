@@ -1,5 +1,5 @@
-import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaRun } from "./OaiaRunDaoTypes"
+import { ApiClient } from "../../../../support/ApiClient.js";
+import { OaiaRun } from "./OaiaRunDaoTypes.js"
 
 export type CreateRunParams = {
     threadId: string;

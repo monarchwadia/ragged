@@ -1,4 +1,4 @@
-import { Embedding, EmbeddingRequest } from "../Embed.types";
+import { Embedding, EmbeddingRequest } from "../Embed.types.js";
 
 /**
  * Creates an embedding for the given text using a specific provider.

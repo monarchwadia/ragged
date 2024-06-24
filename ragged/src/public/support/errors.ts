@@ -1,1 +1,1 @@
-export * from "../../../src/support/CustomErrors";
+export * from "../../../src/support/CustomErrors.js";

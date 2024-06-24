@@ -1,5 +1,5 @@
-import { ApiClient } from "../../../support/ApiClient";
-import { provideOpenaiEmbeddingAdapter } from "./provideOpenaiEmbeddingAdapter"
+import { ApiClient } from "../../../support/ApiClient.js";
+import { provideOpenaiEmbeddingAdapter } from "./provideOpenaiEmbeddingAdapter.js"
 
 describe("provideOpenaiEmbeddingAdapter", () => {
     it("should provide an instance of OpenaiEmbeddingAdapter", () => {

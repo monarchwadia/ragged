@@ -1,6 +1,6 @@
-import { startPollyRecording } from "../../../../../test/startPollyRecording";
-import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaThreadDao } from "./OaiaThreadDao";
+import { startPollyRecording } from "../../../../../test/startPollyRecording.js";
+import { ApiClient } from "../../../../support/ApiClient.js";
+import { OaiaThreadDao } from "./OaiaThreadDao.js";
 
 describe("OaiaThreadDao", () => {
   describe("createThread", () => {

@@ -1,5 +1,5 @@
-import { Message } from "../../../index.types";
-import { OaiaChatMapper } from "./OaiaChatMapper";
+import { Message } from "../../../index.types.js";
+import { OaiaChatMapper } from "./OaiaChatMapper.js";
 
 describe("OaiaChatMapper", () => {
     describe("mapMessageToOaia", () => {

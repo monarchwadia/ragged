@@ -61,7 +61,7 @@
   "scripts": {
     "build": "pnpm test && pnpm build:base",
     "build-skiptests": "pnpm build:base",
-    "build:base": "rm -rf ./build && tsx build.ts && tsc --emitDeclarationOnly",
+    "build:base": "rm -rf ./build && tsx build.ts && tsc --project ./tsconfig.cjs.json --emitDeclarationOnly && tsc --project ./tsconfig.esm.json --emitDeclarationOnly",
     "test": "jest",
     "tdd": "jest --watch"
   },
@@ -71,10 +71,10 @@
   "devDependencies": {
     "@eslint/js": "^9.1.1",
     "@npmcli/package-json": "^5.1.1",
-    "@pollyjs/adapter-fetch": "^6.0.6",
-    "@pollyjs/adapter-node-http": "^6.0.6",
-    "@pollyjs/core": "^6.0.6",
-    "@pollyjs/persister-fs": "^6.0.6",
+    "@pollyjs/adapter-fetch": "6.0.6",
+    "@pollyjs/adapter-node-http": "6.0.6",
+    "@pollyjs/core": "6.0.6",
+    "@pollyjs/persister-fs": "6.0.6",
     "@types/jest": "^29.5.12",
     "@types/json-schema": "^7.0.15",
     "@types/node": "^20.13.0",

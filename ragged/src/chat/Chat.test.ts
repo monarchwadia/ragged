@@ -1,12 +1,12 @@
-import { Chat } from ".";
-import { Tool } from "../tools";
-import { Message } from "./index.types";
-import { BaseChatAdapter } from "./adapter/index.types";
+import { Chat } from "./index.js";
+import { Tool } from "../tools/index.js";
+import { Message } from "./index.types.js";
+import { BaseChatAdapter } from "./adapter/index.types.js";
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
-import { startPollyRecording } from "../../test/startPollyRecording";
+import { startPollyRecording } from "../../test/startPollyRecording.js";
 import {
   ParameterValidationError,
-} from "../support/CustomErrors";
+} from "../support/CustomErrors.js";
 
 describe("Chat", () => {
   let adapter: DeepMockProxy<BaseChatAdapter>;

@@ -1,7 +1,7 @@
 import { Polly } from "@pollyjs/core";
 import FetchAdapter from "@pollyjs/adapter-fetch";
 import FSPersister from "@pollyjs/persister-fs";
-import { Logger } from "../src/support/logger/Logger";
+import { Logger } from "../src/support/logger/Logger.js";
 
 /*
   Register the adapters and persisters we want to use. This way all future

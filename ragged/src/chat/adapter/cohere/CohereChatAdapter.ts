@@ -1,7 +1,7 @@
-import { ApiClient } from "../../../support/ApiClient";
-import { NotImplementedError } from "../../../support/CustomErrors";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "../index.types";
-import { CohereChatMapper } from "./CohereChatMapper";
+import { ApiClient } from "../../../support/ApiClient.js";
+import { NotImplementedError } from "../../../support/CustomErrors.js";
+import { BaseChatAdapter, ChatRequest, ChatResponse } from "../index.types.js";
+import { CohereChatMapper } from "./CohereChatMapper.js";
 
 export type CohereChatAdapterConfig = {
     apiKey?: string;

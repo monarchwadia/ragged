@@ -1,9 +1,9 @@
-import { ParameterValidationError } from "../support/CustomErrors";
-import { Logger } from "../support/logger/Logger";
-import type { EmbeddingRequest, Embedding } from "./Embed.types";
-import type { BaseEmbeddingAdapter } from "./adapter/index.types";
-import { OpenaiEmbeddingAdapterConstructorParams } from "./adapter/openai/OpenaiEmbeddingAdapter";
-import { provideOpenaiEmbeddingAdapter } from "./adapter/openai/provideOpenaiEmbeddingAdapter";
+import { ParameterValidationError } from "../support/CustomErrors.js";
+import { Logger } from "../support/logger/Logger.js";
+import type { EmbeddingRequest, Embedding } from "./Embed.types.js";
+import type { BaseEmbeddingAdapter } from "./adapter/index.types.js";
+import { OpenaiEmbeddingAdapterConstructorParams } from "./adapter/openai/OpenaiEmbeddingAdapter.js";
+import { provideOpenaiEmbeddingAdapter } from "./adapter/openai/provideOpenaiEmbeddingAdapter.js";
 
 export class Embed {
     private static logger = new Logger('Embed');
