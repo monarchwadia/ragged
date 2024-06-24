@@ -61,7 +61,7 @@
   "scripts": {
     "build": "pnpm test && pnpm build:base",
     "build-skiptests": "pnpm build:base",
-    "build:base": "rm -rf ./build && tsx build.ts && tsc --emitDeclarationOnly",
+    "build:base": "rm -rf ./build &&  tsc --emitDeclarationOnly && tsx build.ts",
     "test": "jest",
     "tdd": "jest --watch"
   },

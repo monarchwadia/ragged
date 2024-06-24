@@ -20,7 +20,7 @@ async function main() {
     });
 
 
-    const { esbuildEntryPoints } = buildPublicInterface('./src/public');
+    const { esbuildEntryPoints, packageJsonExports } = buildPublicInterface('./src/public');
     // esm minified
     await esbuild.build({
         entryPoints: esbuildEntryPoints,
@@ -52,6 +52,21 @@ async function main() {
 
     // and same for esm
     fs.copyFileSync('./buildConfig/esm.package.json', './build/esm/package.json');
+
+    // for the sake of cjs, we need to copy the types
+    for (const dirPath in packageJsonExports) {
+        if (packageJsonExports[dirPath].types) {
+            const typefilePath = packageJsonExports[dirPath].types;
+            const cjsfilePath = packageJsonExports[dirPath].require;
+            if (!typefilePath || !cjsfilePath) {
+                console.error("typefilePath or cjsfilePath not found for this path", typefilePath, cjsfilePath)
+                continue;
+            }
+            const typefileName = typefilePath.split('/').slice(-1)[0];
+            const cjsFolderPath = cjsfilePath.split('/').slice(0, -1).join('/');
+            fs.copyFileSync(typefilePath, cjsFolderPath + '/' + typefileName);
+        }
+    }
 }
 
 main()
