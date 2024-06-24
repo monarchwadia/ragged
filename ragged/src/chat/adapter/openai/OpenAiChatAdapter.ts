@@ -1,6 +1,6 @@
 import { ApiClient } from "../../../support/ApiClient";
 import { Logger } from "../../../support/logger/Logger";
-import { BaseChatAdapter, ChatRequest } from "../BaseChatAdapter.types";
+import { BaseChatAdapter, ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
 import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers";
 
@@ -27,7 +27,7 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
         this.config = { ...buildDefaultConfig(), ...config };
     }
 
-    async chat(request: ChatRequest) {
+    async chat(request: ChatAdapterRequest) {
         const mappedRequest = mapToOpenAi(request);
         const response = await this.chatCompletion(mappedRequest);
         const mappedResponse = mapFromOpenAi(response);

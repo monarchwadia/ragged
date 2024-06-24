@@ -1,12 +1,12 @@
-import { MappingError } from "../../../support/CustomErrors";
-import { ChatRequest } from "../BaseChatAdapter.types";
+import { MappingError } from "../../../support/RaggedErrors";
+import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { CohereChatResponseRoot } from "./CohereApiResponseTypes";
 import { CohereChatMapper } from "./CohereChatMapper";
 
 describe("CohereChatMapper", () => {
     describe("mapChatRequestToApiRequest", () => {
         it("should map a single user message to just the message field, and not contain any history field", () => {
-            const request: ChatRequest = {
+            const request: ChatAdapterRequest = {
                 history: [
                     {
                         type: "user",
@@ -24,7 +24,7 @@ describe("CohereChatMapper", () => {
         });
 
         it("should correctly match user and system messages", () => {
-            const request: ChatRequest = {
+            const request: ChatAdapterRequest = {
                 history: [
                     {
                         type: "system",
@@ -60,7 +60,7 @@ describe("CohereChatMapper", () => {
         });
 
         it("maps error messages to chatbot messages", () => {
-            const request: ChatRequest = {
+            const request: ChatAdapterRequest = {
                 history: [
                     {
                         type: "error",
@@ -88,7 +88,7 @@ describe("CohereChatMapper", () => {
         });
 
         it("throws an error if the last message in history was not a user message", () => {
-            const request: ChatRequest = {
+            const request: ChatAdapterRequest = {
                 history: [
                     {
                         type: "system",
@@ -103,7 +103,7 @@ describe("CohereChatMapper", () => {
         });
 
         it("throws an error if the last user message has no text", () => {
-            const request: ChatRequest = {
+            const request: ChatAdapterRequest = {
                 history: [
                     {
                         type: "user",
@@ -118,7 +118,7 @@ describe("CohereChatMapper", () => {
         });
 
         it("throws an error if the last user message has null text", () => {
-            const request: ChatRequest = {
+            const request: ChatAdapterRequest = {
                 history: [
                     {
                         type: "user",
@@ -133,7 +133,7 @@ describe("CohereChatMapper", () => {
         });
 
         it("throws an error if no history is provided", () => {
-            const request: ChatRequest = {
+            const request: ChatAdapterRequest = {
                 history: [],
             };
 

@@ -1,6 +1,6 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../support/ApiClient";
-import { FetchRequestFailedError } from "../../../support/CustomErrors";
+import { FetchRequestFailedError } from "../../../support/RaggedErrors";
 import { OpenaiEmbeddingAdapter } from "./OpenaiEmbeddingAdapter";
 
 describe("OpenaiEmbedAdapter", () => {

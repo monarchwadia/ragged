@@ -1,6 +1,6 @@
-import { ParameterValidationError } from "../support/CustomErrors";
+import { ParameterValidationError } from "../support/RaggedErrors";
 import { Logger } from "../support/logger/Logger";
-import type { EmbeddingRequest, Embedding } from "./Embed.types";
+import type { EmbedRequest, EmbedResponse } from "./Embed.types";
 import type { BaseEmbeddingAdapter } from "./adapter/BaseEmbeddingAdapter.types";
 import { OpenaiEmbeddingAdapterConstructorParams } from "./adapter/openai/OpenaiEmbeddingAdapter";
 import { provideOpenaiEmbeddingAdapter } from "./adapter/openai/provideOpenaiEmbeddingAdapter";
@@ -28,9 +28,9 @@ export class Embed {
         return new Embed(adapter);
     }
 
-    async embed(text: string): Promise<Embedding>;
-    async embed(request: EmbeddingRequest): Promise<Embedding>;
-    async embed(...args: any[]): Promise<Embedding> {
+    async embed(text: string): Promise<EmbedResponse>;
+    async embed(request: EmbedRequest): Promise<EmbedResponse>;
+    async embed(...args: any[]): Promise<EmbedResponse> {
         const request = this.validatedRequest(args);
         return this.adapter.embed(request);
     }
@@ -52,7 +52,7 @@ export class Embed {
      * will be 0 -- this is because the cosine similarity is undefined when the norm of one of the embeddings is 0.
      * @throws ParameterValidationError if the sets of numbers are not the same length.
      */
-    cosineSimilarity(embedding1: Embedding, embedding2: Embedding): number {
+    cosineSimilarity(embedding1: EmbedResponse, embedding2: EmbedResponse): number {
         if (embedding1.embedding.length !== embedding2.embedding.length) {
             throw new ParameterValidationError('Embeddings must be of the same length to calculate cosine similarity');
         }
@@ -93,12 +93,12 @@ export class Embed {
     }
 
 
-    private validatedRequest(args: any[]): EmbeddingRequest {
+    private validatedRequest(args: any[]): EmbedRequest {
         if (args.length !== 1) {
             throw new ParameterValidationError("Embed function requires exactly one argument. Instead, got " + args.length + " arguments.");
         }
 
-        let request: EmbeddingRequest;
+        let request: EmbedRequest;
         if (typeof args[0] === "string") {
             request = { text: args[0] };
         } else {

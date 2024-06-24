@@ -1,5 +1,5 @@
 import { ApiJsonHandler } from "./ApiJsonHandler";
-import { JsonParseError, JsonStringifyError } from "./CustomErrors";
+import { JsonParseError, JsonStringifyError } from "./RaggedErrors";
 
 describe("ApiJsonHandler", () => {
     describe("parse", () => {

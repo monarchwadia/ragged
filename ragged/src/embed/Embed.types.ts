@@ -1,7 +1,7 @@
 /**
  * Request to get an embedding for a given text
  */
-export type EmbeddingRequest = {
+export type EmbedRequest = {
     /**
      * Text to get an embedding for
      */
@@ -15,7 +15,7 @@ export type EmbeddingRequest = {
 /**
  * Response to get an embedding for a given text
  */
-export type Embedding = {
+export type EmbedResponse = {
     /**
      * The provider of the embedding. For example, OpenAI or Cohere.
      */
@@ -42,6 +42,6 @@ export type Embedding = {
  * @returns A promise that gives back an object with the model, provider, and the embedding data (the special numbers).
  * @throws Error if the API request fails.
  */
-export interface BaseEmbeddingAdapter {
-    embed(request: EmbeddingRequest): Promise<Embedding>;
+export interface BaseEmbedAdapter {
+    embed(request: EmbedRequest): Promise<EmbedResponse>;
 }

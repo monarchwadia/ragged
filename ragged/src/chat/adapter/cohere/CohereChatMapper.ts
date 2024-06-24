@@ -1,8 +1,8 @@
 
-import { MappingError } from "../../../support/CustomErrors";
+import { MappingError } from "../../../support/RaggedErrors";
 import { Logger } from "../../../support/logger/Logger";
 import { Message } from "../../Chat.types";
-import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
+import { ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
 import { CohereChatItem, CohereChatRequestRoot } from "./CohereApiRequestTypes";
 import { CohereChatResponseRoot } from "./CohereApiResponseTypes";
 
@@ -23,7 +23,7 @@ const roleMapRaggedCohere: Record<Message['type'], CohereChatItem['role']> = {
 
 export class CohereChatMapper {
     static logger: Logger = new Logger("CohereChatMapper");
-    static mapChatRequestToCohereRequest(request: ChatRequest): CohereChatRequestRoot {
+    static mapChatRequestToCohereRequest(request: ChatAdapterRequest): CohereChatRequestRoot {
         const root: CohereChatRequestRoot = {
             message: undefined
         }
@@ -80,7 +80,7 @@ export class CohereChatMapper {
 
         return root;
     }
-    static mapCohereResponseToChatResponse(response: CohereChatResponseRoot): ChatResponse {
+    static mapCohereResponseToChatResponse(response: CohereChatResponseRoot): ChatAdapterResponse {
         if (!response.text) {
             this.logger.warn("No 'text' field was received in response from Cohere. This is unexpected, and may indicate an error in Ragged's logic.");
         }

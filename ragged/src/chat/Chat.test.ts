@@ -6,7 +6,7 @@ import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { startPollyRecording } from "../../test/startPollyRecording";
 import {
   ParameterValidationError,
-} from "../support/CustomErrors";
+} from "../support/RaggedErrors";
 
 describe("Chat", () => {
   let adapter: DeepMockProxy<BaseChatAdapter>;

@@ -1,4 +1,4 @@
-import { Embedding, EmbeddingRequest } from "../Embed.types";
+import { EmbedResponse, EmbedRequest } from "../Embed.types";
 
 /**
  * Creates an embedding for the given text using a specific provider.
@@ -13,5 +13,5 @@ import { Embedding, EmbeddingRequest } from "../Embed.types";
  * @throws Error if the API request fails.
  */
 export interface BaseEmbeddingAdapter {
-    embed(request: EmbeddingRequest): Promise<Embedding>;
+    embed(request: EmbedRequest): Promise<EmbedResponse>;
 }

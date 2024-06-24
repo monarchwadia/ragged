@@ -1,9 +1,9 @@
-import { MappingError } from "../../../support/CustomErrors";
+import { MappingError } from "../../../support/RaggedErrors";
 import {
   OpenAiChatCompletionRequestBody,
   OpenAiChatCompletionResponseBody,
 } from "./OpenAiApiTypes";
-import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
+import { ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
 import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers";
 import { OpenAiToolMapper } from "./ToolMapper";
 import { OpenAiChatAdapter } from "./OpenAiChatAdapter";
@@ -16,7 +16,7 @@ describe("OpenAiChatAdapter Mappers", () => {
   });
   describe("mapToOpenAi", () => {
     it("should map empty request to OpenAi format", () => {
-      const request: ChatRequest = {
+      const request: ChatAdapterRequest = {
         history: [],
       };
       const expected: OpenAiChatCompletionRequestBody = {
@@ -30,7 +30,7 @@ describe("OpenAiChatAdapter Mappers", () => {
 
     it("should map request to OpenAi format", () => {
       // Arrange
-      const request: ChatRequest = {
+      const request: ChatAdapterRequest = {
         history: [
           { type: "user", text: "Hello" },
           { type: "bot", text: "Hi" },
@@ -50,7 +50,7 @@ describe("OpenAiChatAdapter Mappers", () => {
 
     it("should not map error requests to openai payload", () => {
       // Arrange
-      const request: ChatRequest = {
+      const request: ChatAdapterRequest = {
         history: [
           { type: "user", text: "Hello" },
           { type: "bot", text: "Hi" },
@@ -80,7 +80,7 @@ describe("OpenAiChatAdapter Mappers", () => {
 
     it("should correctly map a request with type 'user' to OpenAi format", () => {
       // Arrange
-      const request: ChatRequest = {
+      const request: ChatAdapterRequest = {
         history: [{ type: "user", text: "Hello" }],
       };
       const expected: OpenAiChatCompletionRequestBody = {
@@ -94,7 +94,7 @@ describe("OpenAiChatAdapter Mappers", () => {
 
     it("should correctly map a request with type 'bot' to OpenAi format", () => {
       // Arrange
-      const request: ChatRequest = {
+      const request: ChatAdapterRequest = {
         history: [{ type: "bot", text: "Hello" }],
       };
       const expected: OpenAiChatCompletionRequestBody = {
@@ -108,7 +108,7 @@ describe("OpenAiChatAdapter Mappers", () => {
 
     it("should correctly map a request with type 'system' to OpenAi format", () => {
       // Arrange
-      const request: ChatRequest = {
+      const request: ChatAdapterRequest = {
         history: [{ type: "system", text: "Hello" }],
       };
       const expected: OpenAiChatCompletionRequestBody = {
@@ -122,7 +122,7 @@ describe("OpenAiChatAdapter Mappers", () => {
 
     it("should skip messages with type 'error' when mapping to OpenAi format", () => {
       // Arrange
-      const request: ChatRequest = {
+      const request: ChatAdapterRequest = {
         history: [
           { type: "system", text: "System message" },
           { type: "error", text: "Hello" },
@@ -158,7 +158,7 @@ describe("OpenAiChatAdapter Mappers", () => {
         },
       };
 
-      const expected: ChatResponse = {
+      const expected: ChatAdapterResponse = {
         history: [],
       };
 
@@ -179,7 +179,7 @@ describe("OpenAiChatAdapter Mappers", () => {
           total_tokens: 0,
         },
       };
-      const expected: ChatResponse = {
+      const expected: ChatAdapterResponse = {
         history: [],
       };
 

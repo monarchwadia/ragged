@@ -1,6 +1,6 @@
 import { before } from "node:test";
 import { ApiClient } from "./ApiClient";
-import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors";
+import { FetchRequestFailedError, FetchResponseNotOkError } from "./RaggedErrors";
 import { objToReadableStream } from "../../test/objectToReadableStream";
 
 describe("ApiClient", () => {

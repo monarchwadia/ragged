@@ -1,6 +1,6 @@
 import { ApiClient } from "../../../support/ApiClient";
 import { Logger } from "../../../support/logger/Logger";
-import type { EmbeddingRequest, Embedding } from "../../Embed.types";
+import type { EmbedRequest, EmbedResponse } from "../../Embed.types";
 import type { BaseEmbeddingAdapter } from "../BaseEmbeddingAdapter.types";
 import { OpenaiEmbeddingResponse } from "./OpenaiEmbeddingTypes";
 
@@ -16,7 +16,7 @@ export class OpenaiEmbeddingAdapter implements BaseEmbeddingAdapter {
     private static logger: Logger = new Logger('OpenaiEmbeddingAdapter');
     constructor(private params: OpenaiEmbeddingAdapterConstructorParams) { }
 
-    async embed(request: EmbeddingRequest): Promise<Embedding> {
+    async embed(request: EmbedRequest): Promise<EmbedResponse> {
         const response: OpenaiEmbeddingResponse = await this.params.apiClient.post('https://api.openai.com/v1/embeddings', {
             body: {
                 input: request.text,
@@ -32,7 +32,7 @@ export class OpenaiEmbeddingAdapter implements BaseEmbeddingAdapter {
             OpenaiEmbeddingAdapter.logger.warn('Recived more than one embedding from OpenAI. This is not currently supported. Returning only the first one.');
         }
 
-        const responseObj: Embedding = {
+        const responseObj: EmbedResponse = {
             model: response.model,
             provider: 'openai',
             embedding: response.data[0].embedding

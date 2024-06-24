@@ -1,6 +1,6 @@
 import { provideCohereChatAdapter } from "./provideCohereChatAdapter";
 import { startPollyRecording } from "../../../../test/startPollyRecording";
-import { ChatRequest } from "../BaseChatAdapter.types";
+import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { CohereChatAdapter } from "./CohereChatAdapter";
 
 describe("cohereChatAdapterProvider", () => {
@@ -14,7 +14,7 @@ describe("cohereChatAdapterProvider", () => {
   });
 
   it("successfully performs a request", async () => {
-    const request: ChatRequest = {
+    const request: ChatAdapterRequest = {
       history: [
         {
           type: "user",
@@ -43,7 +43,7 @@ describe("cohereChatAdapterProvider", () => {
   });
 
   it("successfully does complex requests", async () => {
-    const request: ChatRequest = {
+    const request: ChatAdapterRequest = {
       history: [
         {
           type: "user",

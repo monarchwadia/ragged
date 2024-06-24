@@ -1,7 +1,7 @@
-import { ParameterValidationError, UnknownError } from "../support/CustomErrors";
+import { ParameterValidationError, UnknownError } from "../support/RaggedErrors";
 import { Logger } from "../support/logger/Logger";
 import { BotMessage, ChatConfig, Message, ToolRequest, ToolResponse } from "./Chat.types";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "./adapter/BaseChatAdapter.types";
+import { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "./adapter/BaseChatAdapter.types";
 import { provideOpenAiChatAdapter } from "./adapter/openai/provideOpenAiChatAdapter";
 import { provideCohereChatAdapter } from "./adapter/cohere/provideCohereChatAdapter";
 import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
@@ -95,7 +95,7 @@ export class Chat {
 
             let toolCallsWereResolved = false;
 
-            const request: ChatRequest = { history: workingHistory };
+            const request: ChatAdapterRequest = { history: workingHistory };
             if (tools && tools.length) {
                 request.tools = [...tools];
             }
@@ -104,7 +104,7 @@ export class Chat {
                 request.model = model;
             }
 
-            const response: ChatResponse = await this.performChatRequest(request);
+            const response: ChatAdapterResponse = await this.performChatRequest(request);
 
             workingHistory = [...workingHistory, ...response.history];
 
@@ -142,9 +142,9 @@ export class Chat {
         return workingHistory;
     }
 
-    private async performChatRequest(request: ChatRequest) {
+    private async performChatRequest(request: ChatAdapterRequest) {
         Chat.logger.debug("Chat request: ", JSON.stringify(request));
-        let response: ChatResponse = { history: [] }; // will be replaced soon
+        let response: ChatAdapterResponse = { history: [] }; // will be replaced soon
         try {
             response = await this.adapter.chat(request);
         } catch (e: unknown) {
@@ -222,7 +222,7 @@ export class Chat {
         return toolCallMap
     }
 
-    private async processToolCallMap(toolCallMap: ToolCallMap, request: ChatRequest): Promise<{ toolCallsWereResolved: boolean }> {
+    private async processToolCallMap(toolCallMap: ToolCallMap, request: ChatAdapterRequest): Promise<{ toolCallsWereResolved: boolean }> {
         let toolCallsWereResolved = false;
 
         if (!request.tools) {

@@ -1,6 +1,6 @@
-import { ParameterValidationError } from "../support/CustomErrors";
+import { ParameterValidationError } from "../support/RaggedErrors";
 import { Embed } from "./Embed";
-import type { EmbeddingRequest, Embedding } from "./Embed.types";
+import type { EmbedRequest, EmbedResponse } from "./Embed.types";
 import type { BaseEmbeddingAdapter } from "./adapter/BaseEmbeddingAdapter.types";
 
 describe("Embed", () => {
@@ -10,7 +10,7 @@ describe("Embed", () => {
 
         beforeEach(() => {
             dummyAdapter = {
-                embed: async (request: EmbeddingRequest): Promise<Embedding> => {
+                embed: async (request: EmbedRequest): Promise<EmbedResponse> => {
                     return {
                         provider: "dummy",
                         model: request.model || "default-dummy-model",

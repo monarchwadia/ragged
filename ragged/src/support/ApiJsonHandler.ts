@@ -1,4 +1,4 @@
-import { JsonParseError, JsonStringifyError } from "./CustomErrors";
+import { JsonParseError, JsonStringifyError } from "./RaggedErrors";
 import { Logger } from "./logger/Logger";
 
 export class ApiJsonHandler {

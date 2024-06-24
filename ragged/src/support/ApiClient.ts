@@ -1,5 +1,5 @@
 import { ApiJsonHandler } from "./ApiJsonHandler";
-import { FetchRequestFailedError, FetchResponseNotOkError } from "./CustomErrors";
+import { FetchRequestFailedError, FetchResponseNotOkError } from "./RaggedErrors";
 import { Logger } from "./logger/Logger";
 
 
@@ -9,9 +9,9 @@ type PostOpts = {
 }
 
 /**
- * This class is passed into each driver to allow the driver to make API calls.
+ * This class is passed into each adapter to allow the adapter to make API calls.
  * This is useful for testing, as we can mock this class to return a fake response.
- * Every driver will use this class to make RESTful API calls.
+ * Every adapter should use this class to make RESTful API calls.
  */
 export class ApiClient {
     static logger: Logger = new Logger('ApiClient');

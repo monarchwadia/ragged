@@ -58,7 +58,7 @@ export type ToolProp = StringProp | NumberProp | BooleanProp | ObjectProp | Arra
  *    return props;
  *  }
  */
-export type Validator = (props: Record<string, any>) => Record<string, any> | string;
+export type ToolInputValidator = (props: Record<string, any>) => Record<string, any> | string;
 
 /**
  * Tools provide your application with a way to call code. This lets you do things like
@@ -163,7 +163,7 @@ export type Tool = {
      * from failing and provide a better user experience. If the tool fails, it can attempt to retry the tool with
      * valid input properties.
      * 
-     * @see Validator for more information.
+     * @see ToolInputValidator for more information.
      */
-    validateProps?: Validator
+    validateProps?: ToolInputValidator
 }

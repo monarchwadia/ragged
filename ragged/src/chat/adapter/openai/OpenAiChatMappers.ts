@@ -1,13 +1,13 @@
-import { MappingError } from "../../../support/CustomErrors";
+import { MappingError } from "../../../support/RaggedErrors";
 import { BotMessage } from "../../Chat.types";
 import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "./OpenAiApiTypes";
-import { ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
+import { ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
 import { Logger } from "../../../support/logger/Logger";
 import { OpenAiToolMapper } from "./ToolMapper";
 
 const logger: Logger = new Logger("openai.adapter.mappers");
 
-export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBody => {
+export const mapToOpenAi = (request: ChatAdapterRequest): OpenAiChatCompletionRequestBody => {
     try {
         const messages: OpenAiChatCompletionRequestBody["messages"] = [];
 
@@ -123,9 +123,9 @@ export const mapToOpenAi = (request: ChatRequest): OpenAiChatCompletionRequestBo
     }
 }
 
-export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatResponse => {
+export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatAdapterResponse => {
     try {
-        const history: ChatResponse['history'] = [];
+        const history: ChatAdapterResponse['history'] = [];
 
         if (!response.choices) {
             return {

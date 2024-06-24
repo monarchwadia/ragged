@@ -1,7 +1,7 @@
-import { RetryError } from "../../../../support/CustomErrors";
+import { RetryError } from "../../../../support/RaggedErrors";
 import { Logger } from "../../../../support/logger/Logger";
 import { Message } from "../../../Chat.types";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "../../BaseChatAdapter.types";
+import { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "../../BaseChatAdapter.types";
 import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
 import { OaiaMessageDao } from "../message/OaiaMessageDao";
 import { OaiaRunDao } from "../run/OaiaRunDao";
@@ -50,7 +50,7 @@ export class OaiaChatAdapter implements BaseChatAdapter {
     private static logger: Logger = new Logger("OaiaChatAdapter");
     constructor(private opts: OaiaChatAdapterConstructorOpts) { }
 
-    async chat(request: ChatRequest): Promise<ChatResponse> {
+    async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         OaiaChatAdapter.logger.debug("Creating assistant...");
         const assistant = await this.opts.assistantDao.createAssistant(this.opts.config.apiKey, {
             instructions: this.opts.config.assistant.instructions,

@@ -1,6 +1,6 @@
 import { ApiClient } from "../../../support/ApiClient";
-import { NotImplementedError } from "../../../support/CustomErrors";
-import { BaseChatAdapter, ChatRequest, ChatResponse } from "../BaseChatAdapter.types";
+import { NotImplementedError } from "../../../support/RaggedErrors";
+import { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
 import { CohereChatMapper } from "./CohereChatMapper";
 
 export type CohereChatAdapterConfig = {
@@ -10,7 +10,7 @@ export type CohereChatAdapterConfig = {
 export class CohereChatAdapter implements BaseChatAdapter {
     constructor(private apiClient: ApiClient, private config: CohereChatAdapterConfig) { }
 
-    async chat(request: ChatRequest): Promise<ChatResponse> {
+    async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         if (request.tools) {
             throw new NotImplementedError("Not implemented. Currently, Ragged does not support tools in Cohere requests.");
         }
