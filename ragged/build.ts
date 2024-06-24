@@ -1,10 +1,6 @@
 // @ts-check
 
 import * as esbuild from "esbuild";
-import fs from "fs";
-
-import { buildPublicInterface } from "./buildConfig/buildPublicInterface";
-import { updatePackageJsonEntrypoints } from "./buildConfig/updatePackageJsonEntrypoints";
 
 // const entryPoints = {
 //     'chat/index': './src/public/chat/index.ts',
@@ -14,65 +10,27 @@ import { updatePackageJsonEntrypoints } from "./buildConfig/updatePackageJsonEnt
 const __dirname = new URL(".", import.meta.url).pathname;
 
 async function main() {
-    // update packagejson
-    updatePackageJsonEntrypoints({
-        pathToRaggedDir: __dirname
-    });
-
-
-    const { esbuildEntryPoints, packageJsonExports } = buildPublicInterface('./src/public');
-    // esm minified
-    await esbuild.build({
-        entryPoints: esbuildEntryPoints,
-        outdir: 'build/esm',
-        bundle: true,
-        // outfile: `./build/src/index.js`,
-        platform: "neutral",
-        logLevel: "info",
-        target: ["es6"],
-        format: "esm",
-        minify: true,
-        tsconfig: "./buildConfig/tsconfig.esm.json"
-    });
-
     // Build CommonJS minified
     await esbuild.build({
-        entryPoints: esbuildEntryPoints,
-        outdir: 'build/cjs',
+        entryPoints: [
+            './src/index.ts',
+        ],
+        outdir: 'build',
         bundle: true,
         platform: "neutral",
         logLevel: "info",
-        target: ["es6"],
+        target: ["node14.16.0"],
         format: "cjs",
         minify: true,
-        tsconfig: "./buildConfig/tsconfig.cjs.json"
+        tsconfig: "./tsconfig.json"
     });
-
-    fs.copyFileSync('./buildConfig/cjs.package.json', './build/cjs/package.json');
-
-    // and same for esm
-    fs.copyFileSync('./buildConfig/esm.package.json', './build/esm/package.json');
-
-    // for the sake of cjs, we need to copy the types
-    for (const dirPath in packageJsonExports) {
-        if (packageJsonExports[dirPath].types) {
-            const typefilePath = packageJsonExports[dirPath].types;
-            const cjsfilePath = packageJsonExports[dirPath].require;
-            if (!typefilePath || !cjsfilePath) {
-                console.error("typefilePath or cjsfilePath not found for this path", typefilePath, cjsfilePath)
-                continue;
-            }
-            const typefileName = typefilePath.split('/').slice(-1)[0];
-            const cjsFolderPath = cjsfilePath.split('/').slice(0, -1).join('/');
-            fs.copyFileSync(typefilePath, cjsFolderPath + '/' + typefileName);
-        }
-    }
 }
 
 main()
     .then(() => console.log("done"))
     .catch((e) => {
         console.error(e);
+        // @ts-expect-error
         process.exit(1);
     });
 
