@@ -1,3 +1,4 @@
+import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../support/ApiClient";
 import { AzureOpenAiChatAdapter } from "./AzureOpenAiChatAdapter";
 
@@ -16,6 +17,7 @@ describe("AzureOpenAiChatAdapter", () => {
     });
 
     it("makes a call to the api", async () => {
+        const polly = startPollyRecording("AzureOpenAiChatAdapter-makes-a-call-to-the-api");
         const response = await adapter.chat({
             history: [
                 {
@@ -32,7 +34,9 @@ describe("AzureOpenAiChatAdapter", () => {
                     text: expect.any(String)
                 }
             ]
-        })
+        });
+
+        polly.stop();
     });
 })
 

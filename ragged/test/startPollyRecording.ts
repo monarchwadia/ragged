@@ -51,6 +51,10 @@ export const startPollyRecording = (recordingName: string, opts: PollyOptions = 
         if (req.headers["authorization"]) {
             req.headers["authorization"] = "Bearer <redacted>";
         }
+        // mask api-key header, which is used in Azure OpenAI APIs
+        if (req.headers["api-key"]) {
+            req.headers["api-key"] = "<redacted>";
+        }
     });
     return polly;
 }
