@@ -1,15 +1,15 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaMessageDao } from "../message/OaiaMessageDao";
-import { OaiaThreadDao } from "../thread/OaiaThreadDao";
-import { OaiaRunDao } from "./OaiaRunDao";
-import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
+import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
+import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
+import { OaiaRunDao } from "./AzureOaiaRunDao";
+import { AzureOaiaAssistantDao } from "../assistant/AzureOaiaAssistantDao";
 
 describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
-      const oaiaAssistantDao = new OaiaAssistantDao(apiClient);
+      const oaiaAssistantDao = new AzureOaiaAssistantDao(apiClient);
       const oaiaMessageDao = new OaiaMessageDao(apiClient);
       const oaiaThreadDao = new OaiaThreadDao(apiClient);
       const oaiaRunDao = new OaiaRunDao(apiClient);

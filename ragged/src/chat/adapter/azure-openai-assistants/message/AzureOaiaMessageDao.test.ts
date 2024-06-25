@@ -1,7 +1,7 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaMessageDao } from "./OaiaMessageDao";
-import { OaiaThreadDao } from "../thread/OaiaThreadDao";
+import { OaiaMessageDao } from "./AzureOaiaMessageDao";
+import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 
 describe("OaiaMessageDao", () => {
   describe("createMessage", () => {

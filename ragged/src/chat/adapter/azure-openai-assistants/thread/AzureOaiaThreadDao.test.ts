@@ -1,6 +1,6 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaThreadDao } from "./OaiaThreadDao";
+import { OaiaThreadDao } from "./AzureOaiaThreadDao";
 
 describe("OaiaThreadDao", () => {
   describe("createThread", () => {

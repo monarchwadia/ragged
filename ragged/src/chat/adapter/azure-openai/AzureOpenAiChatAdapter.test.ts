@@ -1,4 +1,4 @@
-import { startPollyRecording } from "../../../../test/startPollyRecording";
+import { startPollyRecording } from "../../../test/startPollyRecording";
 import { ApiClient } from "../../../support/ApiClient";
 import { AzureOpenAiChatAdapter } from "./AzureOpenAiChatAdapter";
 

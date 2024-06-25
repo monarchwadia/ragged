@@ -1,29 +1,29 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaAssistantDao } from "../assistant/OaiaAssistantDao";
-import { OaiaMessageDao } from "../message/OaiaMessageDao";
-import { OaiaRunDao } from "../run/OaiaRunDao";
-import { OaiaThreadDao } from "../thread/OaiaThreadDao";
-import { OaiaChatAdapter } from "./OaiaChatAdapter";
+import { AzureOaiaAssistantDao } from "../assistant/AzureOaiaAssistantDao";
+import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
+import { OaiaRunDao } from "../run/AzureOaiaRunDao";
+import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
+import { AzureOaiaChatAdapter } from "./AzureOaiaChatAdapter";
 
-describe("OaiaChatAdapter", () => {
+describe("AzureOaiaChatAdapter", () => {
     // const apiKey: string = process.env.OPENAI_API_KEY as string;
     const apiKey: string = "not-real";
     let apiClient: ApiClient;
-    let assistantDao: OaiaAssistantDao;
+    let assistantDao: AzureOaiaAssistantDao;
     let threadDao: OaiaThreadDao;
     let messageDao: OaiaMessageDao;
     let runDao: OaiaRunDao;
-    let adapter: OaiaChatAdapter;
+    let adapter: AzureOaiaChatAdapter;
 
     beforeEach(() => {
         apiClient = new ApiClient();
-        assistantDao = new OaiaAssistantDao(apiClient);
+        assistantDao = new AzureOaiaAssistantDao(apiClient);
         threadDao = new OaiaThreadDao(apiClient);
         messageDao = new OaiaMessageDao(apiClient);
         runDao = new OaiaRunDao(apiClient);
 
-        adapter = new OaiaChatAdapter({
+        adapter = new AzureOaiaChatAdapter({
             config: {
                 apiKey,
                 assistant: {
@@ -45,7 +45,7 @@ describe("OaiaChatAdapter", () => {
     });
 
     it("can chat", async () => {
-        const polly = startPollyRecording("OaiaChatAdapter > can chat", {
+        const polly = startPollyRecording("AzureOaiaChatAdapter > can chat", {
             matchRequestsBy: {
                 order: true,
             }

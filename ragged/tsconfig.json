@@ -1,12 +1,9 @@
 {
   "exclude": [
-    "node_modules",
-    "build",
+    "node_modules/**/*",
+    "build/**/*",
     "recordings/**/*",
     "build.ts"
-  ],
-  "include": [
-    "test/**/*.ts",
   ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
@@ -105,6 +102,9 @@
     // "allowUnreachableCode": true,                     /* Disable error reporting for unreachable code. */
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true, /* Skip type checking all .d.ts files. */
+    "types": [
+      "jest"
+    ]
   }
 }

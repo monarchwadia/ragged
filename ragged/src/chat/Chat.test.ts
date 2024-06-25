@@ -3,7 +3,7 @@ import { Tool } from "../tools/Tools.types";
 import { Message } from "./Chat.types";
 import { BaseChatAdapter } from "./adapter/BaseChatAdapter.types";
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
-import { startPollyRecording } from "../../test/startPollyRecording";
+import { startPollyRecording } from "../test/startPollyRecording";
 import {
   ParameterValidationError,
 } from "../support/RaggedErrors";

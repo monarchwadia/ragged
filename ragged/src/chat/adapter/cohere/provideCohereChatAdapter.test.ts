@@ -1,5 +1,5 @@
 import { provideCohereChatAdapter } from "./provideCohereChatAdapter";
-import { startPollyRecording } from "../../../../test/startPollyRecording";
+import { startPollyRecording } from "../../../test/startPollyRecording";
 import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { CohereChatAdapter } from "./CohereChatAdapter";
 
