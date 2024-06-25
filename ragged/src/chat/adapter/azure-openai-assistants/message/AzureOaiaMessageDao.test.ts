@@ -8,15 +8,18 @@ describe("OaiaMessageDao", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
       const oaiaMessageDao = new OaiaMessageDao(apiClient);
-      const oaiaThreadDao = new OaiaThreadDao(apiClient);
+      const oaiaThreadDao = new OaiaThreadDao(apiClient, {
+        apiKey: process.env.OPENAI_API_KEY as string,
+        apiVersion: "not-real",
+        resourceName: "not-real",
+        deploymentName: "not-real",
+      });
 
       const polly = startPollyRecording(
-        "OaiaMessageDao > createMessage > can be created"
+        "AzureOaiaMessageDao > createMessage > can be created"
       );
 
-      const thread = await oaiaThreadDao.createThread(
-        process.env.OPENAI_API_KEY as string
-      );
+      const thread = await oaiaThreadDao.createThread();
 
       const message = await oaiaMessageDao.createMessage(
         process.env.OPENAI_API_KEY as string,

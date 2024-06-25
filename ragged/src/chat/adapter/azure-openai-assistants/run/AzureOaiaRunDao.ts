@@ -1,4 +1,5 @@
 import { ApiClient } from "../../../../support/ApiClient";
+import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 import { OaiaRun } from "./AzureOaiaRunDaoTypes"
 
 export type CreateRunParams = {
@@ -15,10 +16,11 @@ export type GetRunParams = {
 }
 
 export class OaiaRunDao {
-    constructor(private apiClient: ApiClient) { }
+    constructor(private apiClient: ApiClient, private config: AzureOaiaDaoCommonConfig) { }
 
     createRun(apiKey: string, params: CreateRunParams): Promise<OaiaRun> {
-        return this.apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/runs`, {
+        const url = `https://${this.config.resourceName}.openai.azure.com/openai/threads/${params.threadId}/runs?api-version=${this.config.apiVersion}`;
+        return this.apiClient.post(url, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`,
@@ -29,8 +31,8 @@ export class OaiaRunDao {
     }
 
     getRun(apiKey: string, params: GetRunParams): Promise<OaiaRun> {
-        // get https://api.openai.com/v1/threads/{thread_id}/runs/{run_id}
-        return this.apiClient.get(`https://api.openai.com/v1/threads/${params.threadId}/runs/${params.runId}`, {
+        const url = `https://${this.config.resourceName}.openai.azure.com/openai/threads/${params.threadId}/runs/${params.runId}?api-version=${this.config.apiVersion}`
+        return this.apiClient.get(url, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`,

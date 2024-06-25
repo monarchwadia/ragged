@@ -6,15 +6,18 @@ describe("OaiaThreadDao", () => {
   describe("createThread", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
-      const oaiaThreadDao = new OaiaThreadDao(apiClient);
+      const oaiaThreadDao = new OaiaThreadDao(apiClient, {
+        apiKey: process.env.OPENAI_API_KEY as string,
+        resourceName: "not-real",
+        deploymentName: "not-real",
+        apiVersion: "not-real"
+      });
 
       const polly = startPollyRecording(
         "OaiaThreadDao > createThread > can be created"
       );
 
-      const thread = await oaiaThreadDao.createThread(
-        process.env.OPENAI_API_KEY as string
-      );
+      const thread = await oaiaThreadDao.createThread();
 
       polly.stop();
 

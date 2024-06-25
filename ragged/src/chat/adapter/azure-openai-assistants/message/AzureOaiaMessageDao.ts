@@ -1,4 +1,5 @@
 import { ApiClient } from "../../../../support/ApiClient";
+import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 import { OaiaMessage, OaiaMessageList } from "./AzureOaiaMessageDaoTypes"
 
 export type CreateMessageParams = {
@@ -10,25 +11,27 @@ export type CreateMessageParams = {
 }
 
 export class OaiaMessageDao {
-    constructor(private apiClient: ApiClient) { }
+    constructor(private apiClient: ApiClient, private config: AzureOaiaDaoCommonConfig) { }
 
-    createMessage(apiKey: string, params: CreateMessageParams): Promise<OaiaMessage> {
-        return this.apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/messages`, {
+    createMessage(params: CreateMessageParams): Promise<OaiaMessage> {
+        const url = `https://${this.config.resourceName}.openai.azure.com/openai/threads/${params.threadId}/messages?api-version=${this.config.apiVersion}`;
+
+        return this.apiClient.post(url, {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`,
-                "OpenAI-Beta": "assistants=v2"
+                "api-key": this.config.apiKey
             },
             body: params.body
         });
     }
 
-    listMessagesForThread(apiKey: string, threadId: string): Promise<OaiaMessageList> {
-        return this.apiClient.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+    listMessagesForThread(threadId: string): Promise<OaiaMessageList> {
+        const url = `https://${this.config.resourceName}.openai.azure.com/openai/threads/${threadId}/messages?api-version=${this.config.apiVersion}`;
+
+        return this.apiClient.get(url, {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`,
-                "OpenAI-Beta": "assistants=v2"
+                "api-key": this.config.apiKey
             }
         });
     }

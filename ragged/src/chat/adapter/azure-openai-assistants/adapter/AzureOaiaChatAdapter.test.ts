@@ -9,6 +9,9 @@ import { AzureOaiaChatAdapter } from "./AzureOaiaChatAdapter";
 describe("AzureOaiaChatAdapter", () => {
     // const apiKey: string = process.env.OPENAI_API_KEY as string;
     const apiKey: string = "not-real";
+    const resourceName: string = "not-real";
+    const deploymentName: string = "not-real";
+    const apiVersion: string = "not-real";
     let apiClient: ApiClient;
     let assistantDao: AzureOaiaDao;
     let threadDao: OaiaThreadDao;
@@ -18,7 +21,13 @@ describe("AzureOaiaChatAdapter", () => {
 
     beforeEach(() => {
         apiClient = new ApiClient();
-        assistantDao = new AzureOaiaDao(apiClient);
+        assistantDao = new AzureOaiaDao(apiClient, {
+            apiKey,
+            resourceName,
+            deploymentName,
+            apiVersion,
+
+        });
         threadDao = new OaiaThreadDao(apiClient);
         messageDao = new OaiaMessageDao(apiClient);
         runDao = new OaiaRunDao(apiClient);
