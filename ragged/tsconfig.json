@@ -1,8 +1,8 @@
 {
   "exclude": [
-    "node_modules/**/*",
-    "build/**/*",
-    "recordings/**/*",
+    "node_modules/",
+    "build/",
+    "recordings/",
     "build.ts"
   ],
   "compilerOptions": {

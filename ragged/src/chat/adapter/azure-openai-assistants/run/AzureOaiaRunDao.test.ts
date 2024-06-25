@@ -3,7 +3,7 @@ import { ApiClient } from "../../../../support/ApiClient";
 import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
 import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { OaiaRunDao } from "./AzureOaiaRunDao";
-import { AzureOaiaDao } from "../assistant/AzureOaiaDao";
+import { AzureOaiaDao } from "../assistant/AzureOaiaAssistantDao";
 
 describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {

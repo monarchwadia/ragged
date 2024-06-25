@@ -3,7 +3,7 @@
 
 import { ApiClient } from "../../../support/ApiClient";
 import { AzureOaiaChatAdapter, AzureOpenaiAssistantsChatAdapterConfig } from "./adapter/AzureOaiaChatAdapter";
-import { AzureOaiaDao } from "./assistant/AzureOaiaDao";
+import { AzureOaiaDao } from "./assistant/AzureOaiaAssistantDao";
 import { OaiaMessageDao } from "./message/AzureOaiaMessageDao";
 import { OaiaRunDao } from "./run/AzureOaiaRunDao";
 import { OaiaThreadDao } from "./thread/AzureOaiaThreadDao";

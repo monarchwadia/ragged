@@ -1,6 +1,6 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { AzureOaiaDao } from "./AzureOaiaDao";
+import { AzureOaiaDao } from "./AzureOaiaAssistantDao";
 
 describe("AzureOaiaDao", () => {
   describe("createAssistant", () => {

@@ -2,7 +2,7 @@ import { RetryError } from "../../../../support/RaggedErrors";
 import { Logger } from "../../../../support/logger/Logger";
 import { Message } from "../../../Chat.types";
 import { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "../../BaseChatAdapter.types";
-import { AzureOaiaDao } from "../assistant/AzureOaiaDao";
+import { AzureOaiaDao } from "../assistant/AzureOaiaAssistantDao";
 import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
 import { OaiaRunDao } from "../run/AzureOaiaRunDao";
 import { OaiaRun } from "../run/AzureOaiaRunDaoTypes";
