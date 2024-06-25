@@ -6,25 +6,29 @@ import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers";
 
 
 export type OpenAiChatAdapterConfig = {
-    apiKey: string | undefined;
-    organizationId: string | undefined;
-    rootUrl: string;
-}
-
-const buildDefaultConfig = (): OpenAiChatAdapterConfig => {
-    return {
-        apiKey: undefined,
-        organizationId: undefined,
-        rootUrl: "https://api.openai.com/v1/chat/completions"
-    }
+    apiKey?: string | undefined;
+    organizationId?: string | undefined;
+    rootUrl?: string;
 }
 
 export class OpenAiChatAdapter implements BaseChatAdapter {
     private logger: Logger = new Logger('OpenAiChatDriver');
-    private config: OpenAiChatAdapterConfig;
+    private apiKey: string | undefined;
+    private organizationId: string | undefined;
+    private rootUrl: string = "https://api.openai.com/v1/chat/completions";
 
-    constructor(private driverApiClient: ApiClient, config: Partial<OpenAiChatAdapterConfig> = {}) {
-        this.config = { ...buildDefaultConfig(), ...config };
+    constructor(private driverApiClient: ApiClient, config: OpenAiChatAdapterConfig = {}) {
+        if (config.apiKey) {
+            this.apiKey = config.apiKey;
+        }
+
+        if (config.organizationId) {
+            this.organizationId = config.organizationId;
+        }
+
+        if (config.rootUrl) {
+            this.rootUrl = config.rootUrl;
+        }
     }
 
     async chat(request: ChatAdapterRequest) {
@@ -38,15 +42,15 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
     private async chatCompletion(body: OpenAiChatCompletionRequestBody): Promise<OpenAiChatCompletionResponseBody> {
         const headers: HeadersInit = {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.config.apiKey}`
+            'Authorization': `Bearer ${this.apiKey}`
         };
 
-        if (this.config.organizationId) {
-            headers['OpenAI-Organization'] = this.config.organizationId;
+        if (this.organizationId) {
+            headers['OpenAI-Organization'] = this.organizationId;
         }
 
         return await this.driverApiClient.post(
-            this.config.rootUrl,
+            this.rootUrl,
             {
                 headers,
                 body

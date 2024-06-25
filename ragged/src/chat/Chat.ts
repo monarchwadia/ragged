@@ -8,6 +8,8 @@ import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
 import { OpenAiChatAdapterConfig } from "./adapter/openai/OpenAiChatAdapter";
 import { OpenaiAssistantsChatAdapterConfig } from "./adapter/openai-assistants/adapter/OaiaChatAdapter";
 import { provideOpenaiAssistantsChatAdapter } from "./adapter/openai-assistants/provideOpenaiAssistantsChatAdapter";
+import { AzureOpenAiChatAdapter, AzureOpenAiChatAdapterConfig } from "./adapter/azure-openai/AzureOpenAiChatAdapter";
+import { provideAzureOpenAiChatAdapter } from "./adapter/azure-openai/provideAzureOpenaiChatAdapter";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
@@ -45,9 +47,10 @@ export class Chat {
         return this._isRecording;
     }
 
-    static with(provider: "openai", config: Partial<OpenAiChatAdapterConfig>): Chat;
-    static with(provider: "cohere", config: Partial<CohereChatAdapterConfig>): Chat;
-    static with(provider: "openai-assistants", config: Partial<OpenaiAssistantsChatAdapterConfig>): Chat;
+    static with(provider: "openai-assistants", config: OpenaiAssistantsChatAdapterConfig): Chat;
+    static with(provider: "openai", config: OpenAiChatAdapterConfig): Chat;
+    static with(provider: "cohere", config: CohereChatAdapterConfig): Chat;
+    static with(provider: "azure-openai", config: AzureOpenAiChatAdapterConfig): Chat;
     static with(provider: string, config: any = {}) {
         let adapter: BaseChatAdapter;
 
@@ -60,6 +63,9 @@ export class Chat {
                 break;
             case "openai-assistants":
                 adapter = provideOpenaiAssistantsChatAdapter({ config });
+                break;
+            case "azure-openai":
+                adapter = provideAzureOpenAiChatAdapter({ config });
                 break;
             default:
                 throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Chat.with().");
@@ -315,7 +321,7 @@ export class Chat {
             model: undefined
         };
 
-        let incomingMessages = [];
+        let incomingMessages: Message[] = [];
         if (args.length === 0) {
             // async chat(): Promise<Message[]>;
             // Note: No-op, this is an experimental feature for continuing agentic chat
