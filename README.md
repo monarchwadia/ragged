@@ -475,7 +475,7 @@ The following table lists the providers and models that Ragged Comes with out of
 | ----------------------- | ----------------------- | ---- | ---------- | ---------- |
 | OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅    | ✅          | ✅          |
 | OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | ✅    | ❌          | ❌          |
-| Azure OpenAI            | GPT: 4, 4T, 3.5         | ❌    | ❌          | ❌          |
+| Azure OpenAI            | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          |
 | Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ❌    | ❌          | ❌          |
 | Together                | Several OSS Models      | ❌    | ❌          | ❌          |
 | Cohere                  | CommandR, Command       | ✅    | ❌          | ❌          |
