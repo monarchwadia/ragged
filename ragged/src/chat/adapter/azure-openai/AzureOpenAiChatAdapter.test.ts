@@ -2,14 +2,20 @@ import { ApiClient } from "../../../support/ApiClient";
 import { AzureOpenAiChatAdapter } from "./AzureOpenAiChatAdapter";
 
 describe("AzureOpenAiChatAdapter", () => {
-    it("should instantiate", () => {
-        const apiClient = new ApiClient();
-        const adapter = new AzureOpenAiChatAdapter(apiClient);
+    let apiClient: ApiClient;
+    let adapter: AzureOpenAiChatAdapter;
+
+    beforeEach(() => {
+        apiClient = new ApiClient();
+        adapter = new AzureOpenAiChatAdapter(apiClient, {
+            apiKey: process.env.AZURE_OPENAI_API_KEY || "",
+            apiVersion: process.env.AZURE_OPENAI_API_VERSION || "",
+            resourceName: process.env.AZURE_OPENAI_RESOURCE_NAME || "",
+            deploymentName: process.env.AZURE_OPENAI_DEPLOYMENT_NAME || ""
+        });
     });
 
     it("makes a call to the api", async () => {
-        const apiClient = new ApiClient();
-        const adapter = new AzureOpenAiChatAdapter(apiClient);
         const response = await adapter.chat({
             history: [
                 {
@@ -18,6 +24,15 @@ describe("AzureOpenAiChatAdapter", () => {
                 }
             ]
         });
+
+        expect(response).toMatchObject({
+            history: [
+                {
+                    type: "bot",
+                    text: expect.any(String)
+                }
+            ]
+        })
     });
 })
 

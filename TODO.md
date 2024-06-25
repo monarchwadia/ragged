@@ -14,3 +14,4 @@
 
 * Need to add documentation for embeddings.
 * Need examples for embeddings.
+* Options in all places need to be cascading, with defaults set on the constructor and being switched out or modified on api query. Possibly with a callback predicate to modify the opts on the fly.

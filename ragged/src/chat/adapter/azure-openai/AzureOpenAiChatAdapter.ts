@@ -7,22 +7,15 @@ import { AzureOpenAiChatMappers } from "./AzureOpenAiChatMappers";
 
 export type AzureOpenAiChatAdapterConfig = {
     apiKey: string;
-    rootUrl: string;
-}
-
-const buildDefaultConfig = (): AzureOpenAiChatAdapterConfig => {
-    return {
-        apiKey: "",
-        rootUrl: "https://api.openai.com/v1/chat/completions"
-    }
+    resourceName: string;
+    deploymentName: string;
+    apiVersion: string;
 }
 
 export class AzureOpenAiChatAdapter implements BaseChatAdapter {
-    private logger: Logger = new Logger('AzureOpenAiChatDriver');
-    private config: AzureOpenAiChatAdapterConfig;
+    private static logger: Logger = new Logger('AzureOpenAiChatDriver');
 
-    constructor(private driverApiClient: ApiClient, config: Partial<AzureOpenAiChatAdapterConfig> = {}) {
-        this.config = { ...buildDefaultConfig(), ...config };
+    constructor(private driverApiClient: ApiClient, private config: AzureOpenAiChatAdapterConfig) {
     }
 
     async chat(request: ChatAdapterRequest) {
@@ -32,19 +25,25 @@ export class AzureOpenAiChatAdapter implements BaseChatAdapter {
         return mappedResponse;
     }
 
-
     private async chatCompletion(body: AzureOpenAiChatCompletionRequestBody): Promise<AzureOpenAiChatCompletionResponseBody> {
         const headers: HeadersInit = {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.config.apiKey}`
+            'api-key': `${this.config.apiKey}`
         };
 
         return await this.driverApiClient.post(
-            this.config.rootUrl,
+            this.buildUrlFromConfig(),
             {
                 headers,
                 body
             }
         )
+    }
+
+    private buildUrlFromConfig() {
+        const { resourceName, deploymentName, apiVersion } = this.config;
+        const url = `https://${encodeURIComponent(resourceName)}.openai.azure.com/openai/deployments/${encodeURIComponent(deploymentName)}/chat/completions?api-version=${encodeURIComponent(apiVersion)}`
+        // AzureOpenAiChatAdapter.logger.debug(`Built URL: ${url}`);
+        return url;
     }
 }
