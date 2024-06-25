@@ -2,6 +2,7 @@ import { RetryError } from "../../../../support/RaggedErrors";
 import { Logger } from "../../../../support/logger/Logger";
 import { Message } from "../../../Chat.types";
 import { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "../../BaseChatAdapter.types";
+import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 import { AzureOaiaDao } from "../assistant/AzureOaiaAssistantDao";
 import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
 import { OaiaRunDao } from "../run/AzureOaiaRunDao";
@@ -9,34 +10,31 @@ import { OaiaRun } from "../run/AzureOaiaRunDaoTypes";
 import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { AzureOaiaChatMapper } from "./AzureOaiaChatMapper";
 
-export type AzureOpenaiAssistantsChatAdapterConfig = {
-    apiKey: string;
+/**
+ * This is the assistant configuration that will be used to create the assistant.
+ * It is a subset of the OpenAI Assistant configuration.
+ */
+export type CreateAzureOaiaChatAdapterParam = {
     /**
-     * This is the assistant configuration that will be used to create the assistant.
-     * It is a subset of the OpenAI Assistant configuration.
+    * The name of the assistant
+    */
+    name: string;
+    /**
+     * The model to use for the assistant. For example, "gpt-3.5-turbo"
      */
-    assistant: {
-        /**
-         * The name of the assistant
-         */
-        name: string;
-        /**
-         * The model to use for the assistant. For example, "gpt-3.5-turbo"
-         */
-        model: string;
-        /**
-         * The instructions for the assistant. For example, "Analyze my writing and give me some useful critique."
-         */
-        instructions: string;
-        /**
-         * The description of the assistant. For example, "This assistant will analyze your writing and give you some useful critique."
-         */
-        description: string;
-    }
-};
+    model: string;
+    /**
+     * The instructions for the assistant. For example, "Analyze my writing and give me some useful critique."
+     */
+    instructions: string;
+    /**
+     * The description of the assistant. For example, "This assistant will analyze your writing and give you some useful critique."
+     */
+    description: string;
+}
 
 export type AzureOaiaChatAdapterConstructorOpts = {
-    config: AzureOpenaiAssistantsChatAdapterConfig;
+    config: AzureOaiaDaoCommonConfig;
     assistantDao: AzureOaiaDao;
     threadDao: OaiaThreadDao;
     messageDao: OaiaMessageDao;
@@ -52,21 +50,22 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
 
     async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         AzureOaiaChatAdapter.logger.debug("Creating assistant...");
-        const assistant = await this.opts.assistantDao.createAssistant(this.opts.config.apiKey, {
-            instructions: this.opts.config.assistant.instructions,
-            model: this.opts.config.assistant.model,
-            name: this.opts.config.assistant.name,
-            description: this.opts.config.assistant.description,
-            // TODO: support oaia assistant tools
-            tools: []
+
+        // TODO: FIX THIS
+        const assistant = await this.opts.assistantDao.createAssistant({
+            instructions: "",
+            model: "",
+            name: "",
+            tools: [],
+            description: ""
         });
 
         AzureOaiaChatAdapter.logger.debug("Creating thread...");
-        const thread = await this.opts.threadDao.createThread(this.opts.config.apiKey);
+        const thread = await this.opts.threadDao.createThread();
 
         AzureOaiaChatAdapter.logger.debug("Creating messages");
         for (const message of request.history) {
-            await this.opts.messageDao.createMessage(this.opts.config.apiKey, {
+            await this.opts.messageDao.createMessage({
                 threadId: thread.id,
                 body: {
                     content: message.text || "",
@@ -78,10 +77,7 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
         AzureOaiaChatAdapter.logger.debug("Running assistant...");
         const run = await this.opts.runDao.createRun(this.opts.config.apiKey, {
             threadId: thread.id,
-            body: {
-                assistant_id: assistant.id,
-                instructions: this.opts.config.assistant.instructions
-            },
+            assistant_id: assistant.id
         });
 
         const finishedRun = await this.pollRun(run.id, thread.id);
@@ -91,7 +87,7 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
         }
 
         AzureOaiaChatAdapter.logger.debug("Fetching messages...");
-        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(this.opts.config.apiKey, thread.id);
+        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(thread.id);
 
         // All new messages from OAI Assistants come back with a thread_id. But because the messages we
         // created did not originate inside a thread, i.e. they were created just a few lines ago for the first time,

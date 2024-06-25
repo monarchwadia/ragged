@@ -1,42 +1,26 @@
-// import { ApiClient } from "../../../support/ApiClient";
-// import { OpenAiChatAdapter, OpenAiChatAdapterConfig } from ".";
-
 import { ApiClient } from "../../../support/ApiClient";
-import { AzureOaiaChatAdapter, AzureOpenaiAssistantsChatAdapterConfig } from "./adapter/AzureOaiaChatAdapter";
+import { AzureOaiaDaoCommonConfig } from "./Dao.types";
+import { AzureOaiaChatAdapter } from "./adapter/AzureOaiaChatAdapter";
 import { AzureOaiaDao } from "./assistant/AzureOaiaAssistantDao";
 import { OaiaMessageDao } from "./message/AzureOaiaMessageDao";
 import { OaiaRunDao } from "./run/AzureOaiaRunDao";
 import { OaiaThreadDao } from "./thread/AzureOaiaThreadDao";
 
-// export type OpenAiChatProviderParam = {
-//     config?: Partial<OpenAiChatAdapterConfig>;
-//     apiClient?: ApiClient;
-// }
-// export const provideOpenAiChatAdapter = (params: OpenAiChatProviderParam = {}): OpenAiChatAdapter => {
-//     const apiClient = params.apiClient || new ApiClient();
-//     const config = params.config || {};
-
-//     const adapter = new OpenAiChatAdapter(apiClient, config)
-
-//     return adapter;
-// }
-
 export type OpenaiAssistantsChatProviderParam = {
-    config: AzureOpenaiAssistantsChatAdapterConfig;
+    config: AzureOaiaDaoCommonConfig;
     apiClient?: ApiClient;
 }
 
 export const provideAzureOpenaiAssistantsChatAdapter = (params: OpenaiAssistantsChatProviderParam): AzureOaiaChatAdapter => {
-    const config = params.config || {};
     const apiClient = params.apiClient || new ApiClient();
 
-    const assistantDao = new AzureOaiaDao(apiClient);
-    const threadDao = new OaiaThreadDao(apiClient);
-    const messageDao = new OaiaMessageDao(apiClient);
-    const runDao = new OaiaRunDao(apiClient);
+    const assistantDao = new AzureOaiaDao(apiClient, params.config);
+    const threadDao = new OaiaThreadDao(apiClient, params.config);
+    const messageDao = new OaiaMessageDao(apiClient, params.config);
+    const runDao = new OaiaRunDao(apiClient, params.config);
 
     const adapter = new AzureOaiaChatAdapter({
-        config: config,
+        config: params.config,
         assistantDao,
         threadDao,
         messageDao,

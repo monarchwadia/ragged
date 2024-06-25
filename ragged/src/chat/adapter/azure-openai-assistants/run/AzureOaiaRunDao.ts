@@ -4,10 +4,7 @@ import { OaiaRun } from "./AzureOaiaRunDaoTypes"
 
 export type CreateRunParams = {
     threadId: string;
-    body: {
-        assistant_id: string;
-        instructions: string;
-    };
+    assistant_id: string;
 }
 
 export type GetRunParams = {
@@ -23,10 +20,11 @@ export class OaiaRunDao {
         return this.apiClient.post(url, {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`,
-                "OpenAI-Beta": "assistants=v2"
+                "Authorization": `Bearer ${apiKey}`
             },
-            body: params.body
+            body: {
+                assistant_id: params.assistant_id
+            }
         });
     }
 
@@ -35,8 +33,7 @@ export class OaiaRunDao {
         return this.apiClient.get(url, {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`,
-                "OpenAI-Beta": "assistants=v2"
+                "Authorization": `Bearer ${apiKey}`
             }
         });
     }

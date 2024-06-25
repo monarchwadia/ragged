@@ -4,14 +4,10 @@ describe("provideAzureOpenaiAssistantsChatAdapter", () => {
     it("can instantiate", () => {
         const adapter = provideAzureOpenaiAssistantsChatAdapter({
             config: {
-                // apiKey: process.env.OPENAI_API_KEY as string,
                 apiKey: "not-real",
-                assistant: {
-                    description: "test",
-                    instructions: "test",
-                    model: "gpt-3.5-turbo",
-                    name: "test-agent"
-                }
+                resourceName: "not-real",
+                deploymentName: "not-real",
+                apiVersion: "not-real"
             }
         });
         expect(adapter).toBeDefined();
