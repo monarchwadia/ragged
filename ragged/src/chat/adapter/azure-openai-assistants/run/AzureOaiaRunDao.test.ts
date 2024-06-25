@@ -3,13 +3,13 @@ import { ApiClient } from "../../../../support/ApiClient";
 import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
 import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { OaiaRunDao } from "./AzureOaiaRunDao";
-import { AzureOaiaAssistantDao } from "../assistant/AzureOaiaAssistantDao";
+import { AzureOaiaDao } from "../assistant/AzureOaiaDao";
 
 describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
-      const oaiaAssistantDao = new AzureOaiaAssistantDao(apiClient);
+      const oaiaAssistantDao = new AzureOaiaDao(apiClient);
       const oaiaMessageDao = new OaiaMessageDao(apiClient);
       const oaiaThreadDao = new OaiaThreadDao(apiClient);
       const oaiaRunDao = new OaiaRunDao(apiClient);

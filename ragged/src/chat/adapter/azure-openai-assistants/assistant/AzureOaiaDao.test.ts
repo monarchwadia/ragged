@@ -1,19 +1,23 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { AzureOaiaAssistantDao } from "./AzureOaiaAssistantDao";
+import { AzureOaiaDao } from "./AzureOaiaDao";
 
-describe("AzureOaiaAssistantDao", () => {
+describe("AzureOaiaDao", () => {
   describe("createAssistant", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
-      const azureOaiaAssistantDao = new AzureOaiaAssistantDao(apiClient);
+      const azureOaiaDao = new AzureOaiaDao(apiClient, {
+        apiKey: process.env.OPENAI_API_KEY as string,
+        resourceName: "not-real",
+        deploymentName: "not-real",
+        apiVersion: "not-real"
+      });
 
       const polly = startPollyRecording(
-        "AzureOaiaAssistantDao > createAssistant > can be created"
+        "AzureOaiaDao > createAssistant > can be created"
       );
 
-      const assistant = await azureOaiaAssistantDao.createAssistant(
-        process.env.OPENAI_API_KEY as string,
+      const assistant = await azureOaiaDao.createAssistant(
         {
           name: "Financial Analyst Assistant",
           instructions:

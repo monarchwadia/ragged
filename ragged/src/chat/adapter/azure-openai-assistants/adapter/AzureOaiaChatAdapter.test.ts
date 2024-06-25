@@ -1,6 +1,6 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { AzureOaiaAssistantDao } from "../assistant/AzureOaiaAssistantDao";
+import { AzureOaiaDao } from "../assistant/AzureOaiaDao";
 import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
 import { OaiaRunDao } from "../run/AzureOaiaRunDao";
 import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
@@ -10,7 +10,7 @@ describe("AzureOaiaChatAdapter", () => {
     // const apiKey: string = process.env.OPENAI_API_KEY as string;
     const apiKey: string = "not-real";
     let apiClient: ApiClient;
-    let assistantDao: AzureOaiaAssistantDao;
+    let assistantDao: AzureOaiaDao;
     let threadDao: OaiaThreadDao;
     let messageDao: OaiaMessageDao;
     let runDao: OaiaRunDao;
@@ -18,7 +18,7 @@ describe("AzureOaiaChatAdapter", () => {
 
     beforeEach(() => {
         apiClient = new ApiClient();
-        assistantDao = new AzureOaiaAssistantDao(apiClient);
+        assistantDao = new AzureOaiaDao(apiClient);
         threadDao = new OaiaThreadDao(apiClient);
         messageDao = new OaiaMessageDao(apiClient);
         runDao = new OaiaRunDao(apiClient);

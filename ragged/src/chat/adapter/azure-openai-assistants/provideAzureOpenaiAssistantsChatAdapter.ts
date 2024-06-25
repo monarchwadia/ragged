@@ -3,7 +3,7 @@
 
 import { ApiClient } from "../../../support/ApiClient";
 import { AzureOaiaChatAdapter, AzureOpenaiAssistantsChatAdapterConfig } from "./adapter/AzureOaiaChatAdapter";
-import { AzureOaiaAssistantDao } from "./assistant/AzureOaiaAssistantDao";
+import { AzureOaiaDao } from "./assistant/AzureOaiaDao";
 import { OaiaMessageDao } from "./message/AzureOaiaMessageDao";
 import { OaiaRunDao } from "./run/AzureOaiaRunDao";
 import { OaiaThreadDao } from "./thread/AzureOaiaThreadDao";
@@ -30,7 +30,7 @@ export const provideAzureOpenaiAssistantsChatAdapter = (params: OpenaiAssistants
     const config = params.config || {};
     const apiClient = params.apiClient || new ApiClient();
 
-    const assistantDao = new AzureOaiaAssistantDao(apiClient);
+    const assistantDao = new AzureOaiaDao(apiClient);
     const threadDao = new OaiaThreadDao(apiClient);
     const messageDao = new OaiaMessageDao(apiClient);
     const runDao = new OaiaRunDao(apiClient);

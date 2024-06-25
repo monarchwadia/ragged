@@ -1,4 +1,4 @@
-export type OaiaAssistantCreateRequestBody = {
+export type AzureOaiaCreateAssistantRequestBody = {
     name: string;
     instructions: string;
     tools: { type: string; }[];
