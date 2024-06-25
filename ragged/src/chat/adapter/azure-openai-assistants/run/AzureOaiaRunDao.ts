@@ -15,12 +15,12 @@ export type GetRunParams = {
 export class OaiaRunDao {
     constructor(private apiClient: ApiClient, private config: AzureOaiaDaoCommonConfig) { }
 
-    createRun(apiKey: string, params: CreateRunParams): Promise<OaiaRun> {
+    createRun(params: CreateRunParams): Promise<OaiaRun> {
         const url = `https://${this.config.resourceName}.openai.azure.com/openai/threads/${params.threadId}/runs?api-version=${this.config.apiVersion}`;
         return this.apiClient.post(url, {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`
+                "Authorization": `Bearer ${this.config.apiKey}`
             },
             body: {
                 assistant_id: params.assistant_id

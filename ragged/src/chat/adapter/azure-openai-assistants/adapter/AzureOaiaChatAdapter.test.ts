@@ -5,6 +5,7 @@ import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
 import { OaiaRunDao } from "../run/AzureOaiaRunDao";
 import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { AzureOaiaChatAdapter } from "./AzureOaiaChatAdapter";
+import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 
 describe("AzureOaiaChatAdapter", () => {
     // const apiKey: string = process.env.OPENAI_API_KEY as string;
@@ -20,28 +21,20 @@ describe("AzureOaiaChatAdapter", () => {
     let adapter: AzureOaiaChatAdapter;
 
     beforeEach(() => {
-        apiClient = new ApiClient();
-        assistantDao = new AzureOaiaDao(apiClient, {
+        const config: AzureOaiaDaoCommonConfig = {
             apiKey,
             resourceName,
             deploymentName,
             apiVersion,
-
-        });
-        threadDao = new OaiaThreadDao(apiClient);
-        messageDao = new OaiaMessageDao(apiClient);
-        runDao = new OaiaRunDao(apiClient);
+        };
+        apiClient = new ApiClient();
+        assistantDao = new AzureOaiaDao(apiClient, config);
+        threadDao = new OaiaThreadDao(apiClient, config);
+        messageDao = new OaiaMessageDao(apiClient, config);
+        runDao = new OaiaRunDao(apiClient, config);
 
         adapter = new AzureOaiaChatAdapter({
-            config: {
-                apiKey,
-                assistant: {
-                    name: "test-agent",
-                    instructions: "test",
-                    model: "gpt-3.5-turbo",
-                    description: "test",
-                },
-            },
+            config,
             assistantDao,
             threadDao,
             messageDao,

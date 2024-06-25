@@ -75,7 +75,7 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
         }
 
         AzureOaiaChatAdapter.logger.debug("Running assistant...");
-        const run = await this.opts.runDao.createRun(this.opts.config.apiKey, {
+        const run = await this.opts.runDao.createRun({
             threadId: thread.id,
             assistant_id: assistant.id
         });

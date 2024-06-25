@@ -4,22 +4,28 @@ import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
 import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { OaiaRunDao } from "./AzureOaiaRunDao";
 import { AzureOaiaDao } from "../assistant/AzureOaiaAssistantDao";
+import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 
 describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {
     it("can be created", async () => {
+      const config: AzureOaiaDaoCommonConfig = {
+        apiKey: "not-real",
+        resourceName: "not-real",
+        deploymentName: "not-real",
+        apiVersion: "not-real",
+      }
       const apiClient = new ApiClient();
-      const oaiaAssistantDao = new AzureOaiaDao(apiClient);
-      const oaiaMessageDao = new OaiaMessageDao(apiClient);
-      const oaiaThreadDao = new OaiaThreadDao(apiClient);
-      const oaiaRunDao = new OaiaRunDao(apiClient);
+      const oaiaAssistantDao = new AzureOaiaDao(apiClient, config);
+      const oaiaMessageDao = new OaiaMessageDao(apiClient, config);
+      const oaiaThreadDao = new OaiaThreadDao(apiClient, config);
+      const oaiaRunDao = new OaiaRunDao(apiClient, config);
 
       const polly = startPollyRecording(
         "OaiaRunDao > createRun > can be created"
       );
 
       const assistant = await oaiaAssistantDao.createAssistant(
-        process.env.OPENAI_API_KEY as string,
         {
           name: "assistantName",
           description: "assistantDescription",
@@ -29,11 +35,9 @@ describe("OaiaRunDaoDao", () => {
         }
       );
 
-      const thread = await oaiaThreadDao.createThread(
-        process.env.OPENAI_API_KEY as string
-      );
+      const thread = await oaiaThreadDao.createThread();
 
-      await oaiaMessageDao.createMessage(process.env.OPENAI_API_KEY as string, {
+      await oaiaMessageDao.createMessage({
         threadId: thread.id,
         body: {
           role: "user",
@@ -42,17 +46,10 @@ describe("OaiaRunDaoDao", () => {
         },
       });
 
-      const run = await oaiaRunDao.createRun(
-        process.env.OPENAI_API_KEY as string,
-        {
-          threadId: thread.id,
-          body: {
-            assistant_id: assistant.id,
-            instructions:
-              "I need to solve the equation `3x + 11 = 14`. Can you help me?",
-          },
-        }
-      );
+      const run = await oaiaRunDao.createRun({
+        threadId: thread.id,
+        assistant_id: assistant.id,
+      });
 
       polly.stop();
 
