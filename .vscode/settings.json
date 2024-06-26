@@ -28,6 +28,5 @@
     "[markdown]": {
         "editor.defaultFormatter": "yzhang.markdown-all-in-one"
     },
-    "typescript.tsdk": "node_modules/typescript/lib",
     "jest.enable": false
 }
