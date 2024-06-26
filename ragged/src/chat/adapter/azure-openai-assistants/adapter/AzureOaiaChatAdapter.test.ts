@@ -9,10 +9,10 @@ import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 
 describe("AzureOaiaChatAdapter", () => {
     // const apiKey: string = process.env.OPENAI_API_KEY as string;
-    const apiKey: string = "not-real";
-    const resourceName: string = "not-real";
-    const deploymentName: string = "not-real";
-    const apiVersion: string = "not-real";
+    let apiKey = process.env.AZURE_OPENAI_API_KEY || "";
+    let apiVersion = process.env.AZURE_OPENAI_API_VERSION || "";
+    let resourceName = process.env.AZURE_OPENAI_RESOURCE_NAME || "";
+    let deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "";
     let apiClient: ApiClient;
     let assistantDao: AzureOaiaDao;
     let threadDao: OaiaThreadDao;

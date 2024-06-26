@@ -6,14 +6,19 @@ import { OaiaRunDao } from "./AzureOaiaRunDao";
 import { AzureOaiaDao } from "../assistant/AzureOaiaAssistantDao";
 import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 
+let apiKey = process.env.AZURE_OPENAI_API_KEY || "";
+let apiVersion = process.env.AZURE_OPENAI_API_VERSION || "";
+let resourceName = process.env.AZURE_OPENAI_RESOURCE_NAME || "";
+let deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "";
+
 describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {
     it("can be created", async () => {
       const config: AzureOaiaDaoCommonConfig = {
-        apiKey: "not-real",
-        resourceName: "not-real",
-        deploymentName: "not-real",
-        apiVersion: "not-real",
+        apiKey,
+        resourceName,
+        deploymentName,
+        apiVersion,
       }
       const apiClient = new ApiClient();
       const oaiaAssistantDao = new AzureOaiaDao(apiClient, config);

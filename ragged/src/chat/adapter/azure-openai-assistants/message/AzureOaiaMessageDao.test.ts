@@ -4,14 +4,19 @@ import { OaiaMessageDao } from "./AzureOaiaMessageDao";
 import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 
+let apiKey = process.env.AZURE_OPENAI_API_KEY || "";
+let apiVersion = process.env.AZURE_OPENAI_API_VERSION || "";
+let resourceName = process.env.AZURE_OPENAI_RESOURCE_NAME || "";
+let deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "";
+
 describe("OaiaMessageDao", () => {
   describe("createMessage", () => {
     it("can be created", async () => {
       const config: AzureOaiaDaoCommonConfig = {
-        apiKey: "not-real",
-        resourceName: "not-real",
-        deploymentName: "not-real",
-        apiVersion: "not-real",
+        apiKey,
+        resourceName,
+        deploymentName,
+        apiVersion,
       }
       const apiClient = new ApiClient();
       const oaiaMessageDao = new OaiaMessageDao(apiClient, config);
@@ -64,10 +69,10 @@ describe("OaiaMessageDao", () => {
   describe("list messages for thread", () => {
     it("can be listed", async () => {
       const config: AzureOaiaDaoCommonConfig = {
-        apiKey: "not-real",
-        resourceName: "not-real",
-        deploymentName: "not-real",
-        apiVersion: "not-real",
+        apiKey,
+        resourceName,
+        deploymentName,
+        apiVersion,
       }
       const apiClient = new ApiClient();
       const oaiaMessageDao = new OaiaMessageDao(apiClient, config);
