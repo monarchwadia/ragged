@@ -12,7 +12,7 @@ export type GetRunParams = {
     runId: string;
 }
 
-export class OaiaRunDao {
+export class AzureOaiaRunDao {
     constructor(private apiClient: ApiClient, private config: AzureOaiaDaoCommonConfig) { }
 
     createRun(params: CreateRunParams): Promise<OaiaRun> {

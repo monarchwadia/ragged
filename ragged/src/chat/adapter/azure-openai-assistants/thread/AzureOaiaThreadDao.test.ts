@@ -1,6 +1,6 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaThreadDao } from "./AzureOaiaThreadDao";
+import { AzureOaiaThreadDao } from "./AzureOaiaThreadDao";
 
 
 let apiKey = process.env.AZURE_OPENAI_API_KEY || "";
@@ -12,7 +12,7 @@ describe("OaiaThreadDao", () => {
   describe("createThread", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
-      const oaiaThreadDao = new OaiaThreadDao(apiClient, {
+      const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, {
         apiKey: process.env.OPENAI_API_KEY as string,
         resourceName,
         deploymentName,

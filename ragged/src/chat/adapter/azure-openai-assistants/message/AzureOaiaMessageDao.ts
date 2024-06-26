@@ -10,7 +10,7 @@ export type CreateMessageParams = {
     };
 }
 
-export class OaiaMessageDao {
+export class AzureOaiaMessageDao {
     constructor(private apiClient: ApiClient, private config: AzureOaiaDaoCommonConfig) { }
 
     createMessage(params: CreateMessageParams): Promise<OaiaMessage> {

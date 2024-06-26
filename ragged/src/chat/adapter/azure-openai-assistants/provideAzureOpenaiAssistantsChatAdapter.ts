@@ -2,9 +2,9 @@ import { ApiClient } from "../../../support/ApiClient";
 import { AzureOaiaDaoCommonConfig } from "./Dao.types";
 import { AzureOaiaChatAdapter } from "./adapter/AzureOaiaChatAdapter";
 import { AzureOaiaDao } from "./assistant/AzureOaiaAssistantDao";
-import { OaiaMessageDao } from "./message/AzureOaiaMessageDao";
-import { OaiaRunDao } from "./run/AzureOaiaRunDao";
-import { OaiaThreadDao } from "./thread/AzureOaiaThreadDao";
+import { AzureOaiaMessageDao } from "./message/AzureOaiaMessageDao";
+import { AzureOaiaRunDao } from "./run/AzureOaiaRunDao";
+import { AzureOaiaThreadDao } from "./thread/AzureOaiaThreadDao";
 
 export type OpenaiAssistantsChatProviderParam = {
     config: AzureOaiaDaoCommonConfig;
@@ -15,9 +15,9 @@ export const provideAzureOpenaiAssistantsChatAdapter = (params: OpenaiAssistants
     const apiClient = params.apiClient || new ApiClient();
 
     const assistantDao = new AzureOaiaDao(apiClient, params.config);
-    const threadDao = new OaiaThreadDao(apiClient, params.config);
-    const messageDao = new OaiaMessageDao(apiClient, params.config);
-    const runDao = new OaiaRunDao(apiClient, params.config);
+    const threadDao = new AzureOaiaThreadDao(apiClient, params.config);
+    const messageDao = new AzureOaiaMessageDao(apiClient, params.config);
+    const runDao = new AzureOaiaRunDao(apiClient, params.config);
 
     const adapter = new AzureOaiaChatAdapter({
         config: params.config,

@@ -4,10 +4,10 @@ import { Message } from "../../../Chat.types";
 import { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "../../BaseChatAdapter.types";
 import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 import { AzureOaiaDao } from "../assistant/AzureOaiaAssistantDao";
-import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
-import { OaiaRunDao } from "../run/AzureOaiaRunDao";
+import { AzureOaiaMessageDao } from "../message/AzureOaiaMessageDao";
+import { AzureOaiaRunDao } from "../run/AzureOaiaRunDao";
 import { OaiaRun } from "../run/AzureOaiaRunDaoTypes";
-import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
+import { AzureOaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { AzureOaiaChatMapper } from "./AzureOaiaChatMapper";
 
 /**
@@ -36,9 +36,9 @@ export type CreateAzureOaiaChatAdapterParam = {
 export type AzureOaiaChatAdapterConstructorOpts = {
     config: AzureOaiaDaoCommonConfig;
     assistantDao: AzureOaiaDao;
-    threadDao: OaiaThreadDao;
-    messageDao: OaiaMessageDao;
-    runDao: OaiaRunDao;
+    threadDao: AzureOaiaThreadDao;
+    messageDao: AzureOaiaMessageDao;
+    runDao: AzureOaiaRunDao;
 }
 
 /**

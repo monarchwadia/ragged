@@ -1,7 +1,7 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
-import { OaiaMessageDao } from "./AzureOaiaMessageDao";
-import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
+import { AzureOaiaMessageDao } from "./AzureOaiaMessageDao";
+import { AzureOaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 
 let apiKey = process.env.AZURE_OPENAI_API_KEY || "";
@@ -19,8 +19,8 @@ describe("OaiaMessageDao", () => {
         apiVersion,
       }
       const apiClient = new ApiClient();
-      const oaiaMessageDao = new OaiaMessageDao(apiClient, config);
-      const oaiaThreadDao = new OaiaThreadDao(apiClient, config);
+      const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
+      const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
 
       const polly = startPollyRecording(
         "AzureOaiaMessageDao > createMessage > can be created"
@@ -75,8 +75,8 @@ describe("OaiaMessageDao", () => {
         apiVersion,
       }
       const apiClient = new ApiClient();
-      const oaiaMessageDao = new OaiaMessageDao(apiClient, config);
-      const oaiaThreadDao = new OaiaThreadDao(apiClient, config);
+      const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
+      const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
 
       const polly = startPollyRecording(
         "OaiaMessageDao > list messages for thread > can be listed"

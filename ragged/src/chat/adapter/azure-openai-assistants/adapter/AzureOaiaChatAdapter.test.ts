@@ -1,9 +1,9 @@
 import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
 import { AzureOaiaDao } from "../assistant/AzureOaiaAssistantDao";
-import { OaiaMessageDao } from "../message/AzureOaiaMessageDao";
-import { OaiaRunDao } from "../run/AzureOaiaRunDao";
-import { OaiaThreadDao } from "../thread/AzureOaiaThreadDao";
+import { AzureOaiaMessageDao } from "../message/AzureOaiaMessageDao";
+import { AzureOaiaRunDao } from "../run/AzureOaiaRunDao";
+import { AzureOaiaThreadDao } from "../thread/AzureOaiaThreadDao";
 import { AzureOaiaChatAdapter } from "./AzureOaiaChatAdapter";
 import { AzureOaiaDaoCommonConfig } from "../Dao.types";
 
@@ -15,9 +15,9 @@ describe("AzureOaiaChatAdapter", () => {
     let deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || "";
     let apiClient: ApiClient;
     let assistantDao: AzureOaiaDao;
-    let threadDao: OaiaThreadDao;
-    let messageDao: OaiaMessageDao;
-    let runDao: OaiaRunDao;
+    let threadDao: AzureOaiaThreadDao;
+    let messageDao: AzureOaiaMessageDao;
+    let runDao: AzureOaiaRunDao;
     let adapter: AzureOaiaChatAdapter;
 
     beforeEach(() => {
@@ -29,9 +29,9 @@ describe("AzureOaiaChatAdapter", () => {
         };
         apiClient = new ApiClient();
         assistantDao = new AzureOaiaDao(apiClient, config);
-        threadDao = new OaiaThreadDao(apiClient, config);
-        messageDao = new OaiaMessageDao(apiClient, config);
-        runDao = new OaiaRunDao(apiClient, config);
+        threadDao = new AzureOaiaThreadDao(apiClient, config);
+        messageDao = new AzureOaiaMessageDao(apiClient, config);
+        runDao = new AzureOaiaRunDao(apiClient, config);
 
         adapter = new AzureOaiaChatAdapter({
             config,
@@ -50,7 +50,8 @@ describe("AzureOaiaChatAdapter", () => {
         const polly = startPollyRecording("AzureOaiaChatAdapter > can chat", {
             matchRequestsBy: {
                 order: true,
-            }
+            },
+            refresh: true
         });
 
         const response = await adapter.chat({
