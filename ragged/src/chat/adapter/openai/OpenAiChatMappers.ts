@@ -135,7 +135,7 @@ export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatA
 
         if (response.choices?.length && response.choices?.length > 1) {
             logger.warn(`Received more than one choice from OpenAI. This is not currently supported. Only the first choice will be included in history.`);
-            console.log(response.choices)
+            logger.warn(JSON.stringify(response.choices, null, 2))
         }
 
         for (let i = 0; i < response.choices.length; i++) {

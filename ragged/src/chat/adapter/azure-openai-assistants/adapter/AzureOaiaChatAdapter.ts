@@ -118,7 +118,7 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
         // TODO: when runStatus is "requires_action", we need to handle the tool calls there.
 
         let attempt = 0;
-        const maxAttempts = 5;
+        const maxAttempts = 10;
         let nextDelay = 1000;
         let runIsFinished = false;
         let latestRun: OaiaRun | null = null;

@@ -331,20 +331,6 @@ describe("OpenAiChatAdapter Mappers", () => {
           ],
         }
       `);
-
-      // console.log(mapped, 1)
-
-      //         expect(mapped).toMatchInlineSnapshot(`
-      //     {
-      //       "messages": [
-      //         {
-      //           "content": "Hello",
-      //           "role": "user",
-      //         },
-      //       ],
-      //       "model": "gpt-3.5-turbo",
-      //     }
-      //   `);
     });
     it("should map incoming tool requests correctly", () => {
       const result = mapFromOpenAi({

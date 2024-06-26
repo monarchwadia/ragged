@@ -51,7 +51,8 @@ describe("AzureOaiaChatAdapter", () => {
         const polly = startPollyRecording("AzureOaiaChatAdapter > can chat", {
             matchRequestsBy: {
                 order: true,
-            }
+            },
+            refresh: true
         });
 
         const response = await adapter.chat({
@@ -62,5 +63,5 @@ describe("AzureOaiaChatAdapter", () => {
         polly.stop();
 
         expect(response).toMatchInlineSnapshot();
-    }, 10000);
+    }, 1200000  /* 20 mins */);
 });
