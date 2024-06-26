@@ -10,6 +10,7 @@ let apiKey = process.env.AZURE_OPENAI_ASSISTANTS_API_KEY || "";
 let apiVersion = process.env.AZURE_OPENAI_ASSISTANTS_API_VERSION || "";
 let resourceName = process.env.AZURE_OPENAI_ASSISTANTS_RESOURCE_NAME || "";
 let deploymentName = process.env.AZURE_OPENAI_ASSISTANTS_DEPLOYMENT_NAME || "";
+let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
 describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {
@@ -19,7 +20,7 @@ describe("OaiaRunDaoDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
-      }
+      };
       const apiClient = new ApiClient();
       const oaiaAssistantDao = new AzureOaiaDao(apiClient, config);
       const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
@@ -30,15 +31,13 @@ describe("OaiaRunDaoDao", () => {
         "OaiaRunDao > createRun > can be created"
       );
 
-      const assistant = await oaiaAssistantDao.createAssistant(
-        {
-          name: "assistantName",
-          description: "assistantDescription",
-          model: "gpt-3.5-turbo",
-          instructions: "talk funny",
-          tools: [],
-        }
-      );
+      const assistant = await oaiaAssistantDao.createAssistant({
+        name: "assistantName",
+        description: "assistantDescription",
+        model: modelName,
+        instructions: "talk funny",
+        tools: [],
+      });
 
       const thread = await oaiaThreadDao.createThread();
 
@@ -60,30 +59,29 @@ describe("OaiaRunDaoDao", () => {
 
       expect(run).toMatchInlineSnapshot(`
         {
-          "assistant_id": "asst_rLTm0LCjqA2vPolP579uAaD0",
+          "assistant_id": "asst_1K0nKYFjFGpufwqWtIbmefLE",
           "cancelled_at": null,
           "completed_at": null,
-          "created_at": 1718857836,
-          "expires_at": 1718858436,
+          "created_at": 1719370952,
+          "expires_at": 1719371552,
           "failed_at": null,
-          "id": "run_9XQzr1lXBN0B0W3WxNGvG1YV",
+          "file_ids": [],
+          "id": "run_YLRfMjmaXOTMAjJkWr4ihT0P",
           "incomplete_details": null,
-          "instructions": "I need to solve the equation \`3x + 11 = 14\`. Can you help me?",
+          "instructions": "talk funny",
           "last_error": null,
           "max_completion_tokens": null,
           "max_prompt_tokens": null,
           "metadata": {},
-          "model": "gpt-3.5-turbo",
+          "model": "cadstromgpt4",
           "object": "thread.run",
-          "parallel_tool_calls": true,
           "required_action": null,
           "response_format": "auto",
           "started_at": null,
           "status": "queued",
           "temperature": 1,
-          "thread_id": "thread_tYtMyOfMHetTpXaJosgJbn5H",
+          "thread_id": "thread_i1Upvenj9NQqMvySqNqO2Qlc",
           "tool_choice": "auto",
-          "tool_resources": {},
           "tools": [],
           "top_p": 1,
           "truncation_strategy": {

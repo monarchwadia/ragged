@@ -20,7 +20,7 @@ export class AzureOaiaRunDao {
         return this.apiClient.post(url, {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.config.apiKey}`
+                "api-key": this.config.apiKey
             },
             body: {
                 assistant_id: params.assistant_id

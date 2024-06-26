@@ -2,7 +2,6 @@ import { startPollyRecording } from "../../../../test/startPollyRecording";
 import { ApiClient } from "../../../../support/ApiClient";
 import { AzureOaiaThreadDao } from "./AzureOaiaThreadDao";
 
-
 let apiKey = process.env.AZURE_OPENAI_ASSISTANTS_API_KEY || "";
 let apiVersion = process.env.AZURE_OPENAI_ASSISTANTS_API_VERSION || "";
 let resourceName = process.env.AZURE_OPENAI_ASSISTANTS_RESOURCE_NAME || "";
@@ -16,7 +15,7 @@ describe("OaiaThreadDao", () => {
         apiKey,
         resourceName,
         deploymentName,
-        apiVersion
+        apiVersion,
       });
 
       const polly = startPollyRecording(
@@ -29,11 +28,10 @@ describe("OaiaThreadDao", () => {
 
       expect(thread).toMatchInlineSnapshot(`
         {
-          "created_at": 1718855111,
-          "id": "thread_mGG7FJ133ssPowO2UisHkL3h",
+          "created_at": 1719370959,
+          "id": "thread_s5SXjxANbWeVH63QSMvjPpLZ",
           "metadata": {},
           "object": "thread",
-          "tool_resources": {},
         }
       `);
     });

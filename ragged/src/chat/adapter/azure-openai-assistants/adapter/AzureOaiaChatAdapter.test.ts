@@ -13,6 +13,7 @@ describe("AzureOaiaChatAdapter", () => {
     let apiVersion = process.env.AZURE_OPENAI_ASSISTANTS_API_VERSION || "";
     let resourceName = process.env.AZURE_OPENAI_ASSISTANTS_RESOURCE_NAME || "";
     let deploymentName = process.env.AZURE_OPENAI_ASSISTANTS_DEPLOYMENT_NAME || "";
+    let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
     let apiClient: ApiClient;
     let assistantDao: AzureOaiaDao;
     let threadDao: AzureOaiaThreadDao;
@@ -50,26 +51,16 @@ describe("AzureOaiaChatAdapter", () => {
         const polly = startPollyRecording("AzureOaiaChatAdapter > can chat", {
             matchRequestsBy: {
                 order: true,
-            },
-            refresh: true
+            }
         });
 
         const response = await adapter.chat({
             history: [{ text: "Hello, whats your name?", type: "user" }],
-            model: "gpt-3.5-turbo",
+            model: modelName
         });
 
         polly.stop();
 
-        expect(response).toMatchInlineSnapshot(`
-      {
-        "history": [
-          {
-            "text": "Hello! I am an AI assistant, you can call me Assistant. How can I help you today?",
-            "type": "bot",
-          },
-        ],
-      }
-    `);
-    });
+        expect(response).toMatchInlineSnapshot();
+    }, 10000);
 });

@@ -45,6 +45,7 @@ export class ApiClient {
         }
 
         if (!response.ok) {
+            ApiClient.logger.error(await response.text())
             throw new FetchResponseNotOkError(response, response.status);
         }
 

@@ -17,7 +17,7 @@ describe("OaiaMessageDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
-      }
+      };
       const apiClient = new ApiClient();
       const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
       const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
@@ -28,23 +28,20 @@ describe("OaiaMessageDao", () => {
 
       const thread = await oaiaThreadDao.createThread();
 
-      const message = await oaiaMessageDao.createMessage(
-        {
-          threadId: thread.id,
-          body: {
-            role: "user",
-            content:
-              "I need to solve the equation `3x + 11 = 14`. Can you help me?",
-          },
-        }
-      );
+      const message = await oaiaMessageDao.createMessage({
+        threadId: thread.id,
+        body: {
+          role: "user",
+          content:
+            "I need to solve the equation `3x + 11 = 14`. Can you help me?",
+        },
+      });
 
       polly.stop();
 
       expect(message).toMatchInlineSnapshot(`
         {
           "assistant_id": null,
-          "attachments": [],
           "content": [
             {
               "text": {
@@ -54,13 +51,14 @@ describe("OaiaMessageDao", () => {
               "type": "text",
             },
           ],
-          "created_at": 1718856746,
-          "id": "msg_GrLJNcVbzLwCngJMZStb0Bba",
+          "created_at": 1719370696,
+          "file_ids": [],
+          "id": "msg_uWVqYRXLUueeqYsTTRaCwofj",
           "metadata": {},
           "object": "thread.message",
           "role": "user",
           "run_id": null,
-          "thread_id": "thread_FXkzDdHGZ1SjyDDrkg8g2g7V",
+          "thread_id": "thread_Bv4xUPhud36io4zgBJZZdRK8",
         }
       `);
     });
@@ -73,7 +71,7 @@ describe("OaiaMessageDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
-      }
+      };
       const apiClient = new ApiClient();
       const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
       const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
@@ -102,7 +100,6 @@ describe("OaiaMessageDao", () => {
           "data": [
             {
               "assistant_id": null,
-              "attachments": [],
               "content": [
                 {
                   "text": {
@@ -112,18 +109,19 @@ describe("OaiaMessageDao", () => {
                   "type": "text",
                 },
               ],
-              "created_at": 1718857546,
-              "id": "msg_YtpT61EyznDVlevY3jC23Jz8",
+              "created_at": 1719371073,
+              "file_ids": [],
+              "id": "msg_ok8NirkUnSJDa5JHob4tj50Y",
               "metadata": {},
               "object": "thread.message",
               "role": "user",
               "run_id": null,
-              "thread_id": "thread_Lm2DUXuR7clpazi01Wba9LDF",
+              "thread_id": "thread_HCiQG0leC6VTQeiYnvqj4qmp",
             },
           ],
-          "first_id": "msg_YtpT61EyznDVlevY3jC23Jz8",
+          "first_id": "msg_ok8NirkUnSJDa5JHob4tj50Y",
           "has_more": false,
-          "last_id": "msg_YtpT61EyznDVlevY3jC23Jz8",
+          "last_id": "msg_ok8NirkUnSJDa5JHob4tj50Y",
           "object": "list",
         }
       `);
