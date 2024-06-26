@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "/"
+		},
+		{
+			"path": "./ragged",
+			"name": "Ragged"
+		},
+		{
+			"path": "./e2e",
+			"name": "End-to-End Tests"
+		},
+		{
+			"path": "./documentation",
+			"name": "Documentation"
+		},
+		{
+			"path": "./scratch",
+			"name": "Scratch"
+		},
+		{
+			"path": "./examples/nodejs",
+			"name": "Node.js Examples"
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "node_modules/typescript/lib"
+	}
+}
