@@ -9,6 +9,7 @@ export class AzureOaiaThreadDao {
     constructor(private apiClient: ApiClient, private config: AzureOaiaDaoCommonConfig) { }
 
     createThread(): Promise<OaiaThread> {
+        console.log(this.config)
         const url = `https://${this.config.resourceName}.openai.azure.com/openai/threads?api-version=${this.config.apiVersion}`;
         return this.apiClient.post(url, {
             headers: {
