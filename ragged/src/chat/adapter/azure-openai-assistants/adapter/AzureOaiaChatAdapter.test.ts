@@ -11,7 +11,8 @@ import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 const apiKey = process.env.AZURE_OPENAI_ASSISTANTS_API_KEY || "";
 const apiVersion = process.env.AZURE_OPENAI_ASSISTANTS_API_VERSION || "";
 const resourceName = process.env.AZURE_OPENAI_ASSISTANTS_RESOURCE_NAME || "";
-const deploymentName = process.env.AZURE_OPENAI_ASSISTANTS_DEPLOYMENT_NAME || "";
+const deploymentName =
+  process.env.AZURE_OPENAI_ASSISTANTS_DEPLOYMENT_NAME || "";
 const modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
 describe("AzureOaiaChatAdapter", () => {
@@ -28,20 +29,25 @@ describe("AzureOaiaChatAdapter", () => {
     threadDao = mockDeep<AzureOaiaThreadDao>();
     messageDao = mockDeep<AzureOaiaMessageDao>();
     runDao = mockDeep<AzureOaiaRunDao>();
-  })
+  });
 
   describe("mocked", () => {
     it("uses the modelName in the config to call the api", async () => {
       // @ts-expect-error mock
       threadDao.createThread.mockResolvedValue({ id: "mocked-thread-id" });
       // @ts-expect-error mock
-      assistantDao.createAssistant.mockResolvedValue({ id: "mocked-assistant-id" });
+      assistantDao.createAssistant.mockResolvedValue({
+        id: "mocked-assistant-id",
+      });
       // @ts-expect-error mock
       runDao.createRun.mockResolvedValue({ id: "mocked-run-id" });
       // @ts-expect-error
-      runDao.getRun.mockResolvedValue({ id: "mocked-run-id",status: "completed" });
+      runDao.getRun.mockResolvedValue({
+        id: "mocked-run-id",
+        status: "completed",
+      });
       // @ts-expect-error
-      messageDao.listMessagesForThread.mockResolvedValue({data: []});
+      messageDao.listMessagesForThread.mockResolvedValue({ data: [] });
 
       adapter = new AzureOaiaChatAdapter({
         config: {
@@ -58,7 +64,7 @@ describe("AzureOaiaChatAdapter", () => {
       });
 
       await adapter.chat({
-        history: [{ text: "Hello, whats your name?", type: "user" }]
+        history: [{ text: "Hello, whats your name?", type: "user" }],
       });
 
       expect(assistantDao.createAssistant).toHaveBeenCalledWith({
@@ -68,32 +74,31 @@ describe("AzureOaiaChatAdapter", () => {
         instructions: "",
         tools: [],
       });
-    })
-  })
+    });
+  });
 
-  describe.skip("with live calls", () => {
-
+  describe("with live calls", () => {
     let apiClient: ApiClient;
     let assistantDao: AzureOaiaDao;
     let threadDao: AzureOaiaThreadDao;
     let messageDao: AzureOaiaMessageDao;
     let runDao: AzureOaiaRunDao;
     let adapter: AzureOaiaChatAdapter;
-  
+
     beforeEach(() => {
       const config: AzureOaiaDaoCommonConfig = {
         apiKey,
         resourceName,
         deploymentName,
         apiVersion,
-        modelName
+        modelName,
       };
       apiClient = new ApiClient();
       assistantDao = new AzureOaiaDao(apiClient, config);
       threadDao = new AzureOaiaThreadDao(apiClient, config);
       messageDao = new AzureOaiaMessageDao(apiClient, config);
       runDao = new AzureOaiaRunDao(apiClient, config);
-  
+
       adapter = new AzureOaiaChatAdapter({
         config,
         assistantDao,
@@ -102,32 +107,39 @@ describe("AzureOaiaChatAdapter", () => {
         runDao,
       });
     });
-  
+
     it("can instantiate", () => {
       expect(adapter).toBeDefined();
     });
-  
-    it.skip("can chat", async () => {
-      const polly = startPollyRecording("AzureOaiaChatAdapter > can chat", {
-        matchRequestsBy: {
-          order: true,
-        },
-        refresh: true,
-      });
-  
-      const response = await adapter.chat({
-        history: [{ text: "Hello, whats your name?", type: "user" }],
-        model: modelName,
-      });
-  
-      await polly.stop();
-  
-      expect(response).toMatchInlineSnapshot(`
-        {
-          "history": [],
-        }
-      `);
-    }, 2 * 60 * 1000 /* 2 mins */);
-  })
-  
+
+    it(
+      "can chat",
+      async () => {
+        const polly = startPollyRecording("AzureOaiaChatAdapter > can chat", {
+          matchRequestsBy: {
+            order: true,
+          }
+        });
+
+        const response = await adapter.chat({
+          history: [{ text: "Hello, whats your name?", type: "user" }],
+          model: modelName,
+        });
+
+        await polly.stop();
+
+        expect(response).toMatchInlineSnapshot(`
+          {
+            "history": [
+              {
+                "text": "Hello! I'm an AI developed by OpenAI called ChatGPT. I don't have a personal name, but you can call me ChatGPT or refer to me however you prefer. How can I assist you today?",
+                "type": "bot",
+              },
+            ],
+          }
+        `);
+      },
+      10 * 10000
+    );
+  });
 });
