@@ -55,18 +55,17 @@ describe("OaiaRunDaoDao", () => {
         assistant_id: assistant.id,
       });
 
-      polly.stop();
+      await polly.stop();
 
       expect(run).toMatchInlineSnapshot(`
         {
-          "assistant_id": "asst_1K0nKYFjFGpufwqWtIbmefLE",
+          "assistant_id": "asst_z0aUgo4q7ngx7O8szZAKpBut",
           "cancelled_at": null,
           "completed_at": null,
-          "created_at": 1719370952,
-          "expires_at": 1719371552,
+          "created_at": 1719501773,
+          "expires_at": 1719502373,
           "failed_at": null,
-          "file_ids": [],
-          "id": "run_YLRfMjmaXOTMAjJkWr4ihT0P",
+          "id": "run_ywoSTRDUVLSqPRHMK62jPrb3",
           "incomplete_details": null,
           "instructions": "talk funny",
           "last_error": null,
@@ -80,8 +79,9 @@ describe("OaiaRunDaoDao", () => {
           "started_at": null,
           "status": "queued",
           "temperature": 1,
-          "thread_id": "thread_i1Upvenj9NQqMvySqNqO2Qlc",
+          "thread_id": "thread_LqW5iCeRQ7rUkJNpsPdAddu0",
           "tool_choice": "auto",
+          "tool_resources": {},
           "tools": [],
           "top_p": 1,
           "truncation_strategy": {

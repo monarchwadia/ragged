@@ -23,7 +23,12 @@ describe("OaiaMessageDao", () => {
       const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
 
       const polly = startPollyRecording(
-        "AzureOaiaMessageDao > createMessage > can be created"
+        "AzureOaiaMessageDao > createMessage > can be created",
+        {
+          matchRequestsBy: {
+            order: true,
+          },
+        }
       );
 
       const thread = await oaiaThreadDao.createThread();
@@ -37,11 +42,12 @@ describe("OaiaMessageDao", () => {
         },
       });
 
-      polly.stop();
+      await polly.stop();
 
       expect(message).toMatchInlineSnapshot(`
         {
           "assistant_id": null,
+          "attachments": [],
           "content": [
             {
               "text": {
@@ -51,14 +57,13 @@ describe("OaiaMessageDao", () => {
               "type": "text",
             },
           ],
-          "created_at": 1719370696,
-          "file_ids": [],
-          "id": "msg_uWVqYRXLUueeqYsTTRaCwofj",
+          "created_at": 1719418287,
+          "id": "msg_UV2AMX9HH4pUUtl3niNRqRUF",
           "metadata": {},
           "object": "thread.message",
           "role": "user",
           "run_id": null,
-          "thread_id": "thread_Bv4xUPhud36io4zgBJZZdRK8",
+          "thread_id": "thread_z22YIbUVALbEOUwUodiej9TB",
         }
       `);
     });
@@ -77,7 +82,12 @@ describe("OaiaMessageDao", () => {
       const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
 
       const polly = startPollyRecording(
-        "OaiaMessageDao > list messages for thread > can be listed"
+        "OaiaMessageDao > list messages for thread > can be listed",
+        {
+          matchRequestsBy: {
+            order: true,
+          },
+        }
       );
 
       const thread = await oaiaThreadDao.createThread();
@@ -93,13 +103,14 @@ describe("OaiaMessageDao", () => {
 
       const messages = await oaiaMessageDao.listMessagesForThread(thread.id);
 
-      polly.stop();
+      await polly.stop();
 
       expect(messages).toMatchInlineSnapshot(`
         {
           "data": [
             {
               "assistant_id": null,
+              "attachments": [],
               "content": [
                 {
                   "text": {
@@ -109,19 +120,18 @@ describe("OaiaMessageDao", () => {
                   "type": "text",
                 },
               ],
-              "created_at": 1719371073,
-              "file_ids": [],
-              "id": "msg_ok8NirkUnSJDa5JHob4tj50Y",
+              "created_at": 1719501920,
+              "id": "msg_nc90VgI9Z8mvhKKw9qA9rZ5i",
               "metadata": {},
               "object": "thread.message",
               "role": "user",
               "run_id": null,
-              "thread_id": "thread_HCiQG0leC6VTQeiYnvqj4qmp",
+              "thread_id": "thread_FO4iYdUMVUZpmPWxft1jHJU1",
             },
           ],
-          "first_id": "msg_ok8NirkUnSJDa5JHob4tj50Y",
+          "first_id": "msg_nc90VgI9Z8mvhKKw9qA9rZ5i",
           "has_more": false,
-          "last_id": "msg_ok8NirkUnSJDa5JHob4tj50Y",
+          "last_id": "msg_nc90VgI9Z8mvhKKw9qA9rZ5i",
           "object": "list",
         }
       `);

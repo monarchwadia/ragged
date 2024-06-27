@@ -55,7 +55,7 @@ describe("OaiaChatAdapter", () => {
             model: "gpt-3.5-turbo",
         });
 
-        polly.stop();
+        await polly.stop();
 
         expect(response).toMatchInlineSnapshot(`
       {

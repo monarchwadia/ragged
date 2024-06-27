@@ -516,7 +516,7 @@ describe("Chat", () => {
         tools: [lsTool],
       });
 
-      polly.stop();
+      await polly.stop();
 
       expect(response).toMatchInlineSnapshot(`
         [

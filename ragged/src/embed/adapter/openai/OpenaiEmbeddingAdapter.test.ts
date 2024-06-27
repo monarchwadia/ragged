@@ -33,7 +33,7 @@ describe("OpenaiEmbedAdapter", () => {
         it('throws when called without a bad apikey', async () => {
             const polly = startPollyRecording("OpenaiEmbeddingAdapter > embed > throws when called with a bad apikey");
             expect(() => adapter.embed({ text: "dummy" } as any)).rejects.toThrow(FetchRequestFailedError);;
-            polly.stop();
+            await polly.stop();
         });
 
 
@@ -41,7 +41,7 @@ describe("OpenaiEmbedAdapter", () => {
         it("gets embeddings", async () => {
             const polly = startPollyRecording("OpenaiEmbeddingAdapter > embed > gets embeddings");
             const embeddings = await adapter.embed({ text: "Hello, world!" });
-            polly.stop();
+            await polly.stop();
 
             expect(embeddings).toBeDefined();
             expect(embeddings).toMatchSnapshot();

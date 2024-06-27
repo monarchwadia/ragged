@@ -24,14 +24,15 @@ describe("OaiaThreadDao", () => {
 
       const thread = await oaiaThreadDao.createThread();
 
-      polly.stop();
+      await polly.stop();
 
       expect(thread).toMatchInlineSnapshot(`
         {
-          "created_at": 1719370959,
-          "id": "thread_s5SXjxANbWeVH63QSMvjPpLZ",
+          "created_at": 1719501756,
+          "id": "thread_yIOJW31QTvogrAasaWf851nR",
           "metadata": {},
           "object": "thread",
+          "tool_resources": {},
         }
       `);
     });

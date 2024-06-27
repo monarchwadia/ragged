@@ -16,12 +16,12 @@ describe("OaiaThreadDao", () => {
         process.env.OPENAI_API_KEY as string
       );
 
-      polly.stop();
+      await polly.stop();
 
       expect(thread).toMatchInlineSnapshot(`
         {
-          "created_at": 1718855111,
-          "id": "thread_mGG7FJ133ssPowO2UisHkL3h",
+          "created_at": 1719501693,
+          "id": "thread_eyl6iXAW16EJMW9vSBigvofm",
           "metadata": {},
           "object": "thread",
           "tool_resources": {},

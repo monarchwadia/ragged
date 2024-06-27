@@ -36,7 +36,7 @@ describe("AzureOpenAiChatAdapter", () => {
             ]
         });
 
-        polly.stop();
+        await polly.stop();
     });
 })
 

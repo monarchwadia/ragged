@@ -28,7 +28,7 @@ describe("cohereChatAdapterProvider", () => {
     );
     const response = await adapter.chat(request);
 
-    polly.stop();
+    await polly.stop();
 
     expect(response).toMatchInlineSnapshot(`
       {
@@ -69,7 +69,7 @@ describe("cohereChatAdapterProvider", () => {
     );
     const response = await adapter.chat(request);
 
-    polly.stop();
+    await polly.stop();
 
     expect(response).toMatchInlineSnapshot(`
       {

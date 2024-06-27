@@ -15,7 +15,12 @@ describe("OaiaRunDaoDao", () => {
       const oaiaRunDao = new OaiaRunDao(apiClient);
 
       const polly = startPollyRecording(
-        "OaiaRunDao > createRun > can be created"
+        "OaiaRunDao > createRun > can be created",
+        {
+          matchRequestsBy: {
+            order: true,
+          },
+        }
       );
 
       const assistant = await oaiaAssistantDao.createAssistant(
@@ -54,17 +59,17 @@ describe("OaiaRunDaoDao", () => {
         }
       );
 
-      polly.stop();
+      await polly.stop();
 
       expect(run).toMatchInlineSnapshot(`
         {
-          "assistant_id": "asst_rLTm0LCjqA2vPolP579uAaD0",
+          "assistant_id": "asst_9pmKGfUtqPSIUsHVFGq5FIfx",
           "cancelled_at": null,
           "completed_at": null,
-          "created_at": 1718857836,
-          "expires_at": 1718858436,
+          "created_at": 1719501741,
+          "expires_at": 1719502341,
           "failed_at": null,
-          "id": "run_9XQzr1lXBN0B0W3WxNGvG1YV",
+          "id": "run_A4GKqH2vFq9DPgscQrLjXaaW",
           "incomplete_details": null,
           "instructions": "I need to solve the equation \`3x + 11 = 14\`. Can you help me?",
           "last_error": null,
@@ -79,7 +84,7 @@ describe("OaiaRunDaoDao", () => {
           "started_at": null,
           "status": "queued",
           "temperature": 1,
-          "thread_id": "thread_tYtMyOfMHetTpXaJosgJbn5H",
+          "thread_id": "thread_BLQA27eUzIrjnIlEKmryetn2",
           "tool_choice": "auto",
           "tool_resources": {},
           "tools": [],

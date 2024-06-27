@@ -23,7 +23,7 @@ describe("OaiaAssistantDao", () => {
         }
       );
 
-      polly.stop();
+      await polly.stop();
 
       expect(assistant).toMatchInlineSnapshot(`
         {

@@ -31,14 +31,13 @@ describe("AzureOaiaDao", () => {
         model: modelName,
       });
 
-      polly.stop();
+      await polly.stop();
 
       expect(assistant).toMatchInlineSnapshot(`
         {
-          "created_at": 1719370673,
+          "created_at": 1719418286,
           "description": null,
-          "file_ids": [],
-          "id": "asst_wMd36xAfzfnMwZIHqy9pVBzM",
+          "id": "asst_BK3hMED1CYd68BcebjVbcorB",
           "instructions": "You are an expert financial analyst. Use you knowledge base to answer questions about audited financial statements.",
           "metadata": {},
           "model": "cadstromgpt4",
@@ -46,6 +45,7 @@ describe("AzureOaiaDao", () => {
           "object": "assistant",
           "response_format": "auto",
           "temperature": 1,
+          "tool_resources": {},
           "tools": [],
           "top_p": 1,
         }

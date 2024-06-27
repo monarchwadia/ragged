@@ -30,7 +30,7 @@ describe("OaiaMessageDao", () => {
         }
       );
 
-      polly.stop();
+      await polly.stop();
 
       expect(message).toMatchInlineSnapshot(`
         {
@@ -64,7 +64,12 @@ describe("OaiaMessageDao", () => {
       const oaiaThreadDao = new OaiaThreadDao(apiClient);
 
       const polly = startPollyRecording(
-        "OaiaMessageDao > list messages for thread > can be listed"
+        "OaiaMessageDao > list messages for thread > can be listed",
+        {
+          matchRequestsBy: {
+            order: true,
+          },
+        }
       );
 
       const thread = await oaiaThreadDao.createThread(
@@ -85,7 +90,7 @@ describe("OaiaMessageDao", () => {
         thread.id
       );
 
-      polly.stop();
+      await polly.stop();
 
       expect(messages).toMatchInlineSnapshot(`
         {
@@ -102,18 +107,18 @@ describe("OaiaMessageDao", () => {
                   "type": "text",
                 },
               ],
-              "created_at": 1718857546,
-              "id": "msg_YtpT61EyznDVlevY3jC23Jz8",
+              "created_at": 1719501892,
+              "id": "msg_LJvsPRl76Y7kANB0LwzAywJ7",
               "metadata": {},
               "object": "thread.message",
               "role": "user",
               "run_id": null,
-              "thread_id": "thread_Lm2DUXuR7clpazi01Wba9LDF",
+              "thread_id": "thread_6Sc9i1HgWJUskcZw2QEMnZin",
             },
           ],
-          "first_id": "msg_YtpT61EyznDVlevY3jC23Jz8",
+          "first_id": "msg_LJvsPRl76Y7kANB0LwzAywJ7",
           "has_more": false,
-          "last_id": "msg_YtpT61EyznDVlevY3jC23Jz8",
+          "last_id": "msg_LJvsPRl76Y7kANB0LwzAywJ7",
           "object": "list",
         }
       `);
