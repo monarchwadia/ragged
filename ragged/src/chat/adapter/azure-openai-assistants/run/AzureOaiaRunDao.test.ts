@@ -20,6 +20,7 @@ describe("OaiaRunDaoDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
+        modelName
       };
       const apiClient = new ApiClient();
       const oaiaAssistantDao = new AzureOaiaDao(apiClient, config);

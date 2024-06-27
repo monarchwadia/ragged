@@ -3,4 +3,5 @@ export type AzureOaiaDaoCommonConfig = {
     resourceName: string;
     deploymentName: string;
     apiVersion: string;
+    modelName: string;
 }

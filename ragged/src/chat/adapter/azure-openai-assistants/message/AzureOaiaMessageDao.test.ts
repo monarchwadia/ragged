@@ -17,6 +17,7 @@ describe("OaiaMessageDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
+        modelName
       };
       const apiClient = new ApiClient();
       const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);

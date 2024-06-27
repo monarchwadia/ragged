@@ -6,6 +6,7 @@ let apiKey = process.env.AZURE_OPENAI_ASSISTANTS_API_KEY || "";
 let apiVersion = process.env.AZURE_OPENAI_ASSISTANTS_API_VERSION || "";
 let resourceName = process.env.AZURE_OPENAI_ASSISTANTS_RESOURCE_NAME || "";
 let deploymentName = process.env.AZURE_OPENAI_ASSISTANTS_DEPLOYMENT_NAME || "";
+let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
 describe("OaiaThreadDao", () => {
   describe("createThread", () => {
@@ -16,6 +17,7 @@ describe("OaiaThreadDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
+        modelName
       });
 
       const polly = startPollyRecording(

@@ -54,7 +54,7 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
         // TODO: FIX THIS
         const assistant = await this.opts.assistantDao.createAssistant({
             instructions: "",
-            model: "",
+            model: this.opts.config.modelName,
             name: "",
             tools: [],
             description: ""

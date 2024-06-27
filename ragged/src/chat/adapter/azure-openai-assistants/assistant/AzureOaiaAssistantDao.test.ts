@@ -17,6 +17,7 @@ describe("AzureOaiaDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
+        modelName
       });
 
       const polly = startPollyRecording(
