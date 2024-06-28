@@ -20,7 +20,7 @@ describe("OaiaRunDaoDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
-        modelName
+        modelName,
       };
       const apiClient = new ApiClient();
       const oaiaAssistantDao = new AzureOaiaDao(apiClient, config);
@@ -29,7 +29,12 @@ describe("OaiaRunDaoDao", () => {
       const oaiaRunDao = new AzureOaiaRunDao(apiClient, config);
 
       const polly = startPollyRecording(
-        "OaiaRunDao > createRun > can be created"
+        "AzureOaiaRunDao > createRun > can be created",
+        {
+          matchRequestsBy: {
+            order: true,
+          },
+        }
       );
 
       const assistant = await oaiaAssistantDao.createAssistant({
@@ -60,13 +65,13 @@ describe("OaiaRunDaoDao", () => {
 
       expect(run).toMatchInlineSnapshot(`
         {
-          "assistant_id": "asst_z0aUgo4q7ngx7O8szZAKpBut",
+          "assistant_id": "asst_SwmJGuBWJAZBGN7snbBBJRwQ",
           "cancelled_at": null,
           "completed_at": null,
-          "created_at": 1719501773,
-          "expires_at": 1719502373,
+          "created_at": 1719582609,
+          "expires_at": 1719583209,
           "failed_at": null,
-          "id": "run_ywoSTRDUVLSqPRHMK62jPrb3",
+          "id": "run_Os4nKnRAdM4RwUJjgPRwoyBZ",
           "incomplete_details": null,
           "instructions": "talk funny",
           "last_error": null,
@@ -80,7 +85,7 @@ describe("OaiaRunDaoDao", () => {
           "started_at": null,
           "status": "queued",
           "temperature": 1,
-          "thread_id": "thread_LqW5iCeRQ7rUkJNpsPdAddu0",
+          "thread_id": "thread_1fXikpWU4Lb4oNqE4cRYyJ44",
           "tool_choice": "auto",
           "tool_resources": {},
           "tools": [],

@@ -20,8 +20,8 @@ describe("OaiaThreadDao", () => {
 
       expect(thread).toMatchInlineSnapshot(`
         {
-          "created_at": 1719501693,
-          "id": "thread_eyl6iXAW16EJMW9vSBigvofm",
+          "created_at": 1719582332,
+          "id": "thread_XkMLqZrMjBGNdvhW8EhR3PWA",
           "metadata": {},
           "object": "thread",
           "tool_resources": {},

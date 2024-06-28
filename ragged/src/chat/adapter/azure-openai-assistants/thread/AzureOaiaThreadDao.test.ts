@@ -8,7 +8,7 @@ let resourceName = process.env.AZURE_OPENAI_ASSISTANTS_RESOURCE_NAME || "";
 let deploymentName = process.env.AZURE_OPENAI_ASSISTANTS_DEPLOYMENT_NAME || "";
 let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
-describe("OaiaThreadDao", () => {
+describe("AzureOaiaThreadDao", () => {
   describe("createThread", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
@@ -17,11 +17,11 @@ describe("OaiaThreadDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
-        modelName
+        modelName,
       });
 
       const polly = startPollyRecording(
-        "OaiaThreadDao > createThread > can be created"
+        "AzureOaiaThreadDao > createThread > can be created"
       );
 
       const thread = await oaiaThreadDao.createThread();
@@ -30,8 +30,8 @@ describe("OaiaThreadDao", () => {
 
       expect(thread).toMatchInlineSnapshot(`
         {
-          "created_at": 1719501756,
-          "id": "thread_yIOJW31QTvogrAasaWf851nR",
+          "created_at": 1719582469,
+          "id": "thread_0Oq7b8NlD8gayMrM9huQyv21",
           "metadata": {},
           "object": "thread",
           "tool_resources": {},

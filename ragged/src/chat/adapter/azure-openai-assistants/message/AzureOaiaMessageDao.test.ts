@@ -8,6 +8,7 @@ let apiKey = process.env.AZURE_OPENAI_ASSISTANTS_API_KEY || "";
 let apiVersion = process.env.AZURE_OPENAI_ASSISTANTS_API_VERSION || "";
 let resourceName = process.env.AZURE_OPENAI_ASSISTANTS_RESOURCE_NAME || "";
 let deploymentName = process.env.AZURE_OPENAI_ASSISTANTS_DEPLOYMENT_NAME || "";
+let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
 describe("OaiaMessageDao", () => {
   describe("createMessage", () => {
@@ -17,7 +18,7 @@ describe("OaiaMessageDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
-        modelName
+        modelName,
       };
       const apiClient = new ApiClient();
       const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
@@ -77,13 +78,14 @@ describe("OaiaMessageDao", () => {
         resourceName,
         deploymentName,
         apiVersion,
+        modelName,
       };
       const apiClient = new ApiClient();
       const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
       const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
 
       const polly = startPollyRecording(
-        "OaiaMessageDao > list messages for thread > can be listed",
+        "AzureOaiaMessageDao > list messages for thread > can be listed",
         {
           matchRequestsBy: {
             order: true,
@@ -121,18 +123,18 @@ describe("OaiaMessageDao", () => {
                   "type": "text",
                 },
               ],
-              "created_at": 1719501920,
-              "id": "msg_nc90VgI9Z8mvhKKw9qA9rZ5i",
+              "created_at": 1719582630,
+              "id": "msg_KGIuIQH7xkHoBonA2yL1w9s7",
               "metadata": {},
               "object": "thread.message",
               "role": "user",
               "run_id": null,
-              "thread_id": "thread_FO4iYdUMVUZpmPWxft1jHJU1",
+              "thread_id": "thread_x9PWUV0p72hyRy26SMWJ9B27",
             },
           ],
-          "first_id": "msg_nc90VgI9Z8mvhKKw9qA9rZ5i",
+          "first_id": "msg_KGIuIQH7xkHoBonA2yL1w9s7",
           "has_more": false,
-          "last_id": "msg_nc90VgI9Z8mvhKKw9qA9rZ5i",
+          "last_id": "msg_KGIuIQH7xkHoBonA2yL1w9s7",
           "object": "list",
         }
       `);

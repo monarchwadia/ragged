@@ -7,7 +7,8 @@ describe("provideAzureOpenaiAssistantsChatAdapter", () => {
                 apiKey: "not-real",
                 resourceName: "not-real",
                 deploymentName: "not-real",
-                apiVersion: "not-real"
+                apiVersion: "not-real",
+                modelName: "not-real"
             }
         });
         expect(adapter).toBeDefined();
