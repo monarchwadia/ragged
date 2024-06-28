@@ -6,12 +6,12 @@ import { AzureOaiaMessageDao } from "./message/AzureOaiaMessageDao";
 import { AzureOaiaRunDao } from "./run/AzureOaiaRunDao";
 import { AzureOaiaThreadDao } from "./thread/AzureOaiaThreadDao";
 
-export type OpenaiAssistantsChatProviderParam = {
+export type AzureOpenaiAssistantsChatProviderParam = {
     config: AzureOaiaDaoCommonConfig;
     apiClient?: ApiClient;
 }
 
-export const provideAzureOpenaiAssistantsChatAdapter = (params: OpenaiAssistantsChatProviderParam): AzureOaiaChatAdapter => {
+export const provideAzureOpenaiAssistantsChatAdapter = (params: AzureOpenaiAssistantsChatProviderParam): AzureOaiaChatAdapter => {
     const apiClient = params.apiClient || new ApiClient();
 
     const assistantDao = new AzureOaiaDao(apiClient, params.config);

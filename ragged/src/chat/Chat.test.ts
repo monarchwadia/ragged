@@ -653,6 +653,16 @@ describe("Chat", () => {
           }
         });
       });
+
+      it('can instantiate azure-openai-assistants', () => {
+        const c = Chat.with('azure-openai-assistants', {
+          apiKey: '123',
+          apiVersion: 'v1',
+          resourceName: 'resource',
+          deploymentName: 'deployment',
+          modelName: 'model'
+        });
+      })
     });
   })
 });

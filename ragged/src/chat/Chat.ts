@@ -8,8 +8,10 @@ import { CohereChatAdapterConfig } from "./adapter/cohere/CohereChatAdapter";
 import { OpenAiChatAdapterConfig } from "./adapter/openai/OpenAiChatAdapter";
 import { OpenaiAssistantsChatAdapterConfig } from "./adapter/openai-assistants/adapter/OaiaChatAdapter";
 import { provideOpenaiAssistantsChatAdapter } from "./adapter/openai-assistants/provideOpenaiAssistantsChatAdapter";
-import { AzureOpenAiChatAdapter, AzureOpenAiChatAdapterConfig } from "./adapter/azure-openai/AzureOpenAiChatAdapter";
+import { AzureOpenAiChatAdapterConfig } from "./adapter/azure-openai/AzureOpenAiChatAdapter";
 import { provideAzureOpenAiChatAdapter } from "./adapter/azure-openai/provideAzureOpenaiChatAdapter";
+import { provideAzureOpenaiAssistantsChatAdapter } from "./adapter/azure-openai-assistants/provideAzureOpenaiAssistantsChatAdapter";
+import { AzureOaiaDaoCommonConfig } from "./adapter/azure-openai-assistants/Dao.types";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
@@ -51,6 +53,7 @@ export class Chat {
     static with(provider: "openai", config: OpenAiChatAdapterConfig): Chat;
     static with(provider: "cohere", config: CohereChatAdapterConfig): Chat;
     static with(provider: "azure-openai", config: AzureOpenAiChatAdapterConfig): Chat;
+    static with(provider: "azure-openai-assistants", config: AzureOaiaDaoCommonConfig): Chat;
     static with(provider: string, config: any = {}) {
         let adapter: BaseChatAdapter;
 
@@ -66,6 +69,9 @@ export class Chat {
                 break;
             case "azure-openai":
                 adapter = provideAzureOpenAiChatAdapter({ config });
+                break;
+            case "azure-openai-assistants":
+                adapter = provideAzureOpenaiAssistantsChatAdapter({ config });
                 break;
             default:
                 throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Chat.with().");
