@@ -51,6 +51,14 @@ export const ChatAdapters = {
     OpenAiAssistants: {
         OaiaChatAdapter,
         provideOpenaiAssistantsChatAdapter
+    },
+    AzureOpenAi: {
+        AzureOpenAiChatAdapter,
+        provideAzureOpenAiChatAdapter
+    },
+    AzureOpenAiAssistants: {
+        AzureOaiaChatAdapter,
+        provideAzureOpenaiAssistantsChatAdapter
     }
 }
 
@@ -94,5 +102,9 @@ import { ApiJsonHandler } from "./support/ApiJsonHandler";
 import { Tool, ToolInputValidator, ToolProp } from './tools/Tools.types';
 import { OpenAiChatAdapter } from './chat/adapter/openai/OpenAiChatAdapter';
 import { provideOpenAiChatAdapter } from './chat/adapter/openai/provideOpenAiChatAdapter';
+import { AzureOpenAiChatAdapter } from './chat/adapter/azure-openai/AzureOpenAiChatAdapter';
+import { provideAzureOpenAiChatAdapter } from './chat/adapter/azure-openai/provideAzureOpenaiChatAdapter';
+import { AzureOaiaChatAdapter } from './chat/adapter/azure-openai-assistants/adapter/AzureOaiaChatAdapter';
+import { provideAzureOpenaiAssistantsChatAdapter } from './chat/adapter/azure-openai-assistants/provideAzureOpenaiAssistantsChatAdapter';
 
 export { ApiClient, ApiJsonHandler, RaggedErrors, Embed, Chat }
