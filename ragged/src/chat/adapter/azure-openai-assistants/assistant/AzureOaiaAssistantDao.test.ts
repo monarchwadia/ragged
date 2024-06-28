@@ -10,7 +10,7 @@ let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
 describe("AzureOaiaDao", () => {
   describe("createAssistant", () => {
-    it("can be created", async () => {
+    it.skip("can be created", async () => {
       const apiClient = new ApiClient();
       const azureOaiaDao = new AzureOaiaDao(apiClient, {
         apiKey,

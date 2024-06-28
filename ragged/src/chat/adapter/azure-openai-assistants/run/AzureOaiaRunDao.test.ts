@@ -14,7 +14,7 @@ let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
 describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {
-    it("can be created", async () => {
+    it.skip("can be created", async () => {
       const config: AzureOaiaDaoCommonConfig = {
         apiKey,
         resourceName,

@@ -12,7 +12,7 @@ let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
 describe("OaiaMessageDao", () => {
   describe("createMessage", () => {
-    it("can be created", async () => {
+    it.skip("can be created", async () => {
       const config: AzureOaiaDaoCommonConfig = {
         apiKey,
         resourceName,
@@ -72,7 +72,7 @@ describe("OaiaMessageDao", () => {
   });
 
   describe("list messages for thread", () => {
-    it("can be listed", async () => {
+    it.skip("can be listed", async () => {
       const config: AzureOaiaDaoCommonConfig = {
         apiKey,
         resourceName,

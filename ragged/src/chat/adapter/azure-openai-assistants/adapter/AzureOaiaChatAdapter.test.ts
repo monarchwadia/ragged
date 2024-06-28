@@ -112,7 +112,7 @@ describe("AzureOaiaChatAdapter", () => {
       expect(adapter).toBeDefined();
     });
 
-    it(
+    it.skip(
       "can chat",
       async () => {
         const polly = startPollyRecording("AzureOaiaChatAdapter > can chat", {

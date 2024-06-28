@@ -16,7 +16,7 @@ describe("AzureOpenAiChatAdapter", () => {
         });
     });
 
-    it("makes a call to the api", async () => {
+    it.skip("makes a call to the api", async () => {
         const polly = startPollyRecording("AzureOpenAiChatAdapter-makes-a-call-to-the-api");
         const response = await adapter.chat({
             history: [

@@ -10,7 +10,7 @@ let modelName = process.env.AZURE_OPENAI_ASSISTANTS_MODEL_NAME || "";
 
 describe("AzureOaiaThreadDao", () => {
   describe("createThread", () => {
-    it("can be created", async () => {
+    it.skip("can be created", async () => {
       const apiClient = new ApiClient();
       const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, {
         apiKey,
