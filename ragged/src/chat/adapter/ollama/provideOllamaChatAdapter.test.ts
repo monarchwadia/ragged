@@ -36,7 +36,7 @@ describe("ollamaChatAdapterProvider", () => {
       {
         "history": [
           {
-            "text": "I'm just an AI, so I don't have feelings or emotions like humans do. However, I'm functioning properly and ready to help answer any questions or engage in conversation you'd like! How about you? How's your day going?",
+            "text": "Hello",
             "type": "bot",
           },
         ],
