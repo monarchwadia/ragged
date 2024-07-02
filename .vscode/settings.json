@@ -8,6 +8,7 @@
         "**/node_modules": true,
         "**/pnpm-lock.yaml": true,
     },
+    "files.trimTrailingWhitespace": false,
     "editor.formatOnSave": true,
     "editor.formatOnSaveMode": "file",
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",

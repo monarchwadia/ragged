@@ -12,6 +12,8 @@ import { AzureOpenAiChatAdapterConfig } from "./adapter/azure-openai/AzureOpenAi
 import { provideAzureOpenAiChatAdapter } from "./adapter/azure-openai/provideAzureOpenaiChatAdapter";
 import { provideAzureOpenaiAssistantsChatAdapter } from "./adapter/azure-openai-assistants/provideAzureOpenaiAssistantsChatAdapter";
 import { AzureOaiaDaoCommonConfig } from "./adapter/azure-openai-assistants/Dao.types";
+import { provideOllamaChatAdapter } from "./adapter/ollama/provideOllamaChatAdapter";
+import { OllamaChatAdapterConfig } from "./adapter/ollama/OllamaChatAdapter";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
@@ -51,6 +53,7 @@ export class Chat {
 
     static with(provider: "openai-assistants", config: OpenaiAssistantsChatAdapterConfig): Chat;
     static with(provider: "openai", config: OpenAiChatAdapterConfig): Chat;
+    static with(provider: "ollama", config: OllamaChatAdapterConfig): Chat;
     static with(provider: "cohere", config: CohereChatAdapterConfig): Chat;
     static with(provider: "azure-openai", config: AzureOpenAiChatAdapterConfig): Chat;
     static with(provider: "azure-openai-assistants", config: AzureOaiaDaoCommonConfig): Chat;
@@ -63,6 +66,9 @@ export class Chat {
                 break;
             case "cohere":
                 adapter = provideCohereChatAdapter({ config });
+                break;
+            case "ollama":
+                adapter = provideOllamaChatAdapter({ config });
                 break;
             case "openai-assistants":
                 adapter = provideOpenaiAssistantsChatAdapter({ config });
