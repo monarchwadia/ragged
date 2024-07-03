@@ -633,6 +633,11 @@ describe("Chat", () => {
         expect(c).toBeDefined();
       })
 
+      it('can instantiate ollama', () => {
+        const c = Chat.with('ollama', { apiKey: '123' });
+        expect(c).toBeDefined();
+      })
+
       it('can instantiate azure-openai', () => {
         const c = Chat.with('azure-openai', {
           apiKey: '123',
