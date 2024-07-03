@@ -37,12 +37,20 @@ export class ApiClient {
             requestInit.body = ApiJsonHandler.stringify(request.body)
         }
 
+        // debug info
+        ApiClient.logger.info(`${method.toUpperCase()} ${url}: Sending request...`);
+        ApiClient.logger.debug(`${method.toUpperCase()} ${url}: Request body: ${JSON.stringify(request.body)}`);
+        ApiClient.logger.debug(`${method.toUpperCase()} ${url}: Request headers: ${JSON.stringify(request.headers)}`);
+
         let response: Response | null = null;
         try {
             response = await fetch(url, requestInit);
         } catch (e) {
             throw new FetchRequestFailedError("Failed to make fetch call.", e);
         }
+
+        ApiClient.logger.info(`${method.toUpperCase()} ${url}: Response status: ${response.status}`);
+        ApiClient.logger.debug(`${method.toUpperCase()} ${url}: Response headers: ${JSON.stringify(response.headers)}`);
 
         if (!response.ok) {
             ApiClient.logger.error(await response.text())

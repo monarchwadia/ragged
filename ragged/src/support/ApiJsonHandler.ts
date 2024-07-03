@@ -5,6 +5,7 @@ export class ApiJsonHandler {
     static logger: Logger = new Logger('AdapterJsonHandler');
 
     static parse(json: string): any {
+        ApiJsonHandler.logger.debug(`Parsing JSON: ${json}`);
         try {
             return JSON.parse(json);
         } catch (e) {
@@ -14,6 +15,7 @@ export class ApiJsonHandler {
     }
 
     static stringify(obj: any): string {
+        ApiJsonHandler.logger.debug(`Stringifying object to JSON:`, obj);
         try {
             return JSON.stringify(obj);
         } catch (e) {
@@ -23,6 +25,7 @@ export class ApiJsonHandler {
     }
 
     static async parseResponse(response: Response): Promise<any> {
+        ApiJsonHandler.logger.debug(`Parsing response:`, response);
         try {
             const text = await response.text();
             return ApiJsonHandler.parse(text);

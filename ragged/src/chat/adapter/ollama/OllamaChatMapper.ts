@@ -38,7 +38,7 @@ export class OllamaChatMapper {
     return {
       model: config.model,
       messages,
-      stream: config.stream ?? true,
+      stream: config.stream ?? false,
       format: config.format,
       options: config.options,
       keep_alive: config.keep_alive

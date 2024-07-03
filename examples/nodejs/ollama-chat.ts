@@ -4,7 +4,9 @@
 
 import { config } from 'dotenv';
 config();
-import { Chat } from "ragged"
+import { Chat, Logger } from "ragged"
+
+Logger.setLogLevel("debug");
 
 const c = Chat.with({
     provider: "ollama",

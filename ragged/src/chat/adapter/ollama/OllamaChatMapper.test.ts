@@ -65,7 +65,7 @@ describe("OllamaChatMapper", () => {
             content: "Hello, how are you?",
           }
         ],
-        stream: true
+        stream: false
       });
     });
 
