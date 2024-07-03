@@ -571,8 +571,8 @@ describe("Chat", () => {
             {
               type: "image",
               payload: {
-                filetype: "png",
-                encoding: "data_url",
+                mimeType: "image/png",
+                encoding: "base64_data_url",
                 data: "some base64 data",
               }
             }
@@ -589,8 +589,8 @@ describe("Chat", () => {
               {
                 type: "image",
                 payload: {
-                  filetype: "png",
-                  encoding: "data_url",
+                  mimeType: "image/png",
+                  encoding: "base64_data_url",
                   data: "some base64 data",
                 }
               }
@@ -618,8 +618,8 @@ describe("Chat", () => {
             {
               type: "image",
               payload: {
-                filetype: "png",
-                encoding: "data_url",
+                mimeType: "image/png",
+                encoding: "base64_data_url",
                 data: "some base64 data",
               }
             }
@@ -635,8 +635,8 @@ describe("Chat", () => {
             {
               type: "image",
               payload: {
-                filetype: "png",
-                encoding: "data_url",
+                mimeType: "image/png",
+                encoding: "base64_data_url",
                 data: "some base64 data",
               }
             }

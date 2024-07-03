@@ -33,8 +33,8 @@ export const mapToOpenAi = (request: ChatAdapterRequest): OpenAiChatCompletionRe
                                     let dataUrl: string;
 
                                     switch(attachment.payload.encoding) {
-                                        case "data_url":
-                                            dataUrl = `data:image/${attachment.payload.filetype};base64,${attachment.payload.data}`;
+                                        case "base64_data_url":
+                                            dataUrl = `data:${attachment.payload.mimeType};base64,${attachment.payload.data}`;
                                             break;
                                         default:
                                             logger.warn(`Unknown and unhandled attachment encoding: ${attachment.payload.encoding}. This will not get sent to OpenAI. Here is the full attachment: `, attachment);

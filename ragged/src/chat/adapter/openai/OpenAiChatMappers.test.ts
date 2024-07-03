@@ -105,8 +105,8 @@ describe("OpenAiChatAdapter Mappers", () => {
                   type: "image",
                   payload: {
                     data: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTExMWFhUXGBgYGBgYGBgYGBgYGBgYFxgYFxgYHSggGBolHRgXITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGhAQGy0lHyUt",
-                    encoding: "data_url",
-                    filetype: "jpeg",
+                    encoding: "base64_data_url",
+                    mimeType: "image/jpeg",
                   }
                 }
               ]
@@ -151,16 +151,16 @@ describe("OpenAiChatAdapter Mappers", () => {
                   type: "image",
                   payload: {
                     data: "foo",
-                    encoding: "data_url",
-                    filetype: "jpeg",
+                    encoding: "base64_data_url",
+                    mimeType: "image/jpeg",
                   },
                 },
                 {
                   type: "image",
                   payload: {
                     data: "bar",
-                    encoding: "data_url",
-                    filetype: "png",
+                    encoding: "base64_data_url",
+                    mimeType: "image/png",
                   }
                 }
               ]
@@ -277,8 +277,8 @@ describe("OpenAiChatAdapter Mappers", () => {
                   type: "image",
                   payload: {
                     data: "foo",
-                    encoding: "data_url",
-                    filetype: "jpeg",
+                    encoding: "base64_data_url",
+                    mimeType: "image/jpeg",
                   }
                 }
               ]

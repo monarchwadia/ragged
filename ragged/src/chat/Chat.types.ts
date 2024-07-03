@@ -4,8 +4,8 @@ export type UserMessageAttachment =
     | {
         type: "image",
         payload: {
-            filetype: "png" | "jpg" | "jpeg" | "gif" | "svg" | "webp";
-            encoding: "data_url",
+            mimeType: string;
+            encoding: "base64_data_url",
             data: string;
         }
     }
