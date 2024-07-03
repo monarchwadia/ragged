@@ -82,7 +82,7 @@ export class CohereChatMapper {
     }
     static mapCohereResponseToChatResponse(response: CohereChatResponseRoot): ChatAdapterResponse {
         if (!response.text) {
-            this.logger.warn("No 'text' field was received in response from Cohere. This is unexpected, and may indicate an error in Ragged's logic.");
+            CohereChatMapper.logger.warn("No 'text' field was received in response from Cohere. This is unexpected, and may indicate an error in Ragged's logic.");
         }
 
         return {

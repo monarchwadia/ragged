@@ -47,7 +47,7 @@ export class OllamaChatMapper {
 
   static mapOllamaResponseToChatResponse(response: OllamaChatResponseRoot): ChatAdapterResponse {
     if (!response.message.content) {
-      this.logger.warn("No 'content' field was received in response from Ollama. This is unexpected, and may indicate an error in Ragged's logic.");
+      OllamaChatMapper.logger.warn("No 'content' field was received in response from Ollama. This is unexpected, and may indicate an error in Ragged's logic.");
     }
 
     return {
