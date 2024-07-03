@@ -560,6 +560,96 @@ describe("Chat", () => {
     });
   });
 
+  describe("with attachments", () => {
+    it('should send attachments to the adapter', async () => {
+      adapter.chat.mockResolvedValue({ history: [] });
+      await c.chat([
+        {
+          type: "user",
+          text: "This is a test message to the adapter",
+          attachments: [
+            {
+              type: "image",
+              payload: {
+                filetype: "png",
+                encoding: "data_url",
+                data: "some base64 data",
+              }
+            }
+          ]
+        }
+      ]);
+
+      expect(adapter.chat).toHaveBeenCalledWith({
+        history: [
+          {
+            type: "user",
+            text: "This is a test message to the adapter",
+            attachments: [
+              {
+                type: "image",
+                payload: {
+                  filetype: "png",
+                  encoding: "data_url",
+                  data: "some base64 data",
+                }
+              }
+            ]
+          }
+        ]
+      });
+    });
+
+    it('should preserve attachments in history', async () => {
+      adapter.chat.mockResolvedValue({
+        history: [
+          {
+            type: "bot",
+            text: "This is a test response from the adapter"
+          }
+        ]
+      });
+
+      const history = await c.chat([
+        {
+          type: "user",
+          text: "This is a test message to the adapter",
+          attachments: [
+            {
+              type: "image",
+              payload: {
+                filetype: "png",
+                encoding: "data_url",
+                data: "some base64 data",
+              }
+            }
+          ]
+        }
+      ]);
+
+      expect(history).toMatchObject([
+        {
+          type: "user",
+          text: "This is a test message to the adapter",
+          attachments: [
+            {
+              type: "image",
+              payload: {
+                filetype: "png",
+                encoding: "data_url",
+                data: "some base64 data",
+              }
+            }
+          ]
+        },
+        {
+          type: "bot",
+          text: "This is a test response from the adapter"
+        }
+      ] as Message[]);
+    });
+  })
+
   describe("parameter validation", () => {
     describe("chat()", () => {
       it("should not throw an error in sunny-day cases", async () => {

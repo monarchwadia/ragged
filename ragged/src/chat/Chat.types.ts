@@ -3,7 +3,7 @@ import { Tool } from "../tools/Tools.types";
 export type UserMessageAttachment =
     | {
         type: "image",
-        data: {
+        payload: {
             filetype: "png" | "jpg" | "jpeg" | "gif" | "svg" | "webp";
             encoding: "data_url",
             data: string;
