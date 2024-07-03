@@ -18,6 +18,13 @@ describe("Logger", () => {
 
         let logger: Logger;
 
+        afterAll(() => {
+            Logger.setLogLevel('info');
+            console.log = originalConsoleLog;
+            console.warn = originalConsoleWarn;
+            console.error = originalConsoleError;
+        })
+
         beforeEach(() => {
             jest.clearAllMocks();
             // console.log, console.warn, console.error should be mocked

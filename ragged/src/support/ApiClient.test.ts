@@ -2,6 +2,7 @@ import { before } from "node:test";
 import { ApiClient } from "./ApiClient";
 import { FetchRequestFailedError, FetchResponseNotOkError } from "./RaggedErrors";
 import { objToReadableStream } from "../test/objectToReadableStream";
+import { Logger } from "./logger/Logger";
 
 describe("ApiClient", () => {
   describe("post", () => {
@@ -70,7 +71,8 @@ describe("ApiClient", () => {
         } catch (e) {
           caught = e as FetchResponseNotOkError;
         }
-      })
+      });
+
       it("should have thrown an instance of FetchResponseNotOkError", () => {
         expect(caught instanceof FetchResponseNotOkError).toBe(true);
       });
