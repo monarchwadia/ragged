@@ -106,5 +106,6 @@ import { AzureOpenAiChatAdapter } from './chat/adapter/azure-openai/AzureOpenAiC
 import { provideAzureOpenAiChatAdapter } from './chat/adapter/azure-openai/provideAzureOpenaiChatAdapter';
 import { AzureOaiaChatAdapter } from './chat/adapter/azure-openai-assistants/adapter/AzureOaiaChatAdapter';
 import { provideAzureOpenaiAssistantsChatAdapter } from './chat/adapter/azure-openai-assistants/provideAzureOpenaiAssistantsChatAdapter';
+import { Logger } from './support/logger/Logger';
 
-export { ApiClient, ApiJsonHandler, RaggedErrors, Embed, Chat }
+export { ApiClient, ApiJsonHandler, RaggedErrors, Embed, Chat, Logger }

@@ -1,5 +1,9 @@
+import { InstantiationError } from "../RaggedErrors";
+
 // LogLevel type to define various levels of logging
-type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'none';
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'none';
+
+const instances: Record<string, Logger> = {};
 
 /**
  * A simple logger class that logs messages to the console. It supports different log levels and namespaces.
@@ -11,24 +15,23 @@ type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'none';
 export class Logger {
     private static level: LogLevel = 'info';
 
-    constructor(private namespace: string, private level?: LogLevel) {
+    public static setLogLevel(level: LogLevel): void {
+        Logger.level = level;
     }
 
-    private shouldLog(level: LogLevel): boolean {
-        const levels: LogLevel[] = ['debug', 'info', 'warn', 'error', 'none'];
-        const currentSetting = this.level || Logger.level;
-        return levels.indexOf(level) >= levels.indexOf(currentSetting);
-    }
-
-    private formatMessage(level: LogLevel): string {
-        return `[${new Date().toISOString()}] [${level.toUpperCase()}] [${this.namespace}]`;
-    }
-
-    private _log(logFunction: Function, level: LogLevel, ...params: any[]): void {
-        if (this.shouldLog(level)) {
-            logFunction(this.formatMessage(level), ...params);
+    constructor(private namespace: string) {
+        if (instances[namespace]) {
+            console.warn(`Ragged Logger with namespace ${namespace} already exists. This might indicate an issue with Ragged's logging setup, \
+or you might be instantiating the same logger with the same namespace multiple times.`)
+        } else {
+            instances[namespace] = this;
         }
     }
+
+    public static getInstances() {
+        return instances;
+    }
+
 
     debug(...params: any[]): void {
         this._log(console.log, 'debug', ...params);
@@ -46,11 +49,17 @@ export class Logger {
         this._log(console.error, 'error', ...params);
     }
 
-    public static setLogLevel(level: LogLevel): void {
-        Logger.level = level;
+    private formatMessage(level: LogLevel): string {
+        return `[${new Date().toISOString()}] [${level.toUpperCase()}] [${this.namespace}]`;
     }
 
-    public setLogLevel(level: LogLevel): void {
-        this.level = level;
+    private _log(logFunction: Function, level: LogLevel, ...params: any[]): void {
+        const levels: LogLevel[] = ['debug', 'info', 'warn', 'error', 'none'];
+
+        const shouldLog = levels.indexOf(level) >= levels.indexOf(Logger.level);
+
+        if (shouldLog) {
+            logFunction(this.formatMessage(level), ...params);
+        }
     }
 }

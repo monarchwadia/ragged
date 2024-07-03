@@ -1,5 +1,4 @@
 import { ApiClient } from "../../../support/ApiClient";
-import { Logger } from "../../../support/logger/Logger";
 import { BaseChatAdapter, ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
 import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers";
@@ -12,7 +11,6 @@ export type OpenAiChatAdapterConfig = {
 }
 
 export class OpenAiChatAdapter implements BaseChatAdapter {
-    private logger: Logger = new Logger('OpenAiChatDriver');
     private apiKey: string | undefined;
     private organizationId: string | undefined;
     private rootUrl: string = "https://api.openai.com/v1/chat/completions";

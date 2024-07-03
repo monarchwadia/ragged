@@ -25,6 +25,7 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [How agents work in Ragged](#how-agents-work-in-ragged)
     - [Incrementing Agent Example](#incrementing-agent-example)
     - [Multiple Agents Example](#multiple-agents-example)
+  - [Logging](#logging)
   - [Official LLM Adapters](#official-llm-adapters)
     - [OpenAI](#openai)
     - [Cohere](#cohere)
@@ -419,6 +420,18 @@ await main();
 
 Agents can get very complex, with multiple agents running at the same time. Here is an example of a simple chat application that uses multiple agents to generate a conversation: [examples/nodejs/agents-multiple.ts](examples/nodejs/agents-multiple.ts).
 
+## Logging
+
+Ragged has a built-in logging system that allows you to log messages to the console. This is useful for debugging and troubleshooting your code. You can use the `Logger` class to control the logging level and format of the log messages.
+
+```ts
+import { Logger } from "ragged";
+Logger.setLogLevel('debug'); // make it verbose
+Logger.setLogLevel('info'); // default
+Logger.setLogLevel('warn'); // only log warnings
+Logger.setLogLevel('error'); // only log errors
+Logger.setLogLevel('none'); // turn off logging altogether
+```
 ------
 
 ## Official LLM Adapters
