@@ -650,9 +650,7 @@ describe("Chat", () => {
       it('can instantiate ollama', () => {
         const c = Chat.with({
           provider: 'ollama',
-          config: {
-            apiKey: '123'
-          }
+          config: {}
         })
         expect(c).toBeDefined();
       });

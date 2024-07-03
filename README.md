@@ -29,6 +29,9 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [OpenAI](#openai)
     - [Cohere](#cohere)
     - [OpenAI Assistants](#openai-assistants)
+    - [Azure OpenAI](#azure-openai)
+    - [Azure OpenAI Assistants](#azure-openai-assistants)
+    - [Ollama](#ollama)
   - [Feature Roadmap](#feature-roadmap)
     - [Built-in Providers and Models](#built-in-providers-and-models)
   - [Custom LLM Adapters](#custom-llm-adapters)
@@ -424,8 +427,6 @@ Ragged supports multiple LLM providers out of the box. You can use these provide
 
 ### OpenAI
 
-The OpenAI adapter allows you to interact with the OpenAI API.
-
 ```ts
 const c = Chat.with({
     provider: 'openai',
@@ -437,9 +438,7 @@ await c.chat('What is a rickroll?', { model: 'gpt-4' });
 ### Cohere
 
 > [!WARNING]
-> Cohere is a new provider, and tool calling is not yet functional. The adapter is still in development and may not work as expected. Please use with caution.
-
-The Cohere adapter allows you to interact with the Cohere API. You can use this adapter to chat with the CommandR and Command models.
+> This is a new provider, and tool calling is not yet functional.
 
 ```ts
 const c = Chat.with({
@@ -452,15 +451,75 @@ await c.chat('What is a rickroll?', { model: 'command-nightly' });
 ### OpenAI Assistants
 
 > [!WARNING]
-> OpenAI Assistants is a new provider, and tool calling is not yet functional. The adapter is still in development and may not work as expected. Please use with caution.
+> This is a new provider, and tool calling is not yet functional.
 
-The OpenAI Assistants adapter allows you to interact with the OpenAI Assistants API. You can use this adapter to chat with the GPT-4o, GPT-4T, GPT-4, and GPT-3.5 models.
+The OpenAI Assistants adapter allows you to interact with the OpenAI Assistants API. The adapter creates assistants, threads, messages, and runs under the hood for you. As a result, you get a relatively streamlined experience.
 
 ```ts
 const c = Chat.with({
     provider: 'openai-assistants',
-    config: { apiKey: process.env.OPENAI_ASSISTANTS_API_KEY }
+    config: {
+    apiKey: '123',
+    assistant: {
+        model: 'model',
+        description: 'description',
+        instructions: 'instructions',
+        name: 'name',
+    }
+    }
 });
+await c.chat('What is a rickroll?', { model: 'gpt-4o' });
+```
+
+### Azure OpenAI
+
+> [!WARNING]
+> This is a new provider, and tool calling is not yet functional.
+
+```ts
+const c = Chat.with({
+    provider: 'azure-openai',
+    config: {
+    apiKey: '123',
+    apiVersion: 'v1',
+    resourceName: 'resource',
+    deploymentName: 'deployment'
+    }
+});
+await c.chat('What is a rickroll?', { model: 'gpt-4o' });
+```
+
+### Azure OpenAI Assistants
+
+> [!WARNING]
+> This is a new provider, and tool calling is not yet functional.
+
+The Azure OpenAI Assistants adapter allows you to interact with the OpenAI Assistants API. The adapter creates assistants, threads, messages, and runs under the hood for you. As a result, you get a relatively streamlined experience.
+
+```ts
+const c = Chat.with({
+provider: 'azure-openai-assistants',
+config: {
+    apiKey: '123',
+    apiVersion: 'v1',
+    resourceName: 'resource',
+    deploymentName: 'deployment',
+    modelName: 'model'
+}
+});
+await c.chat('What is a rickroll?', { model: 'gpt-4o' });
+```
+
+### Ollama
+
+> [!WARNING]
+> This is a new provider, and tool calling is not yet functional.
+
+```ts
+const c = Chat.with({
+    provider: 'ollama',
+    config: {}
+})
 await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 ```
 
@@ -494,14 +553,14 @@ The following table lists the providers and models that Ragged Comes with out of
 | OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅    | ✅          | ✅          |
 | OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | ✅    | ❌          | ❌          |
 | Azure OpenAI            | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          |
-| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ❌    | ❌          | ❌          |
+| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          |
 | Together                | Several OSS Models      | ❌    | ❌          | ❌          |
 | Cohere                  | CommandR, Command       | ✅    | ❌          | ❌          |
 | Anthropic               | Claude 2, Claude 3      | ❌    | ❌          | ❌          |
 | Mistral                 | 7B, 8x7B, S, M & L      | ❌    | ❌          | ❌          |
 | Groq                    | Lama2-70B, Mixtral-8x7b | ❌    | ❌          | ❌          |
 | DeepSeek                | Chat and Code           | ❌    | ❌          | ❌          |
-| Ollama                  | All models              | ❌    | ❌          | ❌          |
+| Ollama                  | All models              | ✅    | ❌          | ❌          |
 | Google Gemini           | Gemini: Flash, Pro      | ❌    | ❌          | ❌          |
 | Hugging Face            | OSS Model               | ❌    | ❌          | ❌          |
 
