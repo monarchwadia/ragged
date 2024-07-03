@@ -142,5 +142,20 @@ describe("Embed", () => {
                 expect(loggerWarnSpy).toHaveBeenCalled();
             });
         });
+    });
+
+    describe("with", () => {
+        describe("openai", () => {
+            it("can instantiate", () => {
+                const e = Embed.with({
+                    provider: "openai",
+                    config: {
+                        apiKey: "nope"
+                    }
+                });
+
+                expect(e).toBeDefined();
+            });
+        })
     })
 })
