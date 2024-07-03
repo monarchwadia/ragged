@@ -78,18 +78,238 @@ describe("OpenAiChatAdapter Mappers", () => {
       `);
     });
 
-    it("should correctly map a request with type 'user' to OpenAi format", () => {
-      // Arrange
-      const request: ChatAdapterRequest = {
-        history: [{ type: "user", text: "Hello" }],
-      };
-      const expected: OpenAiChatCompletionRequestBody = {
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: "Hello" }],
-      };
+    describe("User messages", () => {
+      it("should correctly map a request with type 'user' to OpenAi format", () => {
+        // Arrange
+        const request: ChatAdapterRequest = {
+          history: [{ type: "user", text: "Hello" }],
+        };
+        const expected: OpenAiChatCompletionRequestBody = {
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: "Hello" }],
+        };
 
-      const result = mapToOpenAi(request);
-      expect(result).toEqual(expected);
+        const result = mapToOpenAi(request);
+        expect(result).toEqual(expected);
+      });
+
+      it('should correctly map a request with type "user" and an image to OpenAi format', () => {
+        // Arrange
+        const request: ChatAdapterRequest = {
+          history: [
+            {
+              type: "user",
+              text: "Hello",
+              attachments: [
+                {
+                  type: "image",
+                  payload: {
+                    data: "/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTExMWFhUXGBgYGBgYGBgYGBgYGBgYFxgYFxgYHSggGBolHRgXITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGhAQGy0lHyUt",
+                    encoding: "data_url",
+                    filetype: "jpeg",
+                  }
+                }
+              ]
+            },
+          ],
+        };
+        const expected: OpenAiChatCompletionRequestBody = {
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  text: "Hello",
+                  type: "text",
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTExMWFhUXGBgYGBgYGBgYGBgYGBgYFxgYFxgYHSggGBolHRgXITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGhAQGy0lHyUt",
+                  },
+                },
+              ],
+              tool_calls: undefined
+            },
+          ],
+        };
+
+        const result = mapToOpenAi(request);
+        expect(result).toEqual(expected);
+      });
+
+      it('should correctly map a request with type "user" and multiple images to OpenAi format', () => {
+        // Arrange
+        const request: ChatAdapterRequest = {
+          history: [
+            {
+              type: "user",
+              text: "Hello",
+              attachments: [
+                {
+                  type: "image",
+                  payload: {
+                    data: "foo",
+                    encoding: "data_url",
+                    filetype: "jpeg",
+                  },
+                },
+                {
+                  type: "image",
+                  payload: {
+                    data: "bar",
+                    encoding: "data_url",
+                    filetype: "png",
+                  }
+                }
+              ]
+            },
+          ],
+        };
+        const expected: OpenAiChatCompletionRequestBody = {
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  text: "Hello",
+                  type: "text",
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: "data:image/jpeg;base64,foo",
+                  },
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: "data:image/png;base64,bar",
+                  },
+                },
+              ],
+              tool_calls: undefined
+            },
+          ],
+        };
+
+        const result = mapToOpenAi(request);
+        expect(result).toEqual(expected);
+      });
+
+      it('should correctly map a request with an empty array of attachments', () => {
+        // Arrange
+        const request: ChatAdapterRequest = {
+          history: [
+            {
+              type: "user",
+              text: "Hello",
+              attachments: []
+            },
+          ],
+        };
+        const expected: OpenAiChatCompletionRequestBody = {
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "user",
+              content: "Hello",
+              tool_calls: undefined
+            },
+          ],
+        };
+
+        const result = mapToOpenAi(request);
+        expect(result).toEqual(expected);
+      });
+
+      it('should skip any badly formatted attachments', () => {
+        // Arrange
+        const request: ChatAdapterRequest = {
+          history: [
+            {
+              type: "user",
+              text: "Hello",
+              attachments: [
+                {
+                  // @ts-expect-error - testing an error case
+                  type: "bad type",
+                }
+              ]
+            },
+          ],
+        };
+        const expected: OpenAiChatCompletionRequestBody = {
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: "Hello"
+                }
+              ],
+              tool_calls: undefined
+            },
+          ],
+        };
+
+        const result = mapToOpenAi(request);
+        expect(result).toEqual(expected);
+      });
+
+      it('should skip any badly formatted attachments but keep good ones', () => {
+        // Arrange
+        const request: ChatAdapterRequest = {
+          history: [
+            {
+              type: "user",
+              text: "Hello",
+              attachments: [
+                {
+                  // @ts-expect-error - testing an error case
+                  type: "bad type",
+                },
+                {
+                  type: "image",
+                  payload: {
+                    data: "foo",
+                    encoding: "data_url",
+                    filetype: "jpeg",
+                  }
+                }
+              ]
+            },
+          ],
+        };
+        const expected: OpenAiChatCompletionRequestBody = {
+          model: "gpt-3.5-turbo",
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: "Hello"
+                },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: "data:image/jpeg;base64,foo",
+                  },
+                },
+              ],
+              tool_calls: undefined
+            },
+          ],
+        };
+
+        const result = mapToOpenAi(request);
+        expect(result).toEqual(expected);
+      });
     });
 
     it("should correctly map a request with type 'bot' to OpenAi format", () => {

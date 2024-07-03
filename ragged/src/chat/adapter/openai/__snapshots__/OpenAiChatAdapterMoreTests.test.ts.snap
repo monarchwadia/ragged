@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OpenAiChatDriver should perform a chat completion 1`] = `
+{
+  "history": [
+    {
+      "text": "I am a chatbot, a computer program designed to simulate conversation with human users. How can I assist you today?",
+      "type": "bot",
+    },
+  ],
+}
+`;

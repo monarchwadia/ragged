@@ -17,10 +17,53 @@ export const mapToOpenAi = (request: ChatAdapterRequest): OpenAiChatCompletionRe
 
             switch (message.type) {
                 case "user":
-                    messages.push({
-                        role: "user",
-                        content: message.text
-                    });
+                    if (message.attachments?.length) {
+                        const content: OpenAiChatCompletionRequestBody["messages"][0]["content"] = [];
+
+                        if (message.text) {
+                            content.push({
+                                type: "text",
+                                text: message.text
+                            });
+                        }
+
+                        message.attachments.forEach(attachment => {
+                            switch(attachment.type) {
+                                case "image":
+                                    let dataUrl: string;
+
+                                    switch(attachment.payload.encoding) {
+                                        case "data_url":
+                                            dataUrl = `data:image/${attachment.payload.filetype};base64,${attachment.payload.data}`;
+                                            break;
+                                        default:
+                                            logger.warn(`Unknown and unhandled attachment encoding: ${attachment.payload.encoding}. This will not get sent to OpenAI. Here is the full attachment: `, attachment);
+                                            return;
+                                    }
+
+                                    content.push({
+                                        type: "image_url",
+                                        image_url: {
+                                            url: dataUrl
+                                        }
+                                    });
+                                    break;
+                                default:
+                                    logger.warn(`Unknown and unhandled attachment type: ${attachment.type}. This will not get sent to OpenAI. Here is the full attachment: `, attachment);
+                                    break;
+                            }
+                        })
+
+                        messages.push({
+                            role: "user",
+                            content
+                        });
+                    } else {
+                        messages.push({
+                            role: "user",
+                            content: message.text
+                        });
+                    }
                     break
                 case "bot": {
 

@@ -9,7 +9,6 @@ describe("OpenAiChatAdapter", () => {
   let spy: jest.SpyInstance;
 
   describe("integration", () => {
-
     beforeEach(() => {
       apiClient = new ApiClient();
       spy = jest.spyOn(apiClient, "post");
@@ -103,7 +102,47 @@ describe("OpenAiChatAdapter", () => {
         }
       `);
     });
-  })
+
+    describe("multimodal", () => {
+      it.skip("should send requests to the multimodal endpoint", async () => {
+        const polly = startPollyRecording(
+          "OpenAiChatAdapter > multimodal > should send requests to the multimodal endpoint"
+        );
+
+        const response = await adapter.chat({
+          history: [
+            {
+              type: "user",
+              text: "What does this image contain?",
+              attachments: [
+                {
+                  type: "image",
+                  payload: {
+                    data: "234ewag9sdghuibhk",
+                    encoding: "data_url",
+                    filetype: "png",
+                  },
+                },
+              ],
+            },
+          ],
+        });
+
+        await polly.stop();
+
+        expect(response).toMatchInlineSnapshot(`
+          {
+            "history": [
+              {
+                "text": "I'm sorry, but I am an AI assistant and I do not have the capability to browse the internet in real-time or access the latest news. You can use your preferred news website or app to stay updated on the latest news. Let me know if you need help with anything else.",
+                "type": "bot",
+              },
+            ],
+          }
+        `);
+      });
+    });
+  });
 
   describe("behaviour", () => {
     beforeEach(() => {
@@ -119,7 +158,6 @@ describe("OpenAiChatAdapter", () => {
     });
 
     it("should do API calls as expected", async () => {
-
       try {
         await adapter.chat({
           history: [
@@ -145,7 +183,7 @@ describe("OpenAiChatAdapter", () => {
               },
             ],
             model: "gpt-3.5-turbo",
-            tools: undefined
+            tools: undefined,
           },
           headers: {
             "Content-Type": "application/json",
@@ -155,5 +193,5 @@ describe("OpenAiChatAdapter", () => {
         }
       );
     });
-  })
+  });
 });
