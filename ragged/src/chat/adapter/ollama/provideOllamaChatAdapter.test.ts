@@ -9,8 +9,7 @@ describe("ollamaChatAdapterProvider", () => {
     adapter = provideOllamaChatAdapter({
       config: {
         apiKey: process.env.OLLAMA_API_KEY,
-        model: "llama3",
-        stream: false,
+        model: "llama3"
       },
     });
   });

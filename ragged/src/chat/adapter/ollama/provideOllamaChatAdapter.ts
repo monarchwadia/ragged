@@ -1,5 +1,6 @@
 import { ApiClient } from "../../../support/ApiClient";
-import { OllamaChatAdapter, OllamaChatAdapterConfig } from "./OllamaChatAdapter";
+import { OllamaChatAdapter } from "./OllamaChatAdapter";
+import { OllamaChatAdapterConfig } from "./OllamaChatAdapterTypes";
 
 export type OllamaChatProviderParam = {
   config: OllamaChatAdapterConfig;

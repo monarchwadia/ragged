@@ -15,7 +15,7 @@ describe("OllamaChatMapper", () => {
         ],
       };
 
-      const mappedRequest = OllamaChatMapper.mapChatRequestToOllamaRequest(request, { model: "llama3", stream: false });
+      const mappedRequest = OllamaChatMapper.mapChatRequestToOllamaRequest(request, { model: "llama3" });
 
       expect(mappedRequest).toMatchObject({
         model: "llama3",

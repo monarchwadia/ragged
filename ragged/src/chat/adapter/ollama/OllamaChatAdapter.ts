@@ -1,17 +1,8 @@
 import { ApiClient } from "../../../support/ApiClient";
 import { NotImplementedError } from "../../../support/RaggedErrors";
 import { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
+import { OllamaChatAdapterConfig } from "./OllamaChatAdapterTypes";
 import { OllamaChatMapper } from "./OllamaChatMapper";
-
-export type OllamaChatAdapterConfig = {
-  apiKey?: string;
-  model: string;
-  stream?: boolean;
-  format?: string;
-  options?: Record<string, any>;
-  keep_alive?: string;
-  endpoint?: string;
-}
 
 export class OllamaChatAdapter implements BaseChatAdapter {
   constructor(private apiClient: ApiClient, private config: OllamaChatAdapterConfig) { }

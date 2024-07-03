@@ -13,7 +13,7 @@ import { provideAzureOpenAiChatAdapter } from "./adapter/azure-openai/provideAzu
 import { provideAzureOpenaiAssistantsChatAdapter } from "./adapter/azure-openai-assistants/provideAzureOpenaiAssistantsChatAdapter";
 import { AzureOaiaDaoCommonConfig } from "./adapter/azure-openai-assistants/Dao.types";
 import { provideOllamaChatAdapter } from "./adapter/ollama/provideOllamaChatAdapter";
-import { OllamaChatAdapterConfig } from "./adapter/ollama/OllamaChatAdapter";
+import { OllamaChatAdapterConfig } from "./adapter/ollama/OllamaChatAdapterTypes";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
