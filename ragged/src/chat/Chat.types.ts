@@ -1,8 +1,19 @@
 import { Tool } from "../tools/Tools.types";
 
+export type UserMessageAttachment =
+    | {
+        type: "image",
+        data: {
+            filetype: "png" | "jpg" | "jpeg" | "gif" | "svg" | "webp";
+            encoding: "data_url",
+            data: string;
+        }
+    }
+
 export type UserMessage = {
     type: "user";
     text: string | null;
+    attachments?: UserMessageAttachment[];
 };
 
 export type BotMessage = {

@@ -6,6 +6,7 @@ import {
     BotMessage,
     SystemMessage,
     UserMessage,
+    UserMessageAttachment,
     ErrorMessage,
     ChatConfig,
     Message,
