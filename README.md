@@ -18,6 +18,7 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
     - [Accessing message history](#accessing-message-history)
     - [Setting message history](#setting-message-history)
   - [Freezing History](#freezing-history)
+  - [Image Input, a.k.a. Multimodal](#image-input-aka-multimodal)
   - [Tool Calling](#tool-calling)
     - [Tool Props](#tool-props)
   - [Autonomous Agents](#autonomous-agents)
@@ -170,6 +171,50 @@ const response1 = await c.chat('Remember that my name is "John."');
 
 const response2 = await c.chat('What is my name?');
 // Response: I do not know your name. Please tell me.
+```
+
+## Image Input, a.k.a. Multimodal
+
+Ragged supports multimodal input. This means that you can pass images to the LLM along with text. This is useful for creating more interactive and engaging chat experiences.
+
+Currently we only support base64 encoded images, but will expand this support in the future.
+
+```ts
+// chat with the model
+const messages = await c.chat([
+    {
+        type: "user",
+        text: "What do these images contain? Describe them.",
+        attachments: [
+            {
+                type: "image",
+                payload: {
+                    data: "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVEiJtZZPbBtFFMZ/M7ubXdtdb1xSFyeilBapySVU8h8OoFaooFSqiihIVIpQBKci6KEg9Q6H9kovIHoCIVQJJCKE1ENFjnAgcaSGC6rEnxBwA04Tx43t2FnvDAfjkNibxgHxnWb2e/u992bee7tCa00YFsffekFY+nUzFtjW0LrvjRXrCDIAaPLlW0nHL0SsZtVoaF98mLrx3pdhOqLtYPHChahZcYYO7KvPFxvRl5XPp1sN3adWiD1ZAqD6XYK1b/dvE5IWryTt2udLFedwc1+9kLp+vbbpoDh+6TklxBeAi9TL0taeWpdmZzQDry0AcO+jQ12RyohqqoYoo8RDwJrU+qXkjWtfi8Xxt58BdQuwQs9qC/afLwCw8tnQbqYAPsgxE1S6F3EAIXux2oQFKm0ihMsOF71dHYx+f3NND68ghCu1YIoePPQN1pGRABkJ6Bus96CutRZMydTl+TvuiRW1m3n0eDl0vRPcEysqdXn+jsQPsrHMquGeXEaY4Yk4wxWcY5V/9scqOMOVUFthatyTy8QyqwZ+kDURKoMWxNKr2EeqVKcTNOajqKoBgOE28U4tdQl5p5bwCw7BWquaZSzAPlwjlithJtp3pTImSqQRrb2Z8PHGigD4RZuNX6JYj6wj7O4TFLbCO/Mn/m8R+h6rYSUb3ekokRY6f/YukArN979jcW+V/S8g0eT/N3VN3kTqWbQ428m9/8k0P/1aIhF36PccEl6EhOcAUCrXKZXXWS3XKd2vc/TRBG9O5ELC17MmWubD2nKhUKZa26Ba2+D3P+4/MNCFwg59oWVeYhkzgN/JDR8deKBoD7Y+ljEjGZ0sosXVTvbc6RHirr2reNy1OXd6pJsQ+gqjk8VWFYmHrwBzW/n+uMPFiRwHB2I7ih8ciHFxIkd/3Omk5tCDV1t+2nNu5sxxpDFNx+huNhVT3/zMDz8usXC3ddaHBj1GHj/As08fwTS7Kt1HBTmyN29vdwAw+/wbwLVOJ3uAD1wi/dUH7Qei66PfyuRj4Ik9is+hglfbkbfR3cnZm7chlUWLdwmprtCohX4HUtlOcQjLYCu+fzGJH2QRKvP3UNz8bWk1qMxjGTOMThZ3kvgLI5AzFfo379UAAAAASUVORK5CYII=",
+                    encoding: "base64_data_url",
+                    mimeType: "image/png",
+                },
+            },
+            {
+                type: "image",
+                payload: {
+                    encoding: "base64_data_url",
+                    data: "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAADMElEQVR4nOzVwQnAIBQFQYXff81RUkQCOyDj1YOPnbXWPmeTRef+/3O/OyBjzh3CD95BfqICMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMO0TAAD//2Anhf4QtqobAAAAAElFTkSuQmCC",
+                    mimeType: "image/png",
+                },
+            },
+        ],
+    },
+], {
+    model: "gpt-4o"
+});
+
+// log the messages
+console.log(messages.at(-1)?.text);
+
+// Output:
+// The first image is an emoji of a face with heart-shaped eyes, typically used to express love, adoration, or strong liking for something or someone.
+// The second image is a gradient background that transitions from dark to light colors. The colors include black, brown, orange at the top, and transition through white and blue towards the bottom.
+
 ```
 
 ## Tool Calling
@@ -545,13 +590,12 @@ await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 | In-built Message History           | 🟢 100%     | ❌           |
 | Write your own custom LLM adapters | 🟢 100%     | ❌           |
 | Tool Calling                       | 🟡 30%      | ❌           |
+| Multimodal Input                   | 🟡 30%      | ❌           |
 | Autonomous Agents                  | 🟢 100%     | ❌           |
 | Message History                    | 🟢 100%     | ❌           |
 | Helpful Errors                     | 🟢 100%     | ❌           |
 | Streaming                          | 🔴 0%       | ❌           |
 | Model Fine-Tuning                  | 🔴 0%       | ❌           |
-| File Input                         | 🔴 0%       | ❌           |
-| Multimodal Input                   | 🔴 0%       | ❌           |
 | Multimodal Generation              | 🔴 0%       | ❌           |
 
 \* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
@@ -561,21 +605,21 @@ await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 
 The following table lists the providers and models that Ragged Comes with out of the box. If you want to use a different provider or model, you can create a custom adapter.
 
-| Provider                | Models                  | Chat | Embeddings | Tool Calls |
-| ----------------------- | ----------------------- | ---- | ---------- | ---------- |
-| OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅    | ✅          | ✅          |
-| OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | ✅    | ❌          | ❌          |
-| Azure OpenAI            | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          |
-| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          |
-| Together                | Several OSS Models      | ❌    | ❌          | ❌          |
-| Cohere                  | CommandR, Command       | ✅    | ❌          | ❌          |
-| Anthropic               | Claude 2, Claude 3      | ❌    | ❌          | ❌          |
-| Mistral                 | 7B, 8x7B, S, M & L      | ❌    | ❌          | ❌          |
-| Groq                    | Lama2-70B, Mixtral-8x7b | ❌    | ❌          | ❌          |
-| DeepSeek                | Chat and Code           | ❌    | ❌          | ❌          |
-| Ollama                  | All models              | ✅    | ❌          | ❌          |
-| Google Gemini           | Gemini: Flash, Pro      | ❌    | ❌          | ❌          |
-| Hugging Face            | OSS Model               | ❌    | ❌          | ❌          |
+| Provider                | Models                  | Chat | Embeddings | Tool Calls | Multimodal |
+| ----------------------- | ----------------------- | ---- | ---------- | ---------- | ---------- |
+| OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅    | ✅          | ✅          | ✅          |
+| OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | ✅    | ❌          | ❌          | ❌          |
+| Azure OpenAI            | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          | ❌          |
+| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          | ❌          |
+| Together                | Several OSS Models      | ❌    | ❌          | ❌          | ❌          |
+| Cohere                  | CommandR, Command       | ✅    | ❌          | ❌          | ❌          |
+| Anthropic               | Claude 2, Claude 3      | ❌    | ❌          | ❌          | ❌          |
+| Mistral                 | 7B, 8x7B, S, M & L      | ❌    | ❌          | ❌          | ❌          |
+| Groq                    | Lama2-70B, Mixtral-8x7b | ❌    | ❌          | ❌          | ❌          |
+| DeepSeek                | Chat and Code           | ❌    | ❌          | ❌          | ❌          |
+| Ollama                  | All models              | ✅    | ❌          | ❌          | ❌          |
+| Google Gemini           | Gemini: Flash, Pro      | ❌    | ❌          | ❌          | ❌          |
+| Hugging Face            | OSS Model               | ❌    | ❌          | ❌          | ❌          |
 
 
 ## Custom LLM Adapters
