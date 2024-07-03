@@ -9,7 +9,10 @@ import { Chat, ChatTypes } from "ragged"
 type Tool = ChatTypes['Tool']
 
 // Instantiate the Chat object with the OpenAI provider
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+const c = Chat.with({
+    provider: "openai",
+    config: { apiKey: process.env.OPENAI_API_KEY }
+});
 
 // Perform the query with the tool
 const response = await c.chat("Fetch and display the contents of https://feeds.bbci.co.uk/news/world/rss.xml", {

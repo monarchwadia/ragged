@@ -9,7 +9,10 @@ config();
 import { Chat, ChatTypes } from "ragged"
 type Tool = ChatTypes['Tool']
 
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+const c = Chat.with({
+    provider: "openai",
+    config: { apiKey: process.env.OPENAI_API_KEY }
+});
 c.record(true);
 c.maxIterations = 10;
 

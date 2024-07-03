@@ -2,13 +2,14 @@ import { config } from "dotenv";
 config();
 import { program } from "commander";
 import fs from "fs";
-import { Chat } from "ragged/chat";
+import { Chat } from "ragged";
 
 const OUTPUT_DIR = "./.output";
 
-const c = Chat.with("openai", {
-    apiKey: process.env.OPENAI_API_KEY
-})
+const c = Chat.with({
+    provider: "openai",
+    config: { apiKey: process.env.OPENAI_API_KEY }
+});
 
 // first ask the user for the prefix name of the types. For example, OpenAi. also ask for the filepath to the input dir.
 

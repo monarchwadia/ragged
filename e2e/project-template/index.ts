@@ -1,5 +1,8 @@
 import { Chat } from "ragged";
 import { Embed } from "ragged";
 
-console.log(Chat.with("openai", { apiKey: "nope" }));
+console.log(Chat.with({
+    provider: "openai",
+    config: { apiKey: "nope" }
+}))
 console.log(Embed.with("openai", { apiKey: "nope" }));

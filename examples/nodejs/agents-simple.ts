@@ -22,7 +22,10 @@ import { Chat } from "ragged"
 
 // Define the main function
 async function main() {
-    const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+    const c = Chat.with({
+        provider: "openai",
+        config: { apiKey: process.env.OPENAI_API_KEY }
+    });
     c.record(false);
 
     // Start with the initial state

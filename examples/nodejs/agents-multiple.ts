@@ -98,7 +98,10 @@ const shouldImprove = async (tweet: TweetHolder): Promise<void> => {
     It should be inspiring and not contain any discouraging or disheartening statements.
 `;
 
-    const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+    const c = Chat.with({
+        provider: "openai",
+        config: { apiKey: process.env.OPENAI_API_KEY }
+    });
     c.record(false);
 
     const tool: Tool = {
@@ -187,7 +190,10 @@ const shouldImprove = async (tweet: TweetHolder): Promise<void> => {
  * @returns  The generated tweet.
  */
 const writeTweet = async (): Promise<string> => {
-    const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+    const c = Chat.with({
+        provider: "openai",
+        config: { apiKey: process.env.OPENAI_API_KEY }
+    });
     c.record(false);
 
     const result = await c.chat(`Write a tweet about climate change.`);
@@ -209,7 +215,10 @@ const writeTweet = async (): Promise<string> => {
  * @returns 
  */
 const rewriteTweet = async (tweet: TweetHolder): Promise<string> => {
-    const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+    const c = Chat.with({
+        provider: "openai",
+        config: { apiKey: process.env.OPENAI_API_KEY }
+    });
     c.record(false);
 
     const result = await c.chat(`

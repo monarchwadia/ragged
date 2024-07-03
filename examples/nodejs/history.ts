@@ -2,7 +2,10 @@ import { config } from 'dotenv';
 config();
 
 import { Chat } from "ragged"
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+const c = Chat.with({
+    provider: "openai",
+    config: { apiKey: process.env.OPENAI_API_KEY }
+});
 
 // By default, recording is already turned on
 // Doing this line just to demonstrate the API
