@@ -10,6 +10,7 @@ export type OllamaChatAdapterConfig = {
   format?: string;
   options?: Record<string, any>;
   keep_alive?: string;
+  endpoint?: string;
 }
 
 export class OllamaChatAdapter implements BaseChatAdapter {
@@ -20,7 +21,7 @@ export class OllamaChatAdapter implements BaseChatAdapter {
       throw new NotImplementedError("Not implemented. Currently, Ragged does not support tools in Ollama requests.");
     }
     const ollamaRequest = OllamaChatMapper.mapChatRequestToOllamaRequest(request, this.config);
-    const response = await this.apiClient.post('http://localhost:11434/api/chat', {
+    const response = await this.apiClient.post(this.config.endpoint ?? 'http://localhost:11434/api/chat', {
       body: ollamaRequest,
       headers: {
         'accept': 'application/json',
