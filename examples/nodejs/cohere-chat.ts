@@ -6,7 +6,11 @@ import { config } from 'dotenv';
 config();
 import { Chat } from "ragged"
 
-const c = Chat.with('cohere', { apiKey: process.env.COHERE_API_KEY, model: 'command-light' });
+const c = Chat.with({
+    provider: "cohere",
+    config: { apiKey: process.env.COHERE_API_KEY, model: 'command-light' }
+});
+
 
 const messages = await c.chat('What is a rickroll?');
 

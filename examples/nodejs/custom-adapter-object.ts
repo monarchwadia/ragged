@@ -3,8 +3,6 @@
  */
 
 import { Chat } from "ragged"
-// import type { BaseChatAdapter, ChatRequest, ChatResponse } from "ragged/chat/adapter"
-
 import type { ChatAdapterTypes } from "ragged";
 
 type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];

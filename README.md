@@ -71,7 +71,10 @@ Ragged is very easy to use. Here is a complete application that shows chat compl
 import { Chat } from "ragged"
 
 // create a new Chat instance with the OpenAI provider
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+const c = Chat.with({
+    provider: 'openai',
+    config: { apiKey: process.env.OPENAI_API_KEY }
+});
 
 // chat with the model
 const messages = await c.chat('What is a rickroll?');
@@ -226,10 +229,13 @@ const getHomepageTool: ChatTypes['Tool'] = {
     }
 }
 
-const c = Chat.with('openai', {
-    apiKey: process.env.OPENAI_API_KEY,
-    // You can also pass the organization ID here.
-    organizationId: process.env.OPENAI_ORGANIZATION_ID
+const c = Chat.with({
+    provider: 'openai',
+    config: {
+        apiKey: process.env.OPENAI_API_KEY 
+        // You can also pass the organization ID here.
+        organizationId: process.env.OPENAI_ORGANIZATION_ID
+    }
 });
 
 const response = await c.chat("Get the contents of my homepage.", {
@@ -330,7 +336,10 @@ import { Chat } from "ragged"
 
 // Define the main function
 async function main() {
-    const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+    const c = Chat.with({
+        provider: 'openai',
+        config: { apiKey: process.env.OPENAI_API_KEY }
+    });
     c.record(false);
 
     // Start with the initial state
@@ -418,7 +427,10 @@ Ragged supports multiple LLM providers out of the box. You can use these provide
 The OpenAI adapter allows you to interact with the OpenAI API.
 
 ```ts
-const c = Chat.with('openai', { apiKey: process.env.OPENAI_API_KEY });
+const c = Chat.with({
+    provider: 'openai',
+    config: { apiKey: process.env.OPENAI_API_KEY }
+});
 await c.chat('What is a rickroll?', { model: 'gpt-4' });
 ```
 
@@ -430,7 +442,10 @@ await c.chat('What is a rickroll?', { model: 'gpt-4' });
 The Cohere adapter allows you to interact with the Cohere API. You can use this adapter to chat with the CommandR and Command models.
 
 ```ts
-const c = Chat.with('cohere', { apiKey: process.env.COHERE_API_KEY });
+const c = Chat.with({
+    provider: 'cohere',
+    config: { apiKey: process.env.COHERE_API_KEY }
+});
 await c.chat('What is a rickroll?', { model: 'command-nightly' });
 ```
 
@@ -442,7 +457,10 @@ await c.chat('What is a rickroll?', { model: 'command-nightly' });
 The OpenAI Assistants adapter allows you to interact with the OpenAI Assistants API. You can use this adapter to chat with the GPT-4o, GPT-4T, GPT-4, and GPT-3.5 models.
 
 ```ts
-const c = Chat.with('openai-assistants', { apiKey: process.env.OPENAI_ASSISTANTS_API_KEY });
+const c = Chat.with({
+    provider: 'openai-assistants',
+    config: { apiKey: process.env.OPENAI_ASSISTANTS_API_KEY }
+});
 await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 ```
 

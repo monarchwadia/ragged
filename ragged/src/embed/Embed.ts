@@ -2,22 +2,28 @@ import { ParameterValidationError } from "../support/RaggedErrors";
 import { Logger } from "../support/logger/Logger";
 import type { EmbedRequest, EmbedResponse } from "./Embed.types";
 import type { BaseEmbeddingAdapter } from "./adapter/BaseEmbeddingAdapter.types";
-import { OpenaiEmbeddingAdapterConstructorParams } from "./adapter/openai/OpenaiEmbeddingAdapter";
 import { provideOpenaiEmbeddingAdapter } from "./adapter/openai/provideOpenaiEmbeddingAdapter";
+
+export type EmbedWithConfig = {
+    provider: "openai";
+    config: {
+        apiKey: string;
+        apiClient?: any;
+    }
+}
 
 export class Embed {
     private static logger = new Logger('Embed');
 
     constructor(private adapter: BaseEmbeddingAdapter) { }
 
-    static with(provider: "openai", config: Partial<OpenaiEmbeddingAdapterConstructorParams>): Embed;
-    static with(provider: string, config: any = {}) {
+    static with({ provider, config }: EmbedWithConfig): Embed {
         let adapter: BaseEmbeddingAdapter;
 
         switch (provider) {
             case "openai":
                 adapter = provideOpenaiEmbeddingAdapter({
-                    apiKey: config.apiKey || "",
+                    apiKey: config.apiKey,
                     apiClient: config.apiClient
                 });
                 break;

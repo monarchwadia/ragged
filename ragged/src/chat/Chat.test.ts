@@ -470,9 +470,12 @@ describe("Chat", () => {
     });
 
     it("can list files in a directory using tool calls", async () => {
-      const c = Chat.with("openai", {
-        apiKey: process.env.OPENAI_API_KEY
-      });
+      const c = Chat.with({
+        provider: 'openai',
+        config: {
+          apiKey: process.env.OPENAI_API_KEY
+        }
+      })
 
       const lsTool: Tool = {
         id: "ls",
@@ -624,45 +627,75 @@ describe("Chat", () => {
   describe('Chat.with', () => {
     describe('instantiation', () => {
       it('can instantiate openai', () => {
-        const c = Chat.with('openai', { apiKey: '123' });
+        const c = Chat.with({
+          provider: 'openai',
+          config: {
+            apiKey: '123'
+          }
+        });
         expect(c).toBeDefined();
       })
 
       it('can instantiate cohere', () => {
-        const c = Chat.with('cohere', { apiKey: '123' });
+        const c = Chat.with({
+          provider: 'cohere',
+          config: {
+            apiKey: '123'
+          }
+        });
+
         expect(c).toBeDefined();
       })
 
-      it('can instantiate azure-openai', () => {
-        const c = Chat.with('azure-openai', {
-          apiKey: '123',
-          apiVersion: 'v1',
-          resourceName: 'resource',
-          deploymentName: 'deployment'
-        });
+      it('can instantiate ollama', () => {
+        const c = Chat.with({
+          provider: 'ollama',
+          config: {
+            apiKey: '123'
+          }
+        })
+        expect(c).toBeDefined();
       });
 
-      it('can instantiate openai-assistants', () => {
-        const c = Chat.with('openai-assistants', {
-          apiKey: '123',
-          assistant: {
-            model: 'model',
-            description: 'description',
-            instructions: 'instructions',
-            name: 'name',
+      it('can instantiate azure-openai', () => {
+        const c = Chat.with({
+          provider: 'azure-openai',
+          config: {
+            apiKey: '123',
+            apiVersion: 'v1',
+            resourceName: 'resource',
+            deploymentName: 'deployment'
           }
         });
       });
 
-      it('can instantiate azure-openai-assistants', () => {
-        const c = Chat.with('azure-openai-assistants', {
+      it('can instantiate openai-assistants', () => {
+        const c = Chat.with({
+          provider: 'openai-assistants',
+          config: {
+            apiKey: '123',
+            assistant: {
+              model: 'model',
+              description: 'description',
+              instructions: 'instructions',
+              name: 'name',
+            }
+          }
+        });
+      });
+    });
+
+    it('can instantiate azure-openai-assistants', () => {
+      const c = Chat.with({
+        provider: 'azure-openai-assistants',
+        config: {
           apiKey: '123',
           apiVersion: 'v1',
           resourceName: 'resource',
           deploymentName: 'deployment',
           modelName: 'model'
-        });
-      })
-    });
+        }
+      });
+    })
   })
-});
+})

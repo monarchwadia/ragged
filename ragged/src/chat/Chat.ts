@@ -12,12 +12,23 @@ import { AzureOpenAiChatAdapterConfig } from "./adapter/azure-openai/AzureOpenAi
 import { provideAzureOpenAiChatAdapter } from "./adapter/azure-openai/provideAzureOpenaiChatAdapter";
 import { provideAzureOpenaiAssistantsChatAdapter } from "./adapter/azure-openai-assistants/provideAzureOpenaiAssistantsChatAdapter";
 import { AzureOaiaDaoCommonConfig } from "./adapter/azure-openai-assistants/Dao.types";
+import { provideOllamaChatAdapter } from "./adapter/ollama/provideOllamaChatAdapter";
+import { OllamaChatAdapterConfig } from "./adapter/ollama/OllamaChatAdapter";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
     request: ToolRequest | null,
     response: ToolResponse | null
 }>;
+
+export type ChatWithConfig =
+    | { provider: "openai-assistants", config: OpenaiAssistantsChatAdapterConfig }
+    | { provider: "ollama", config: OllamaChatAdapterConfig }
+    | { provider: "openai", config: OpenAiChatAdapterConfig }
+    | { provider: "cohere", config: CohereChatAdapterConfig }
+    | { provider: "azure-openai", config: AzureOpenAiChatAdapterConfig }
+    | { provider: "azure-openai-assistants", config: AzureOaiaDaoCommonConfig }
+    | { provider: string, config: any };
 
 export class Chat {
     private static logger = new Logger("Chat");
@@ -49,12 +60,7 @@ export class Chat {
         return this._isRecording;
     }
 
-    static with(provider: "openai-assistants", config: OpenaiAssistantsChatAdapterConfig): Chat;
-    static with(provider: "openai", config: OpenAiChatAdapterConfig): Chat;
-    static with(provider: "cohere", config: CohereChatAdapterConfig): Chat;
-    static with(provider: "azure-openai", config: AzureOpenAiChatAdapterConfig): Chat;
-    static with(provider: "azure-openai-assistants", config: AzureOaiaDaoCommonConfig): Chat;
-    static with(provider: string, config: any = {}) {
+    static with({ provider, config }: ChatWithConfig) {
         let adapter: BaseChatAdapter;
 
         switch (provider) {
@@ -63,6 +69,9 @@ export class Chat {
                 break;
             case "cohere":
                 adapter = provideCohereChatAdapter({ config });
+                break;
+            case "ollama":
+                adapter = provideOllamaChatAdapter({ config });
                 break;
             case "openai-assistants":
                 adapter = provideOpenaiAssistantsChatAdapter({ config });
