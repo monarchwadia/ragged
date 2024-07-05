@@ -1,3 +1,4 @@
 {
-    "jest.runMode": "on-save"
+    "jest.runMode": "on-save",
+    "git.openRepositoryInParentFolders": "always"
 }
