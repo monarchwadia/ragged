@@ -46,18 +46,16 @@ export class OllamaChatMapper {
     };
   }
 
-  static mapOllamaResponseToChatResponse(response: OllamaChatResponseRoot): ChatAdapterResponse {
+  static mapOllamaResponseToChatResponse(response: OllamaChatResponseRoot): Message[] {
     if (!response.message.content) {
       OllamaChatMapper.logger.warn("No 'content' field was received in response from Ollama. This is unexpected, and may indicate an error in Ragged's logic.");
     }
 
-    return {
-      history: [
-        {
-          type: roleMapOllamaRagged[response.message.role],
-          text: response.message.content
-        }
-      ]
-    };
+    return [
+      {
+        type: roleMapOllamaRagged[response.message.role],
+        text: response.message.content
+      }
+    ]
   }
 }

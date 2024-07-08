@@ -20,6 +20,12 @@ export class OllamaChatAdapter implements BaseChatAdapter {
         'Authorization': `Bearer ${this.config.apiKey}`
       }
     });
-    return OllamaChatMapper.mapOllamaResponseToChatResponse(response);
+
+    const history = OllamaChatMapper.mapOllamaResponseToChatResponse(response.json);
+
+    return {
+      history,
+      raw: response.raw
+    };
   }
 }

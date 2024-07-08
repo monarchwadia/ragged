@@ -1,4 +1,5 @@
 import { ApiClient } from "../../../support/ApiClient";
+import { fakeRawsFactory } from "../../../test/fakeFactories";
 import { OllamaChatAdapter } from "./OllamaChatAdapter";
 import { mockDeep } from "jest-mock-extended"
 
@@ -10,9 +11,12 @@ describe("OllamaChatAdapter", () => {
         };
         const apiClient = mockDeep<ApiClient>();
         apiClient.post.mockResolvedValue({
-            message: {
-                content: "Hello"
-            }
+            json: {
+                message: {
+                    content: "Hello"
+                }
+            },
+            raw: fakeRawsFactory()
         });
         const adapter = new OllamaChatAdapter(apiClient, config);
         adapter.chat({
@@ -34,9 +38,12 @@ describe("OllamaChatAdapter", () => {
         };
         const apiClient = mockDeep<ApiClient>();
         apiClient.post.mockResolvedValue({
-            message: {
-                content: "Hello"
-            }
+            json: {
+                message: {
+                    content: "Hello"
+                }
+            },
+            raw: fakeRawsFactory()
         });
         const adapter = new OllamaChatAdapter(apiClient, config);
         adapter.chat({

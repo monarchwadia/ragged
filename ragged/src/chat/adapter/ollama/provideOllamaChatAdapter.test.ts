@@ -31,16 +31,17 @@ describe("ollamaChatAdapterProvider", () => {
 
     await polly.stop();
 
-    expect(response).toMatchInlineSnapshot(`
-      {
-        "history": [
+    expect(response.history).toMatchInlineSnapshot(`
+        [
           {
             "text": "Hello",
             "type": "bot",
           },
-        ],
-      }
+        ]
     `);
+
+    expect(response.raw.request).toBeInstanceOf(Request);
+    expect(response.raw.response).toBeInstanceOf(Response);
   }, 15000);
 
   it("successfully does complex requests", async () => {
@@ -72,15 +73,15 @@ describe("ollamaChatAdapterProvider", () => {
 
     await polly.stop();
 
-    expect(response).toMatchInlineSnapshot(`
-      {
-        "history": [
+    expect(response.history).toMatchInlineSnapshot(`
+        [
           {
             "text": "Hello",
             "type": "bot",
           },
-        ],
-      }
+        ]
     `);
+    expect(response.raw.request).toBeInstanceOf(Request);
+    expect(response.raw.response).toBeInstanceOf(Response);
   }, 15000);
 });

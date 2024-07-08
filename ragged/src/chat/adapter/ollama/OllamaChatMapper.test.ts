@@ -107,14 +107,13 @@ describe("OllamaChatMapper", () => {
 
       const mappedResponse = OllamaChatMapper.mapOllamaResponseToChatResponse(response);
 
-      expect(mappedResponse).toMatchObject({
-        history: [
-          {
-            type: "bot",
-            text: "I am a response"
-          }
-        ]
-      });
+      expect(mappedResponse).toMatchObject([
+        {
+          type: "bot",
+          text: "I am a response"
+        }
+      ]
+      );
     });
   });
 });
