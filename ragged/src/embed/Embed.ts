@@ -16,7 +16,7 @@ export type EmbedWithConfig = {
 export class Embed {
     private static logger = new Logger('Embed');
 
-    constructor(private adapter: BaseEmbeddingAdapter, private apiClient: ApiClient) { }
+    constructor(private adapter: BaseEmbeddingAdapter, private apiClient: ApiClient = new ApiClient()) { }
 
     static with({ provider, config }: EmbedWithConfig): Embed {
         let adapter: BaseEmbeddingAdapter;

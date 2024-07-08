@@ -701,6 +701,7 @@ import type { ChatAdapterTypes } from "ragged"
 const c = new Chat({
     chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
         // Make your API calls here, then return the mapped response.
+        // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };
     }
 });
@@ -720,6 +721,7 @@ import type { ChatAdapterTypes } from "ragged"
 const adapter: ChatAdapterTypes['BaseChatAdapter'] = {
     chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
         // Make your API calls here, then return the mapped response.
+        // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };
     }
 }
@@ -742,6 +744,7 @@ type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
 class ExampleAdapter implements BaseChatAdapter {
     async chat(request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> {
         // Make your API calls here, then return the mapped response.
+        // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };
     }
 }

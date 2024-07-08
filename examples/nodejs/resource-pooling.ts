@@ -45,13 +45,6 @@ export class PoolWrapperAdapter implements BaseChatAdapter {
 }
 
 /**
- * If we wanted, we could implement our own ApiClient as well.
- * The API client is used to make HTTP requests to the AI services.
- * This would be a good place to implement rate limiting, throttling, etc.
- */
-const apiClient = new ApiClient();
-
-/**
  * We can use the `provideCohereChatAdapter` and `provideOpenAiChatAdapter` functions, too.
  * But we are using the constructors directly here for demonstration purposes.
  */
@@ -59,14 +52,14 @@ const cPooled = new Chat(new PoolWrapperAdapter([
     /**
      * An example with Cohere adapter
      */
-    new CohereChatAdapter(apiClient, {
+    new CohereChatAdapter({
         apiKey: process.env.COHERE_API_KEY,
         model: 'command-r'
     }),
     /**
      * An example with OpenAI adapter. In the future, we could use Azure OpenAI as well.
      */
-    new OpenAiChatAdapter(apiClient, {
+    new OpenAiChatAdapter({
         apiKey: process.env.OPENAI_API_KEY,
         /**
          * To use any openai-compatible API, such as over Ollama, we can set the rootUrl here.

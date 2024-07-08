@@ -99,7 +99,7 @@ export class Chat {
         return new Chat(adapter, apiClient);
     }
 
-    constructor(private adapter: BaseChatAdapter, private apiClient: ApiClient) { }
+    constructor(private adapter: BaseChatAdapter, private apiClient: ApiClient = new ApiClient()) { }
 
     // TODO: Need to put tools, model inside options object.. consider also doing cascading options overrides
     async chat(): Promise<ChatResponse>;
