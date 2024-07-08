@@ -47,7 +47,7 @@ describe("OaiaChatAdapter", () => {
         const polly = startPollyRecording("OaiaChatAdapter > can chat", {
             matchRequestsBy: {
                 order: true,
-            }
+            },
         });
 
         const response = await adapter.chat({
@@ -56,16 +56,15 @@ describe("OaiaChatAdapter", () => {
         });
 
         await polly.stop();
-
-        expect(response).toMatchInlineSnapshot(`
-      {
-        "history": [
-          {
-            "text": "Hello! I am an AI assistant, you can call me Assistant. How can I help you today?",
-            "type": "bot",
-          },
-        ],
-      }
+        expect(response.history).toMatchInlineSnapshot(`
+      [
+        {
+          "text": "Hello! I am an AI assistant, you can call me Assistant. How can I help you today?",
+          "type": "bot",
+        },
+      ]
     `);
+        expect(response.raw.request).toBeNull();
+        expect(response.raw.response).toBeNull();
     });
 });
