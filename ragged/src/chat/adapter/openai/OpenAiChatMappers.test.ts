@@ -378,12 +378,8 @@ describe("OpenAiChatAdapter Mappers", () => {
         },
       };
 
-      const expected: ChatAdapterResponse = {
-        history: [],
-      };
-
       const result = mapFromOpenAi(response);
-      expect(result).toEqual(expected);
+      expect(result).toEqual([]);
     });
     it("should map empty response from OpenAi to ChatResponse", () => {
       const response: OpenAiChatCompletionResponseBody = {
@@ -399,12 +395,9 @@ describe("OpenAiChatAdapter Mappers", () => {
           total_tokens: 0,
         },
       };
-      const expected: ChatAdapterResponse = {
-        history: [],
-      };
 
       const result = mapFromOpenAi(response);
-      expect(result).toEqual(expected);
+      expect(result).toEqual([]);
     });
 
     it("should map Tools to a Tools array", () => {
@@ -588,8 +581,7 @@ describe("OpenAiChatAdapter Mappers", () => {
       });
 
       expect(result).toMatchInlineSnapshot(`
-        {
-          "history": [
+          [
             {
               "text": null,
               "toolCalls": [
@@ -604,8 +596,7 @@ describe("OpenAiChatAdapter Mappers", () => {
               ],
               "type": "bot",
             },
-          ],
-        }
+          ]
       `);
     });
 

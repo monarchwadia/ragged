@@ -1,5 +1,5 @@
 import { MappingError } from "../../../support/RaggedErrors";
-import { BotMessage } from "../../Chat.types";
+import { BotMessage, Message } from "../../Chat.types";
 import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "./OpenAiApiTypes";
 import { ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
 import { Logger } from "../../../support/logger/Logger";
@@ -166,14 +166,12 @@ export const mapToOpenAi = (request: ChatAdapterRequest): OpenAiChatCompletionRe
     }
 }
 
-export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatAdapterResponse => {
+export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): Message[] => {
     try {
         const history: ChatAdapterResponse['history'] = [];
 
         if (!response.choices) {
-            return {
-                history
-            }
+            return history;
         }
 
         if (response.choices?.length && response.choices?.length > 1) {
@@ -230,9 +228,7 @@ export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatA
             }
         }
 
-        return {
-            history
-        }
+        return history;
     } catch (e) {
         throw new MappingError("Failed to map OpenAI response to ChatResponse", e);
     }

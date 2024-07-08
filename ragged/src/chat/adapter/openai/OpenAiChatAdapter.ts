@@ -31,13 +31,17 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
 
     async chat(request: ChatAdapterRequest) {
         const mappedRequest = mapToOpenAi(request);
-        const response = await this.chatCompletion(mappedRequest);
-        const mappedResponse = mapFromOpenAi(response);
-        return mappedResponse;
+        const apiResponse = await this.chatCompletion(mappedRequest);
+        const mappedResponse = mapFromOpenAi(apiResponse.json);
+        return {
+            history: mappedResponse,
+            raw: apiResponse.raw
+        
+        };
     }
 
 
-    private async chatCompletion(body: OpenAiChatCompletionRequestBody): Promise<OpenAiChatCompletionResponseBody> {
+    private async chatCompletion(body: OpenAiChatCompletionRequestBody) {
         const headers: HeadersInit = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.apiKey}`

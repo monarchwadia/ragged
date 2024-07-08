@@ -17,10 +17,20 @@ describe("OpenAiChatDriver", () => {
     driver = new OpenAiChatDriver(apiClient, config);
   });
 
-  afterEach(() => { jest.clearAllMocks() });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("should pass the body directly into the apiclient", () => {
-    const spy = jest.spyOn(apiClient, "post").mockImplementation(() => Promise.resolve(new Response(objToReadableStream("{}"))));
+    const spy = jest.spyOn(apiClient, "post").mockImplementation(() =>
+      Promise.resolve({
+        json: {},
+        raw: {
+          request: new Request("https://not-real.com"),
+          response: new Response(new ReadableStream()),
+        },
+      })
+    );
 
     driver.chat({ model: "gpt-3.5-turbo", history: [] });
 
@@ -31,11 +41,10 @@ describe("OpenAiChatDriver", () => {
           "Content-Type": "application/json",
           Authorization: `Bearer undefined`,
         },
-        body: { "model": "gpt-3.5-turbo", "messages": [], "tools": undefined },
+        body: { model: "gpt-3.5-turbo", messages: [], tools: undefined },
       }
     );
-
-  })
+  });
 
   it("should perform a chat completion", async () => {
     const polly = startPollyRecording(
@@ -50,6 +59,13 @@ describe("OpenAiChatDriver", () => {
     });
     await polly.stop();
 
-    expect(result).toMatchSnapshot();
+    expect(result.history).toMatchInlineSnapshot(`
+      [
+        {
+          "text": "I am a chatbot, a computer program designed to simulate conversation with human users. How can I assist you today?",
+          "type": "bot",
+        },
+      ]
+    `);
   });
 });

@@ -82,25 +82,23 @@ describe("OpenAiChatAdapter", () => {
 
       await polly.stop();
 
-      expect(response).toMatchInlineSnapshot(`
-        {
-          "history": [
-            {
-              "text": null,
-              "toolCalls": [
-                {
-                  "meta": {
-                    "toolRequestId": "call_MhanXUgR5MD6pSGbsWi2D4Of",
-                  },
-                  "props": "{"query":"latest news"}",
-                  "toolName": "todays-news",
-                  "type": "tool.request",
+      expect(response.history).toMatchInlineSnapshot(`
+        [
+          {
+            "text": null,
+            "toolCalls": [
+              {
+                "meta": {
+                  "toolRequestId": "call_MhanXUgR5MD6pSGbsWi2D4Of",
                 },
-              ],
-              "type": "bot",
-            },
-          ],
-        }
+                "props": "{"query":"latest news"}",
+                "toolName": "todays-news",
+                "type": "tool.request",
+              },
+            ],
+            "type": "bot",
+          },
+        ]
       `);
     });
 
@@ -132,15 +130,13 @@ describe("OpenAiChatAdapter", () => {
 
         await polly.stop();
 
-        expect(response).toMatchInlineSnapshot(`
-          {
-            "history": [
+        expect(response.history).toMatchInlineSnapshot(`
+            [
               {
                 "text": "This image contains a widely recognized emoji commonly known as the "Heart Eyes Emoji" or "Smiling Face with Heart-Eyes." The emoji features a yellow face with an open smile and heart-shaped eyes, conveying an expression of love, adoration, or strong affection.",
                 "type": "bot",
               },
-            ],
-          }
+            ]
         `);
       });
 
@@ -179,17 +175,15 @@ describe("OpenAiChatAdapter", () => {
 
         await polly.stop();
 
-        expect(response).toMatchInlineSnapshot(`
-          {
-            "history": [
-              {
-                "text": "The first image is of a smiling face with heart-shaped eyes, which is commonly known as the "heart eyes" emoji. It expresses love, admiration, or strong liking for someone or something.
+        expect(response.history).toMatchInlineSnapshot(`
+          [
+            {
+              "text": "The first image is of a smiling face with heart-shaped eyes, which is commonly known as the "heart eyes" emoji. It expresses love, admiration, or strong liking for someone or something.
 
           The second image is a gradient that transitions from black at the top left to orange at the top right to blue at the bottom left to white at the bottom right. It doesn't depict any specific object but serves as a visually appealing background.",
-                "type": "bot",
-              },
-            ],
-          }
+              "type": "bot",
+            },
+          ]
         `);
       });
     });
