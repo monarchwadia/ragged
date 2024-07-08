@@ -70,6 +70,7 @@ In the following sections, we will show you how to use Ragged to perform many co
   - [Image Input, a.k.a. Multimodal](#image-input-aka-multimodal)
   - [Tool Calling](#tool-calling)
     - [Tool Props](#tool-props)
+    - [Raw request and response objects](#raw-request-and-response-objects)
   - [Autonomous Agents](#autonomous-agents)
     - [What is an agent?](#what-is-an-agent)
     - [How agents work in Ragged](#how-agents-work-in-ragged)
@@ -368,6 +369,17 @@ Here, we define a tool called `fetchTool`. This tool has a `props` object that d
 
 > [!WARNING]
 > It's important to note that the LLM can hallucinate the props object. This means that the LLM can pass props which are not defined in the props object. This is dangerous, as it can lead to unexpected behavior. To prevent this, you should always validate the props object before using it in your tool handler.
+
+### Raw request and response objects
+
+You can get the raw request and response objects from the tool handler by using the `raw` property. This property contains the raw vanillla `Request` and `Response` objects that were sent to and received from the tool handler.
+
+```ts
+const { history, raw } = await c.chat("What is a rickroll?");
+console.log(history.at(-1)?.text); // A rickroll is a prank...
+console.log(raw.requests); // All API requests done during the chat (there can be more than 1 if you are doing tool calling)
+console.log(raw.responses); // All API responses done during the chat (there can be more than 1 if you are doing tool calling)
+```
 
 ## Autonomous Agents
 
