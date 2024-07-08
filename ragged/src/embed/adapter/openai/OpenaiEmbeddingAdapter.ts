@@ -17,7 +17,7 @@ export class OpenaiEmbeddingAdapter implements BaseEmbeddingAdapter {
     constructor(private params: OpenaiEmbeddingAdapterConstructorParams) { }
 
     async embed(request: EmbedRequest): Promise<EmbedResponse> {
-        const response: OpenaiEmbeddingResponse = await this.params.apiClient.post('https://api.openai.com/v1/embeddings', {
+        const response = await this.params.apiClient.post('https://api.openai.com/v1/embeddings', {
             body: {
                 input: request.text,
                 model: request.model || "text-embedding-3-small"
@@ -28,14 +28,16 @@ export class OpenaiEmbeddingAdapter implements BaseEmbeddingAdapter {
             }
         });
 
-        if (response.data.length > 1) {
+        const json: OpenaiEmbeddingResponse = response.json;
+
+        if (json.data.length > 1) {
             OpenaiEmbeddingAdapter.logger.warn('Recived more than one embedding from OpenAI. This is not currently supported. Returning only the first one.');
         }
 
         const responseObj: EmbedResponse = {
-            model: response.model,
+            model: json.model,
             provider: 'openai',
-            embedding: response.data[0].embedding
+            embedding: json.data[0].embedding
         }
 
 
