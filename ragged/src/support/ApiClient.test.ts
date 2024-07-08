@@ -3,36 +3,36 @@ import { FetchRequestFailedError, FetchResponseNotOkError } from "./RaggedErrors
 import { objToReadableStream } from "../test/objectToReadableStream";
 
 describe("ApiClient", () => {
+  let fetchMock = jest.fn(() => Promise.resolve(new Response()));
+  let originalFetch: typeof fetch;
+  beforeEach(() => {
+    // mock global.fetch
+    originalFetch = global.fetch;
+    global.fetch = fetchMock;
+
+    fetchMock.mockImplementation(() =>
+      Promise.resolve(
+        new Response(
+          objToReadableStream({
+            some: "response",
+          })
+        )
+      )
+    );
+  });
+
+  afterEach(() => {
+    // restore global.fetch
+    global.fetch = originalFetch;
+    jest.clearAllMocks();
+  });
+
   describe("post", () => {
-    let fetchMock = jest.fn(() => Promise.resolve(new Response()));
-    let originalFetch: typeof fetch;
-
-    beforeEach(() => {
-      // mock global.fetch
-      originalFetch = global.fetch;
-      global.fetch = fetchMock;
-    });
-
-    afterEach(() => {
-      // restore global.fetch
-      global.fetch = originalFetch;
-    });
-
     describe("POST", () => {
       let json: any;
       let raw: Awaited<ReturnType<ApiClient['post']>>['raw']
 
       beforeEach(async () => {
-        fetchMock.mockImplementationOnce(() =>
-          Promise.resolve(
-            new Response(
-              objToReadableStream({
-                some: "response",
-              })
-            )
-          )
-        );
-
         const returnObj = await new ApiClient().post("https://example.com", {
           body: {
             some: "request",
@@ -41,10 +41,6 @@ describe("ApiClient", () => {
 
         json = returnObj.json;
         raw = returnObj.raw;
-      });
-
-      afterEach(() => {
-        jest.clearAllMocks();
       });
 
       it("should have the right json object", () => {
@@ -143,4 +139,8 @@ describe("ApiClient", () => {
       });
     });
   });
+
+  describe("hooks", () => {
+
+  })
 });

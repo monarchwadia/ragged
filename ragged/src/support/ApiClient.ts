@@ -6,6 +6,10 @@ import { Logger } from "./logger/Logger";
 type ApiClientRequest = {
     headers?: RequestInit["headers"];
     body?: any;
+    hooks?: {
+        beforeRequest?: (request: Request) => void;
+        afterResponse?: (response: Response) => void;
+    }
 }
 
 type ApiClientResponse = {
@@ -32,7 +36,7 @@ export class ApiClient {
         return this.doCall("POST", url, requestInit);
     }
 
-    private formatMessage (request: Request, message: string) {
+    private formatMessage(request: Request, message: string) {
         return `${request.method.toUpperCase()} ${request.url}: ${message}`
     };
 
