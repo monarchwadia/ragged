@@ -1,4 +1,5 @@
 import { MappingError } from "../../../support/RaggedErrors";
+import { Message } from "../../Chat.types";
 import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { CohereChatResponseRoot } from "./CohereApiResponseTypes";
 import { CohereChatMapper } from "./CohereChatMapper";
@@ -6,14 +7,12 @@ import { CohereChatMapper } from "./CohereChatMapper";
 describe("CohereChatMapper", () => {
     describe("mapChatRequestToApiRequest", () => {
         it("should map a single user message to just the message field, and not contain any history field", () => {
-            const request: ChatAdapterRequest = {
-                history: [
-                    {
-                        type: "user",
-                        text: "Hello, how are you?",
-                    },
-                ],
-            };
+            const request: Message[] = [
+                {
+                    type: "user",
+                    text: "Hello, how are you?",
+                },
+            ];
 
             const mappedRequest =
                 CohereChatMapper.mapChatRequestToCohereRequest(request);
@@ -24,22 +23,20 @@ describe("CohereChatMapper", () => {
         });
 
         it("should correctly match user and system messages", () => {
-            const request: ChatAdapterRequest = {
-                history: [
-                    {
-                        type: "system",
-                        text: "I am a system message",
-                    },
-                    {
-                        type: "bot",
-                        text: "I am a bot message",
-                    },
-                    {
-                        type: "user",
-                        text: "Hello, how are you?",
-                    },
-                ],
-            };
+            const request: Message[] = [
+                {
+                    type: "system",
+                    text: "I am a system message",
+                },
+                {
+                    type: "bot",
+                    text: "I am a bot message",
+                },
+                {
+                    type: "user",
+                    text: "Hello, how are you?",
+                },
+            ];
 
             const mappedRequest =
                 CohereChatMapper.mapChatRequestToCohereRequest(request);
@@ -60,18 +57,16 @@ describe("CohereChatMapper", () => {
         });
 
         it("maps error messages to chatbot messages", () => {
-            const request: ChatAdapterRequest = {
-                history: [
-                    {
-                        type: "error",
-                        text: "I am an error message",
-                    },
-                    {
-                        type: "user",
-                        text: "Hello, how are you?",
-                    },
-                ],
-            };
+            const request: Message[] = [
+                {
+                    type: "error",
+                    text: "I am an error message",
+                },
+                {
+                    type: "user",
+                    text: "Hello, how are you?",
+                },
+            ]
 
             const mappedRequest =
                 CohereChatMapper.mapChatRequestToCohereRequest(request);
@@ -88,14 +83,12 @@ describe("CohereChatMapper", () => {
         });
 
         it("throws an error if the last message in history was not a user message", () => {
-            const request: ChatAdapterRequest = {
-                history: [
-                    {
-                        type: "system",
-                        text: "I am a system message",
-                    },
-                ],
-            };
+            const request: Message[] = [
+                {
+                    type: "system",
+                    text: "I am a system message",
+                },
+            ];
 
             expect(() =>
                 CohereChatMapper.mapChatRequestToCohereRequest(request)
@@ -103,14 +96,12 @@ describe("CohereChatMapper", () => {
         });
 
         it("throws an error if the last user message has no text", () => {
-            const request: ChatAdapterRequest = {
-                history: [
-                    {
-                        type: "user",
-                        text: "",
-                    },
-                ],
-            };
+            const request: Message[] = [
+                {
+                    type: "user",
+                    text: "",
+                },
+            ];
 
             expect(() =>
                 CohereChatMapper.mapChatRequestToCohereRequest(request)
@@ -118,14 +109,12 @@ describe("CohereChatMapper", () => {
         });
 
         it("throws an error if the last user message has null text", () => {
-            const request: ChatAdapterRequest = {
-                history: [
-                    {
-                        type: "user",
-                        text: null,
-                    },
-                ],
-            };
+            const request: Message[] = [
+                {
+                    type: "user",
+                    text: null,
+                },
+            ];
 
             expect(() =>
                 CohereChatMapper.mapChatRequestToCohereRequest(request)
@@ -133,9 +122,7 @@ describe("CohereChatMapper", () => {
         });
 
         it("throws an error if no history is provided", () => {
-            const request: ChatAdapterRequest = {
-                history: [],
-            };
+            const request: Message[] = [];
 
             expect(() =>
                 CohereChatMapper.mapChatRequestToCohereRequest(request)
@@ -175,14 +162,12 @@ describe("CohereChatMapper", () => {
                 CohereChatMapper.mapCohereResponseToChatResponse(response);
 
             expect(mappedResponse).toMatchInlineSnapshot(`
-        {
-          "history": [
+          [
             {
               "text": "I am a response",
               "type": "bot",
             },
-          ],
-        }
+          ]
       `);
         });
 
@@ -224,14 +209,12 @@ describe("CohereChatMapper", () => {
             const mappedResponse =
                 CohereChatMapper.mapCohereResponseToChatResponse(response);
 
-            expect(mappedResponse).toMatchObject({
-                history: [
-                    {
-                        type: "bot",
-                        text: "I am a response",
-                    },
-                ],
-            });
+            expect(mappedResponse).toMatchObject([
+                {
+                    type: "bot",
+                    text: "I am a response",
+                },
+            ]);
         });
     });
 });
