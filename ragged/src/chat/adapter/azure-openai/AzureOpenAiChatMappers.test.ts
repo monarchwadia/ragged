@@ -73,14 +73,12 @@ describe("AzureOpenAiChatMappers", () => {
             };
 
             const result = AzureOpenAiChatMappers.mapFromOpenAi(response);
-            expect(result).toEqual({
-                history: [
-                    {
-                        text: "Hello",
-                        type: "bot"
-                    }
-                ]
-            });
+            expect(result).toEqual([
+                {
+                    text: "Hello",
+                    type: "bot"
+                }
+            ]);
         });
     });
 }); 

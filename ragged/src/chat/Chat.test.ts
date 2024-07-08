@@ -53,7 +53,7 @@ describe("Chat", () => {
         raw: fakeRawsFactory()
       });
 
-      const history = await c.chat([
+      const chatResponse = await c.chat([
         {
           type: "system",
           text: "This is a system message",
@@ -64,7 +64,7 @@ describe("Chat", () => {
         },
       ]);
 
-      expect(history).toMatchInlineSnapshot(`
+      expect(chatResponse.history).toMatchInlineSnapshot(`
         [
           {
             "text": "This is a system message",
@@ -92,9 +92,9 @@ describe("Chat", () => {
 
       adapter.chat.mockResolvedValue({ history: expectedOutput, raw: fakeRawsFactory() });
 
-      const history = await c.chat(`This is a test message to the adapter`);
+      const chatResponse = await c.chat(`This is a test message to the adapter`);
 
-      expect(history).toMatchObject([
+      expect(chatResponse.history).toMatchObject([
         {
           type: "user",
           text: `This is a test message to the adapter`,
@@ -108,9 +108,9 @@ describe("Chat", () => {
         const ERROR_MESSAGE = "This is a super specific error message"
         adapter.chat.mockRejectedValue(new Error(ERROR_MESSAGE));
 
-        const history = await c.chat(`This is a test message to the adapter`);
+        const chatResponse = await c.chat(`This is a test message to the adapter`);
 
-        expect(history).toMatchObject([
+        expect(chatResponse.history).toMatchObject([
           {
             type: "user",
             text: `This is a test message to the adapter`,
@@ -125,9 +125,9 @@ describe("Chat", () => {
       it("includes unknown errors in the response", async () => {
         adapter.chat.mockRejectedValue({});
 
-        const history = await c.chat(`This is a test message to the adapter`);
+        const chatResponse = await c.chat(`This is a test message to the adapter`);
 
-        expect(history).toMatchObject([
+        expect(chatResponse.history).toMatchObject([
           {
             type: "user",
             text: `This is a test message to the adapter`,
@@ -140,12 +140,12 @@ describe("Chat", () => {
       });
 
       describe.each([new Error("error"), {}])("The raw response object", (rejectedValue) => {
-        it("should set the raw request and response objects as null", async () => {
+        it("should set the raw request and response objects as empty strings", async () => {
           adapter.chat.mockRejectedValue(rejectedValue);
 
-          const history = await c.chat(`This is a test message to the adapter`);
+          const chatResponse = await c.chat(`This is a test message to the adapter`);
 
-          throw new Error("Not implemented: history.raw should be { null, null }");
+          expect(chatResponse.raw).toMatchObject({ requests: [], responses: [] });
         })
       })
     })
@@ -166,9 +166,9 @@ describe("Chat", () => {
         raw: fakeRawsFactory()
       });
 
-      let messages = await c.chat(`This is a test message to the adapter`);
+      let chatResponse = await c.chat(`This is a test message to the adapter`);
 
-      expect(messages).toMatchObject([
+      expect(chatResponse.history).toMatchObject([
         {
           type: "user",
           text: `This is a test message to the adapter`,
@@ -191,7 +191,7 @@ describe("Chat", () => {
         raw: fakeRawsFactory()
       });
 
-      messages = await c.chat(`This is another test message to the adapter`);
+      chatResponse = await c.chat(`This is another test message to the adapter`);
 
       const expectedValue = [
         {
@@ -212,7 +212,7 @@ describe("Chat", () => {
         },
       ] as Message[];
 
-      expect(messages).toMatchObject(expectedValue);
+      expect(chatResponse.history).toMatchObject(expectedValue);
       expect(c.history).toMatchObject(expectedValue);
     });
 
@@ -230,7 +230,7 @@ describe("Chat", () => {
         raw: fakeRawsFactory()
       });
 
-      const messages = await c.chat([
+      const chatResponse = await c.chat([
         {
           type: "system",
           text: "This message will be appended in the history",
@@ -241,7 +241,7 @@ describe("Chat", () => {
         },
       ]);
 
-      expect(messages).toMatchObject([
+      expect(chatResponse.history).toMatchObject([
         {
           type: "system",
           text: "This message will be appended in the history",
@@ -262,9 +262,9 @@ describe("Chat", () => {
 
       adapter.chat.mockRejectedValue(new Error("This is an error"));
 
-      const history = await c.chat(`This is a test message to the adapter`);
+      const chatResponse = await c.chat(`This is a test message to the adapter`);
 
-      expect(history).toMatchObject([
+      expect(chatResponse.history).toMatchObject([
         {
           type: "user",
           text: `This is a test message to the adapter`,
@@ -281,9 +281,9 @@ describe("Chat", () => {
 
       adapter.chat.mockRejectedValue({});
 
-      const messages = await c.chat(`This is a test message to the adapter`);
+      const chatResponse = await c.chat(`This is a test message to the adapter`);
 
-      expect(messages).toMatchObject([
+      expect(chatResponse.history).toMatchObject([
         {
           type: "user",
           text: `This is a test message to the adapter`,
@@ -316,9 +316,9 @@ describe("Chat", () => {
       c.record(false);
 
       const response3 = await c.chat(`Message 3`);
-      expect(response3).toHaveLength(6);
+      expect(response3.history).toHaveLength(6);
       expect(c.history).toHaveLength(4);
-      expect(response3).toMatchObject([
+      expect(response3.history).toMatchObject([
         {
           type: "user",
           text: `Message 1`,
@@ -346,9 +346,9 @@ describe("Chat", () => {
       ] as Message[]);
 
       const response4 = await c.chat(`Message 4`);
-      expect(response4).toHaveLength(6);
+      expect(response4.history).toHaveLength(6);
       expect(c.history).toHaveLength(4);
-      expect(response4).toMatchObject([
+      expect(response4.history).toMatchObject([
         {
           type: "user",
           text: `Message 1`,
@@ -453,7 +453,7 @@ describe("Chat", () => {
           ],
         });
 
-        expect(response).toMatchInlineSnapshot(`
+        expect(response.history).toMatchInlineSnapshot(`
           [
             {
               "text": "This is a test message to the adapter",
@@ -542,7 +542,7 @@ describe("Chat", () => {
 
       await polly.stop();
 
-      expect(response).toMatchInlineSnapshot(`
+      expect(response.history).toMatchInlineSnapshot(`
         [
           {
             "text": "What are the files in my root dir?",
@@ -632,7 +632,7 @@ describe("Chat", () => {
         raw: fakeRawsFactory()
       });
 
-      const history = await c.chat([
+      const chatResponse = await c.chat([
         {
           type: "user",
           text: "This is a test message to the adapter",
@@ -649,7 +649,7 @@ describe("Chat", () => {
         }
       ]);
 
-      expect(history).toMatchObject([
+      expect(chatResponse.history).toMatchObject([
         {
           type: "user",
           text: "This is a test message to the adapter",

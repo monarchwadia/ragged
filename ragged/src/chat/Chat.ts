@@ -30,6 +30,14 @@ export type ChatWithConfig =
     | { provider: "azure-openai-assistants", config: AzureOaiaDaoCommonConfig }
     | { provider: string, config: any };
 
+export type ChatResponse = {
+    history: Message[];
+    raw: {
+        requests: Request[];
+        responses: Response[];
+    };
+}
+
 export class Chat {
     private static logger = new Logger("Chat");
 
@@ -92,17 +100,20 @@ export class Chat {
     constructor(private adapter: BaseChatAdapter) { }
 
     // TODO: Need to put tools, model inside options object.. consider also doing cascading options overrides
-    async chat(): Promise<Message[]>;
-    async chat(config: ChatConfig): Promise<Message[]>;
-    async chat(userMessage: string): Promise<Message[]>;
-    async chat(userMessage: string, config: ChatConfig): Promise<Message[]>;
-    async chat(messages: Message[]): Promise<Message[]>;
-    async chat(messages: Message[], config: ChatConfig): Promise<Message[]>;
-    async chat(...args: any[]): Promise<Message[]> {
+    async chat(): Promise<ChatResponse>;
+    async chat(config: ChatConfig): Promise<ChatResponse>;
+    async chat(userMessage: string): Promise<ChatResponse>;
+    async chat(userMessage: string, config: ChatConfig): Promise<ChatResponse>;
+    async chat(messages: Message[]): Promise<ChatResponse>;
+    async chat(messages: Message[], config: ChatConfig): Promise<ChatResponse>;
+    async chat(...args: any[]): Promise<ChatResponse> {
         const initializedChatState = this.validatedChatParams(...args);
         let { workingHistory } = initializedChatState;
         const { config } = initializedChatState;
         const { tools, model } = config;
+
+        let rawRequests: Request[] = [];
+        let rawResponses: Response[] = [];
 
         // ======= start of loop =======
 
@@ -126,6 +137,12 @@ export class Chat {
             }
 
             const response: ChatAdapterResponse = await this.performChatRequest(request);
+            if (response.raw.request) {
+                rawRequests.push(response.raw.request);
+            }
+            if (response.raw.response) {
+                rawResponses.push(response.raw.response);
+            }
 
             workingHistory = [...workingHistory, ...response.history];
 
@@ -160,7 +177,13 @@ export class Chat {
             }
         }
 
-        return workingHistory;
+        return {
+            history: workingHistory,
+            raw: {
+                requests: rawRequests,
+                responses: rawResponses
+            }
+        };
     }
 
     private async performChatRequest(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
@@ -176,7 +199,7 @@ export class Chat {
                 raw: {
                     request: null,
                     response: null
-                }   
+                }
             };
         }
     }
