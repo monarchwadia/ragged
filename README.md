@@ -11,13 +11,57 @@ The heart of Ragged is a simple abstraction that allows you to interact with LLM
 
 Ragged is designed to be simple, easy to use, and flexible. It is built with modern JavaScript and TypeScript features, and it is designed to be extensible and customizable. Ragged is a powerful tool for building chat-based applications, bots, and conversational interfaces as well as for use in RAG pipelines and other NLP tasks.
 
+## Installation
+
+Installing Ragged is very easy.
+
+```bash
+# either
+npm install --save-exact ragged
+# or
+pnpm add --save-exact ragged
+# or
+yarn add --exact ragged
+```
+
+That's it. You're ready to go!
+
+## Ragged's Chat Completion Abstraction
+
+Ragged's core Chat Completion abstraction is an easy-to-use `Message` interface.
+
+```ts
+import { ChatTypes } from "ragged";
+
+const history: ChatTypes['Message'][] = [
+    { type: "user", text: "What is a rickroll?" },
+    { type: "bot", text: "A rickroll is a prank..." }
+]
+```
+
+Because this interface is standard, a lot of operations become very easy to perform. For example, you can access the last message in the history using the `.at` method.
+
+```ts
+console.log(history.at(-1)?.text); // A rickroll is a prank...
+```
+
+Or, you can simply modify history by pushing new messages to the array.
+
+```ts
+history.push({ type: "bot", text: "I'm a bot!" });
+```
+
+About 90% of Ragged is built around this simple interface. (The other 10% is for Embeddings, which has its own analog to the `Message` type). This standard interface is the same across all LLM providers, making it easy to switch between providers without changing your code.
+
+In the following sections, we will show you how to use Ragged to perform many complex operations with ease, including chat completion, tool calling, multimodal input, agent creation, and more.
+
 ## Table of Contents 
 
 - [Ragged](#ragged)
   - [What is this?](#what-is-this)
-  - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
-  - [Ragged's LLM API Abstraction](#raggeds-llm-api-abstraction)
+  - [Ragged's Chat Completion Abstraction](#raggeds-chat-completion-abstraction)
+  - [Table of Contents](#table-of-contents)
   - [Simple chat](#simple-chat)
   - [Message History](#message-history)
     - [Accessing message history](#accessing-message-history)
@@ -57,48 +101,6 @@ Ragged is designed to be simple, easy to use, and flexible. It is built with mod
     - [Understanding the folder structure](#understanding-the-folder-structure)
       - [Main folder](#main-folder)
       - [Supporting folders](#supporting-folders)
-
-## Installation
-
-Installing Ragged is very easy.
-
-```bash
-# either
-npm install --save-exact ragged
-# or
-pnpm add --save-exact ragged
-# or
-yarn add --exact ragged
-```
-
-That's it. You're ready to go!
-
-## Ragged's LLM API Abstraction
-
-Ragged's core abstraction is an easy-to-use `Message` interface.
-
-```ts
-const history: Message[] = [
-    { type: "user", text: "What is a rickroll?" },
-    { type: "bot", text: "A rickroll is a prank..." }
-]
-```
-
-This standard interface is the same across all LLM providers, making it easy to switch between providers without changing your code.
-
-Because this interface is standard, a lot of operations become very easy to perform. For example, you can access the last message in the history using the `.at` method.
-
-```ts
-console.log(history.at(-1)?.text); // A rickroll is a prank...
-```
-
-Or, you can simply modify history by pushing new messages to the array.
-
-```ts
-history.push({ type: "bot", text: "I'm a bot!" });
-```
-
-In the following sections, we will show you how to use Ragged to perform many complex operations with ease, including chat completion, tool calling, multimodal input, agent creation, and more.
 
 ## Simple chat
 
