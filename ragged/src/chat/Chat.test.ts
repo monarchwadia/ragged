@@ -1,4 +1,4 @@
-import { Chat } from "./Chat";
+import { Chat, ChatResponse } from "./Chat";
 import { Tool } from "../tools/Tools.types";
 import { Message } from "./Chat.types";
 import { BaseChatAdapter } from "./adapter/BaseChatAdapter.types";
@@ -490,94 +490,105 @@ describe("Chat", () => {
       });
     });
 
-    it("can list files in a directory using tool calls", async () => {
-      const c = Chat.with({
-        provider: 'openai',
-        config: {
-          apiKey: process.env.OPENAI_API_KEY
-        }
-      })
+    describe("list files in a directory using tool calls", () => {
+      let response: ChatResponse;
+      beforeEach(async () => {
+        const c = Chat.with({
+          provider: 'openai',
+          config: {
+            apiKey: process.env.OPENAI_API_KEY
+          }
+        })
 
-      const lsTool: Tool = {
-        id: "ls",
-        description:
-          "List the files in any given directory on the user's local machine.",
-        props: {
-          type: "object",
+        const lsTool: Tool = {
+          id: "ls",
+          description:
+            "List the files in any given directory on the user's local machine.",
           props: {
-            path: {
-              type: "string",
-              description: "The path to the directory to list files from.",
-              required: true,
+            type: "object",
+            props: {
+              path: {
+                type: "string",
+                description: "The path to the directory to list files from.",
+                required: true,
+              },
             },
           },
-        },
-        handler: async (props) => {
-          try {
-            const json = await JSON.parse(props);
-            const path = json.path;
-            const files = ["cool.doc", "cool2.doc", "cool3.doc"];
-            return `The files in the directory ${path} are: ${files.join(
-              "\n"
-            )}`;
-          } catch (e: any) {
-            console.error(e);
-            if (e?.message) {
-              return `An error occurred: ${e.message}`;
-            } else {
-              return `An unknown error occurred.`;
+          handler: async (props) => {
+            try {
+              const json = await JSON.parse(props);
+              const path = json.path;
+              const files = ["cool.doc", "cool2.doc", "cool3.doc"];
+              return `The files in the directory ${path} are: ${files.join(
+                "\n"
+              )}`;
+            } catch (e: any) {
+              console.error(e);
+              if (e?.message) {
+                return `An error occurred: ${e.message}`;
+              } else {
+                return `An unknown error occurred.`;
+              }
             }
-          }
-        },
-      };
-
-      const polly = startPollyRecording(
-        "can-list-files-in-a-directory-using-tool-calls",
-        { matchRequestsBy: { order: true } }
-      );
-      c.maxIterations = 5;
-      const response = await c.chat(`What are the files in my root dir?`, {
-        tools: [lsTool],
-      });
-
-      await polly.stop();
-
-      expect(response.history).toMatchInlineSnapshot(`
-        [
-          {
-            "text": "What are the files in my root dir?",
-            "type": "user",
           },
-          {
-            "text": null,
-            "toolCalls": [
-              {
-                "meta": {
-                  "toolRequestId": "call_QGrPTwIBYpTYdRJWISkx7Njt",
+        };
+
+        const polly = startPollyRecording(
+          "can-list-files-in-a-directory-using-tool-calls",
+          { matchRequestsBy: { order: true } }
+        );
+        c.maxIterations = 5;
+        response = await c.chat(`What are the files in my root dir?`, {
+          tools: [lsTool],
+        });
+
+        await polly.stop();
+      })
+      it("should return the expected response", () => {
+
+        expect(response.history).toMatchInlineSnapshot(`
+          [
+            {
+              "text": "What are the files in my root dir?",
+              "type": "user",
+            },
+            {
+              "text": null,
+              "toolCalls": [
+                {
+                  "meta": {
+                    "toolRequestId": "call_QGrPTwIBYpTYdRJWISkx7Njt",
+                  },
+                  "props": "{"path":"/"}",
+                  "toolName": "ls",
+                  "type": "tool.request",
                 },
-                "props": "{"path":"/"}",
-                "toolName": "ls",
-                "type": "tool.request",
-              },
-              {
-                "data": "The files in the directory / are: cool.doc
-        cool2.doc
-        cool3.doc",
-                "meta": {
-                  "toolRequestId": "call_QGrPTwIBYpTYdRJWISkx7Njt",
+                {
+                  "data": "The files in the directory / are: cool.doc
+          cool2.doc
+          cool3.doc",
+                  "meta": {
+                    "toolRequestId": "call_QGrPTwIBYpTYdRJWISkx7Njt",
+                  },
+                  "toolName": "ls",
+                  "type": "tool.response",
                 },
-                "toolName": "ls",
-                "type": "tool.response",
-              },
-            ],
-            "type": "bot",
-          },
-          {
-            "text": "The files in your root directory are: cool.doc, cool2.doc, cool3.doc.",
-            "type": "bot",
-          },
-        ]
-      `);
+              ],
+              "type": "bot",
+            },
+            {
+              "text": "The files in your root directory are: cool.doc, cool2.doc, cool3.doc.",
+              "type": "bot",
+            },
+          ]
+        `);
+      })
+
+      it("should return the raw requests and responses", () => {
+        expect(response.raw.requests.length).toBe(2);
+        expect(response.raw.responses.length).toBe(2);
+      })
+
     });
   });
 
