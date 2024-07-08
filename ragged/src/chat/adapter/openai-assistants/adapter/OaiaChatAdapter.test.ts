@@ -17,10 +17,10 @@ describe("OaiaChatAdapter", () => {
 
     beforeEach(() => {
         apiClient = new ApiClient();
-        assistantDao = new OaiaAssistantDao(apiClient);
-        threadDao = new OaiaThreadDao(apiClient);
-        messageDao = new OaiaMessageDao(apiClient);
-        runDao = new OaiaRunDao(apiClient);
+        assistantDao = new OaiaAssistantDao();
+        threadDao = new OaiaThreadDao();
+        messageDao = new OaiaMessageDao();
+        runDao = new OaiaRunDao();
 
         adapter = new OaiaChatAdapter({
             config: {
@@ -52,6 +52,7 @@ describe("OaiaChatAdapter", () => {
 
         const response = await adapter.chat({
             history: [{ text: "Hello, whats your name?", type: "user" }],
+            context: { apiClient },
             model: "gpt-3.5-turbo",
         });
 

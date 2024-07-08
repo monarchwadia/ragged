@@ -15,10 +15,10 @@ export type GetRunParams = {
 }
 
 export class OaiaRunDao {
-    constructor(private apiClient: ApiClient) { }
+    constructor() { }
 
-    async createRun(apiKey: string, params: CreateRunParams): Promise<OaiaRun> {
-        const apiResponse = await this.apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/runs`, {
+    async createRun(apiClient: ApiClient, apiKey: string, params: CreateRunParams): Promise<OaiaRun> {
+        const apiResponse = await apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/runs`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`,
@@ -29,9 +29,9 @@ export class OaiaRunDao {
         return apiResponse.json;
     }
 
-    async getRun(apiKey: string, params: GetRunParams): Promise<OaiaRun> {
+    async getRun(apiClient: ApiClient, apiKey: string, params: GetRunParams): Promise<OaiaRun> {
         // get https://api.openai.com/v1/threads/{thread_id}/runs/{run_id}
-        const apiResponse = await this.apiClient.get(`https://api.openai.com/v1/threads/${params.threadId}/runs/${params.runId}`, {
+        const apiResponse = await apiClient.get(`https://api.openai.com/v1/threads/${params.threadId}/runs/${params.runId}`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`,

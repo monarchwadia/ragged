@@ -2,10 +2,10 @@ import { ApiClient } from "../../../../support/ApiClient";
 import { OaiaAssistantCreateRequestBody, OaiaAssistant } from "./OaiaAssistantDaoTypes"
 
 export class OaiaAssistantDao {
-    constructor(private apiClient: ApiClient) { }
+    constructor() { }
 
-    async createAssistant(apiKey: string, body: OaiaAssistantCreateRequestBody): Promise<OaiaAssistant> {
-        const apiResponse = await this.apiClient.post("https://api.openai.com/v1/assistants", {
+    async createAssistant(apiClient: ApiClient, apiKey: string, body: OaiaAssistantCreateRequestBody): Promise<OaiaAssistant> {
+        const apiResponse = await apiClient.post("https://api.openai.com/v1/assistants", {
             body: body,
             headers: {
                 "Content-Type": "application/json",

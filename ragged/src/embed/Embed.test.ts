@@ -1,3 +1,5 @@
+import { mockDeep } from "jest-mock-extended";
+import { ApiClient } from "../support/ApiClient";
 import { ParameterValidationError } from "../support/RaggedErrors";
 import { Embed } from "./Embed";
 import type { EmbedRequest, EmbedResponse } from "./Embed.types";
@@ -7,8 +9,10 @@ describe("Embed", () => {
     describe("with dummy adapter", () => {
         let dummyAdapter: BaseEmbeddingAdapter;
         let e: Embed;
+        let apiClient: ApiClient;
 
         beforeEach(() => {
+            apiClient = mockDeep<ApiClient>();
             dummyAdapter = {
                 embed: async (request: EmbedRequest): Promise<EmbedResponse> => {
                     return {
@@ -18,7 +22,7 @@ describe("Embed", () => {
                     };
                 }
             }
-            e = new Embed(dummyAdapter);
+            e = new Embed(dummyAdapter, apiClient);
         });
 
         afterEach(() => {

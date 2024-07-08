@@ -15,12 +15,12 @@ export type AzureOpenAiChatAdapterConfig = {
 export class AzureOpenAiChatAdapter implements BaseChatAdapter {
     private static logger: Logger = new Logger('AzureOpenAiChatDriver');
 
-    constructor(private driverApiClient: ApiClient, private config: AzureOpenAiChatAdapterConfig) {
+    constructor(private config: AzureOpenAiChatAdapterConfig) {
     }
 
     async chat(request: ChatAdapterRequest) {
-        const mappedRequest = AzureOpenAiChatMappers.mapToOpenAi(request);
-        const apiResponse = await this.chatCompletion(mappedRequest);
+        const mappedRequest = AzureOpenAiChatMappers.mapToOpenAi(request.history);
+        const apiResponse = await this.chatCompletion(request.context.apiClient, mappedRequest);
         const mappedResponse = AzureOpenAiChatMappers.mapFromOpenAi(apiResponse.json);
         return {
             history: mappedResponse,
@@ -28,13 +28,13 @@ export class AzureOpenAiChatAdapter implements BaseChatAdapter {
         };
     }
 
-    private async chatCompletion(body: AzureOpenAiChatCompletionRequestBody) {
+    private async chatCompletion(apiClient: ApiClient, body: AzureOpenAiChatCompletionRequestBody) {
         const headers: HeadersInit = {
             'Content-Type': 'application/json',
             'api-key': `${this.config.apiKey}`
         };
 
-        const apiResponse = await this.driverApiClient.post(
+        const apiResponse = await apiClient.post(
             this.buildUrlFromConfig(),
             {
                 headers,

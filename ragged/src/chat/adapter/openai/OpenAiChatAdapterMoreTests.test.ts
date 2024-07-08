@@ -14,7 +14,7 @@ describe("OpenAiChatDriver", () => {
     };
 
     apiClient = new ApiClient();
-    driver = new OpenAiChatDriver(apiClient, config);
+    driver = new OpenAiChatDriver(config);
   });
 
   afterEach(() => {
@@ -32,7 +32,7 @@ describe("OpenAiChatDriver", () => {
       })
     );
 
-    driver.chat({ model: "gpt-3.5-turbo", history: [] });
+    driver.chat({ model: "gpt-3.5-turbo", history: [], context: { apiClient } });
 
     expect(spy).toHaveBeenCalledWith(
       "https://api.openai.com/v1/chat/completions",
@@ -52,6 +52,7 @@ describe("OpenAiChatDriver", () => {
     );
     const result = await driver.chat({
       model: "gpt-3.5-turbo",
+      context: { apiClient },
       history: [
         { type: "system", text: "You are a chatbot." },
         { type: "user", text: "What are you?" },

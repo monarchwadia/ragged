@@ -9,6 +9,8 @@ import { OpenAiToolMapper } from "./ToolMapper";
 import { OpenAiChatAdapter } from "./OpenAiChatAdapter";
 import { Message } from "../../Chat.types";
 import { Tool } from "../../../tools/Tools.types";
+import { mockDeep } from "jest-mock-extended";
+import { ApiClient } from "../../../support/ApiClient";
 
 describe("OpenAiChatAdapter Mappers", () => {
   afterEach(() => {
@@ -18,6 +20,7 @@ describe("OpenAiChatAdapter Mappers", () => {
     it("should map empty request to OpenAi format", () => {
       const request: ChatAdapterRequest = {
         history: [],
+        context: { apiClient: mockDeep<ApiClient>() },
       };
       const expected: OpenAiChatCompletionRequestBody = {
         model: "gpt-3.5-turbo",
@@ -35,6 +38,7 @@ describe("OpenAiChatAdapter Mappers", () => {
           { type: "user", text: "Hello" },
           { type: "bot", text: "Hi" },
         ],
+        context: { apiClient: mockDeep<ApiClient>() },
       };
       const expected: OpenAiChatCompletionRequestBody = {
         model: "gpt-3.5-turbo",
@@ -56,6 +60,7 @@ describe("OpenAiChatAdapter Mappers", () => {
           { type: "bot", text: "Hi" },
           { type: "error", text: "Error" },
         ],
+        context: { apiClient: mockDeep<ApiClient>() },
       };
 
       const mapped = mapToOpenAi(request);
@@ -83,6 +88,7 @@ describe("OpenAiChatAdapter Mappers", () => {
         // Arrange
         const request: ChatAdapterRequest = {
           history: [{ type: "user", text: "Hello" }],
+          context: { apiClient: mockDeep<ApiClient>() },
         };
         const expected: OpenAiChatCompletionRequestBody = {
           model: "gpt-3.5-turbo",
@@ -96,6 +102,7 @@ describe("OpenAiChatAdapter Mappers", () => {
       it('should correctly map a request with type "user" and an image to OpenAi format', () => {
         // Arrange
         const request: ChatAdapterRequest = {
+          context: { apiClient: mockDeep<ApiClient>() },
           history: [
             {
               type: "user",
@@ -142,6 +149,7 @@ describe("OpenAiChatAdapter Mappers", () => {
       it('should correctly map a request with type "user" and multiple images to OpenAi format', () => {
         // Arrange
         const request: ChatAdapterRequest = {
+          context: { apiClient: mockDeep<ApiClient>() },
           history: [
             {
               type: "user",
@@ -202,6 +210,7 @@ describe("OpenAiChatAdapter Mappers", () => {
       it('should correctly map a request with an empty array of attachments', () => {
         // Arrange
         const request: ChatAdapterRequest = {
+          context: { apiClient: mockDeep<ApiClient>() },
           history: [
             {
               type: "user",
@@ -315,6 +324,7 @@ describe("OpenAiChatAdapter Mappers", () => {
     it("should correctly map a request with type 'bot' to OpenAi format", () => {
       // Arrange
       const request: ChatAdapterRequest = {
+        context: { apiClient: mockDeep<ApiClient>() },
         history: [{ type: "bot", text: "Hello" }],
       };
       const expected: OpenAiChatCompletionRequestBody = {
@@ -329,6 +339,7 @@ describe("OpenAiChatAdapter Mappers", () => {
     it("should correctly map a request with type 'system' to OpenAi format", () => {
       // Arrange
       const request: ChatAdapterRequest = {
+        context: { apiClient: mockDeep<ApiClient>() },
         history: [{ type: "system", text: "Hello" }],
       };
       const expected: OpenAiChatCompletionRequestBody = {
@@ -343,6 +354,7 @@ describe("OpenAiChatAdapter Mappers", () => {
     it("should skip messages with type 'error' when mapping to OpenAi format", () => {
       // Arrange
       const request: ChatAdapterRequest = {
+        context: { apiClient: mockDeep<ApiClient>() },
         history: [
           { type: "system", text: "System message" },
           { type: "error", text: "Hello" },
@@ -404,6 +416,7 @@ describe("OpenAiChatAdapter Mappers", () => {
       const handler = jest.fn().mockReturnValue("OK");
 
       const mapped = mapToOpenAi({
+        context: { apiClient: mockDeep<ApiClient>() },
         history: [{ type: "user", text: "Hello" }],
         tools: [
           {
@@ -650,6 +663,7 @@ describe("OpenAiChatAdapter Mappers", () => {
 
       expect(
         mapToOpenAi({
+          context: { apiClient: mockDeep<ApiClient>() },
           history,
           tools,
         })

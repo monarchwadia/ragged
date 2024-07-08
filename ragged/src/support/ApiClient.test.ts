@@ -32,7 +32,7 @@ describe("ApiClient", () => {
             )
           )
         );
-  
+
         const returnObj = await new ApiClient().post("https://example.com", {
           body: {
             some: "request",

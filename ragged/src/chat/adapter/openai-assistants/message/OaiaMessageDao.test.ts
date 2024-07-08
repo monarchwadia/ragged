@@ -7,18 +7,20 @@ describe("OaiaMessageDao", () => {
   describe("createMessage", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
-      const oaiaMessageDao = new OaiaMessageDao(apiClient);
-      const oaiaThreadDao = new OaiaThreadDao(apiClient);
+      const oaiaMessageDao = new OaiaMessageDao();
+      const oaiaThreadDao = new OaiaThreadDao();
 
       const polly = startPollyRecording(
         "OaiaMessageDao > createMessage > can be created"
       );
 
       const thread = await oaiaThreadDao.createThread(
+        apiClient,
         process.env.OPENAI_API_KEY as string
       );
 
       const message = await oaiaMessageDao.createMessage(
+        apiClient,
         process.env.OPENAI_API_KEY as string,
         {
           threadId: thread.id,
@@ -60,8 +62,8 @@ describe("OaiaMessageDao", () => {
   describe("list messages for thread", () => {
     it("can be listed", async () => {
       const apiClient = new ApiClient();
-      const oaiaMessageDao = new OaiaMessageDao(apiClient);
-      const oaiaThreadDao = new OaiaThreadDao(apiClient);
+      const oaiaMessageDao = new OaiaMessageDao();
+      const oaiaThreadDao = new OaiaThreadDao();
 
       const polly = startPollyRecording(
         "OaiaMessageDao > list messages for thread > can be listed",
@@ -73,10 +75,11 @@ describe("OaiaMessageDao", () => {
       );
 
       const thread = await oaiaThreadDao.createThread(
+        apiClient,
         process.env.OPENAI_API_KEY as string
       );
 
-      await oaiaMessageDao.createMessage(process.env.OPENAI_API_KEY as string, {
+      await oaiaMessageDao.createMessage(apiClient, process.env.OPENAI_API_KEY as string, {
         threadId: thread.id,
         body: {
           role: "user",
@@ -86,6 +89,7 @@ describe("OaiaMessageDao", () => {
       });
 
       const messages = await oaiaMessageDao.listMessagesForThread(
+        apiClient,
         process.env.OPENAI_API_KEY as string,
         thread.id
       );

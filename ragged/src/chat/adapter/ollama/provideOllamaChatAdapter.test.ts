@@ -2,10 +2,14 @@ import { provideOllamaChatAdapter } from "./provideOllamaChatAdapter";
 import { startPollyRecording } from "../../../test/startPollyRecording";
 import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { OllamaChatAdapter } from "./OllamaChatAdapter";
+import { ApiClient } from "../../../support/ApiClient";
 
 describe("ollamaChatAdapterProvider", () => {
   let adapter: OllamaChatAdapter;
+  let apiClient: ApiClient;
+
   beforeEach(() => {
+    apiClient = new ApiClient();
     adapter = provideOllamaChatAdapter({
       config: {
         apiKey: process.env.OLLAMA_API_KEY,
@@ -22,6 +26,7 @@ describe("ollamaChatAdapterProvider", () => {
           text: "Reply with only the single word Hello, and nothing else",
         },
       ],
+      context: { apiClient }
     };
 
     const polly = startPollyRecording(
@@ -64,6 +69,7 @@ describe("ollamaChatAdapterProvider", () => {
           text: "Response with only the single word Hello and nothing else",
         },
       ],
+      context: { apiClient }
     };
 
     const polly = startPollyRecording(

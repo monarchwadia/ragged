@@ -8,7 +8,7 @@ export type CohereChatAdapterConfig = {
     model?: string;
 }
 export class CohereChatAdapter implements BaseChatAdapter {
-    constructor(private apiClient: ApiClient, private config: CohereChatAdapterConfig) { }
+    constructor(private config: CohereChatAdapterConfig) { }
 
     async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         if (request.tools) {
@@ -16,7 +16,7 @@ export class CohereChatAdapter implements BaseChatAdapter {
         }
         const cohereRequest = CohereChatMapper.mapChatRequestToCohereRequest(request.history);
 
-        const apiResponse = await this.apiClient.post('https://api.cohere.com/v1/chat', {
+        const apiResponse = await request.context.apiClient.post('https://api.cohere.com/v1/chat', {
             body: cohereRequest,
             headers: {
                 'accept': 'application/json',

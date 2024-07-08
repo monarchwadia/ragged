@@ -1,3 +1,4 @@
+import { ApiClient } from "../support/ApiClient";
 import { ParameterValidationError } from "../support/RaggedErrors";
 import { Logger } from "../support/logger/Logger";
 import type { EmbedRequest, EmbedResponse } from "./Embed.types";
@@ -15,30 +16,36 @@ export type EmbedWithConfig = {
 export class Embed {
     private static logger = new Logger('Embed');
 
-    constructor(private adapter: BaseEmbeddingAdapter) { }
+    constructor(private adapter: BaseEmbeddingAdapter, private apiClient: ApiClient) { }
 
     static with({ provider, config }: EmbedWithConfig): Embed {
         let adapter: BaseEmbeddingAdapter;
+        const apiClient = new ApiClient();
 
         switch (provider) {
             case "openai":
                 adapter = provideOpenaiEmbeddingAdapter({
-                    apiKey: config.apiKey,
-                    apiClient: config.apiClient
+                    apiKey: config.apiKey
                 });
                 break;
             default:
                 throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Embed.with().");
         }
 
-        return new Embed(adapter);
+        return new Embed(adapter, apiClient);
     }
 
     async embed(text: string): Promise<EmbedResponse>;
-    async embed(request: EmbedRequest): Promise<EmbedResponse>;
+    async embed(request: { text: string, model?: string }): Promise<EmbedResponse>;
     async embed(...args: any[]): Promise<EmbedResponse> {
         const request = this.validatedRequest(args);
-        return this.adapter.embed(request);
+        return this.adapter.embed({
+            text: request.text,
+            model: request.model,
+            context: {
+                apiClient: this.apiClient
+            }
+        });
     }
 
 
@@ -99,12 +106,12 @@ export class Embed {
     }
 
 
-    private validatedRequest(args: any[]): EmbedRequest {
+    private validatedRequest(args: any[]): { text: string; model?: string } {
         if (args.length !== 1) {
             throw new ParameterValidationError("Embed function requires exactly one argument. Instead, got " + args.length + " arguments.");
         }
 
-        let request: EmbedRequest;
+        let request: { text: string; model?: string };
         if (typeof args[0] === "string") {
             request = { text: args[0] };
         } else {

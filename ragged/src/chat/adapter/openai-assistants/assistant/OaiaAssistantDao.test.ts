@@ -6,13 +6,14 @@ describe("OaiaAssistantDao", () => {
   describe("createAssistant", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
-      const oaiaAssistantDao = new OaiaAssistantDao(apiClient);
+      const oaiaAssistantDao = new OaiaAssistantDao();
 
       const polly = startPollyRecording(
         "OaiaAssistantDao > createAssistant > can be created"
       );
 
       const assistant = await oaiaAssistantDao.createAssistant(
+        apiClient,
         process.env.OPENAI_API_KEY as string,
         {
           name: "Financial Analyst Assistant",

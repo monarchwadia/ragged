@@ -2,10 +2,14 @@ import { provideCohereChatAdapter } from "./provideCohereChatAdapter";
 import { startPollyRecording } from "../../../test/startPollyRecording";
 import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { CohereChatAdapter } from "./CohereChatAdapter";
+import { ApiClient } from "../../../support/ApiClient";
 
 describe("cohereChatAdapterProvider", () => {
   let adapter: CohereChatAdapter;
+  let apiClient: ApiClient;
+
   beforeEach(() => {
+    apiClient = new ApiClient();
     adapter = provideCohereChatAdapter({
       config: {
         apiKey: process.env.COHERE_API_KEY,
@@ -21,6 +25,9 @@ describe("cohereChatAdapterProvider", () => {
           text: "Hello, how are you?",
         },
       ],
+      context: {
+        apiClient
+      }
     };
 
     const polly = startPollyRecording(
@@ -60,6 +67,9 @@ describe("cohereChatAdapterProvider", () => {
           text: "Hello, how are you?",
         },
       ],
+      context: {
+        apiClient
+      }
     };
 
     const polly = startPollyRecording(

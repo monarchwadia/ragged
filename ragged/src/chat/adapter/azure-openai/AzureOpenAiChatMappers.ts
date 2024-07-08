@@ -17,10 +17,10 @@ const fromMap: Record<AzureOpenAiChatCompletionResponseBody['choices'][0]['messa
 
 
 export class AzureOpenAiChatMappers {
-    static mapToOpenAi(request: ChatAdapterRequest): AzureOpenAiChatCompletionRequestBody {
+    static mapToOpenAi(request: Message[]): AzureOpenAiChatCompletionRequestBody {
         const messages: AzureOpenAiChatCompletionRequestBody['messages'] = [];
-        for (let i = 0; i < request.history.length; i++) {
-            const message = request.history[i];
+        for (let i = 0; i < request.length; i++) {
+            const message = request[i];
             const role = toMap[message.type];
 
             if (role === null) continue;

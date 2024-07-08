@@ -14,6 +14,7 @@ import { provideAzureOpenaiAssistantsChatAdapter } from "./adapter/azure-openai-
 import { AzureOaiaDaoCommonConfig } from "./adapter/azure-openai-assistants/Dao.types";
 import { provideOllamaChatAdapter } from "./adapter/ollama/provideOllamaChatAdapter";
 import { OllamaChatAdapterConfig } from "./adapter/ollama/OllamaChatAdapterTypes";
+import { ApiClient } from "../support/ApiClient";
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
@@ -69,6 +70,7 @@ export class Chat {
     }
 
     static with({ provider, config }: ChatWithConfig) {
+        const apiClient = new ApiClient();
         let adapter: BaseChatAdapter;
 
         switch (provider) {
@@ -94,10 +96,10 @@ export class Chat {
                 throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Chat.with().");
         }
 
-        return new Chat(adapter);
+        return new Chat(adapter, apiClient);
     }
 
-    constructor(private adapter: BaseChatAdapter) { }
+    constructor(private adapter: BaseChatAdapter, private apiClient: ApiClient) { }
 
     // TODO: Need to put tools, model inside options object.. consider also doing cascading options overrides
     async chat(): Promise<ChatResponse>;
@@ -127,7 +129,12 @@ export class Chat {
 
             let toolCallsWereResolved = false;
 
-            const request: ChatAdapterRequest = { history: workingHistory };
+            const request: ChatAdapterRequest = {
+                history: workingHistory,
+                context: {
+                    apiClient: this.apiClient
+                }
+            };
             if (tools && tools.length) {
                 request.tools = [...tools];
             }

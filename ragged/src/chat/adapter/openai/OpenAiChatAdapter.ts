@@ -15,7 +15,7 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
     private organizationId: string | undefined;
     private rootUrl: string = "https://api.openai.com/v1/chat/completions";
 
-    constructor(private driverApiClient: ApiClient, config: OpenAiChatAdapterConfig = {}) {
+    constructor(config: OpenAiChatAdapterConfig = {}) {
         if (config.apiKey) {
             this.apiKey = config.apiKey;
         }
@@ -31,17 +31,17 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
 
     async chat(request: ChatAdapterRequest) {
         const mappedRequest = mapToOpenAi(request);
-        const apiResponse = await this.chatCompletion(mappedRequest);
+        const apiResponse = await this.chatCompletion(request.context.apiClient, mappedRequest);
         const mappedResponse = mapFromOpenAi(apiResponse.json);
         return {
             history: mappedResponse,
             raw: apiResponse.raw
-        
+
         };
     }
 
 
-    private async chatCompletion(body: OpenAiChatCompletionRequestBody) {
+    private async chatCompletion(apiClient: ApiClient, body: OpenAiChatCompletionRequestBody) {
         const headers: HeadersInit = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.apiKey}`
@@ -51,7 +51,7 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
             headers['OpenAI-Organization'] = this.organizationId;
         }
 
-        return await this.driverApiClient.post(
+        return await apiClient.post(
             this.rootUrl,
             {
                 headers,

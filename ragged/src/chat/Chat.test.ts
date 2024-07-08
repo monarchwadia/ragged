@@ -8,14 +8,17 @@ import {
   ParameterValidationError,
 } from "../support/RaggedErrors";
 import { fakeRawsFactory } from "../test/fakeFactories";
+import { ApiClient } from "../support/ApiClient";
 
 describe("Chat", () => {
   let adapter: DeepMockProxy<BaseChatAdapter>;
+  let apiClient: DeepMockProxy<ApiClient>;
   let c: Chat;
 
   beforeEach(() => {
     adapter = mockDeep<BaseChatAdapter>();
-    c = new Chat(adapter);
+    apiClient = mockDeep<ApiClient>();
+    c = new Chat(adapter, apiClient);
   });
 
   describe("Default behaviour", () => {
@@ -24,7 +27,7 @@ describe("Chat", () => {
 
       c.chat();
 
-      expect(adapter.chat).toHaveBeenCalledWith({ history: [] });
+      expect(adapter.chat).toHaveBeenCalledWith({ history: [], context: { apiClient } });
     })
 
     it("Calls the adapter with the correct request", async () => {
@@ -39,6 +42,7 @@ describe("Chat", () => {
             text: "This is a test message to the adapter",
           },
         ],
+        context: { apiClient }
       });
     });
 
@@ -613,6 +617,7 @@ describe("Chat", () => {
       ]);
 
       expect(adapter.chat).toHaveBeenCalledWith({
+        context: { apiClient },
         history: [
           {
             type: "user",

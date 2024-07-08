@@ -2,22 +2,28 @@ import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { AzureOpenAiChatMappers } from "./AzureOpenAiChatMappers";
 import { mapToOpenAi } from "../openai/OpenAiChatMappers";
 import { AzureOpenAiChatCompletionResponseBody } from "./AzureOpenAiChatTypes";
+import { Message } from "../../Chat.types";
+import { ApiClient } from "../../../support/ApiClient";
 
 describe("AzureOpenAiChatMappers", () => {
+    let apiClient: ApiClient;
+
+    beforeEach(() => {
+        apiClient = new ApiClient();
+    })
+
     it("should compile", () => {
         const mappers = new AzureOpenAiChatMappers();
     })
 
     describe("mapToOpenAi", () => {
         it("can map from chat adapter request", () => {
-            const request: ChatAdapterRequest = {
-                history: [
-                    {
-                        type: "user",
-                        text: "Hello"
-                    }
-                ]
-            };
+            const request: Message[] = [
+                {
+                    type: "user",
+                    text: "Hello"
+                }
+            ];
 
 
             const result = AzureOpenAiChatMappers.mapToOpenAi(request);
@@ -32,14 +38,12 @@ describe("AzureOpenAiChatMappers", () => {
         });
 
         it('filters out error messages', () => {
-            const request: ChatAdapterRequest = {
-                history: [
-                    {
-                        type: "error",
-                        text: "Hello"
-                    }
-                ]
-            };
+            const request: Message[] = [
+                {
+                    type: "error",
+                    text: "Hello"
+                }
+            ];
 
             const result = AzureOpenAiChatMappers.mapToOpenAi(request);
             expect(result).toEqual({

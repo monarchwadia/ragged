@@ -18,12 +18,15 @@ describe("OllamaChatAdapter", () => {
             },
             raw: fakeRawsFactory()
         });
-        const adapter = new OllamaChatAdapter(apiClient, config);
+        const adapter = new OllamaChatAdapter(config);
         adapter.chat({
             history: [{
                 type: "user",
                 text: "Hello"
-            }]
+            }],
+            context: {
+                apiClient
+            }
         });
 
         expect(apiClient.post).toHaveBeenCalledWith("http://localhost:11434/api/chat", expect.anything());
@@ -45,12 +48,15 @@ describe("OllamaChatAdapter", () => {
             },
             raw: fakeRawsFactory()
         });
-        const adapter = new OllamaChatAdapter(apiClient, config);
+        const adapter = new OllamaChatAdapter(config);
         adapter.chat({
             history: [{
                 type: "user",
                 text: "Hello"
-            }]
+            }],
+            context: {
+                apiClient
+            }
         });
 
         expect(apiClient.post).toHaveBeenCalledWith(endpoint, expect.anything());

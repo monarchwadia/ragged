@@ -16,7 +16,7 @@ describe("OpenAiChatAdapter", () => {
       const config = {
         apiKey: process.env.OPENAI_API_KEY,
       };
-      adapter = new OpenAiChatAdapter(apiClient, config);
+      adapter = new OpenAiChatAdapter(config);
     });
 
     afterEach(() => {
@@ -36,6 +36,9 @@ describe("OpenAiChatAdapter", () => {
             text: "Hello, World!",
           },
         ],
+        context: {
+          apiClient
+        }
       });
 
       await polly.stop();
@@ -59,6 +62,7 @@ describe("OpenAiChatAdapter", () => {
             text: "Retrieve today's news using the todays-news tool.",
           },
         ],
+        context: { apiClient },
         tools: [
           {
             id: "todays-news",
@@ -110,6 +114,7 @@ describe("OpenAiChatAdapter", () => {
 
         const response = await adapter.chat({
           model: "gpt-4o",
+          context: { apiClient },
           history: [
             {
               type: "user",
@@ -147,6 +152,7 @@ describe("OpenAiChatAdapter", () => {
 
         const response = await adapter.chat({
           model: "gpt-4o",
+          context: { apiClient },
           history: [
             {
               type: "user",
@@ -192,7 +198,7 @@ describe("OpenAiChatAdapter", () => {
   describe("behaviour", () => {
     beforeEach(() => {
       apiClient = mockDeep<ApiClient>();
-      adapter = new OpenAiChatAdapter(apiClient, {
+      adapter = new OpenAiChatAdapter({
         apiKey: "nope-key",
         organizationId: "nope-org",
       });
@@ -211,6 +217,7 @@ describe("OpenAiChatAdapter", () => {
               text: "Hello, World!",
             },
           ],
+          context: { apiClient },
         });
       } catch (e) {
         // expected

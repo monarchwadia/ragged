@@ -10,10 +10,10 @@ export type CreateMessageParams = {
 }
 
 export class OaiaMessageDao {
-    constructor(private apiClient: ApiClient) { }
+    constructor() { }
 
-    async createMessage(apiKey: string, params: CreateMessageParams): Promise<OaiaMessage> {
-        const apiResponse = await this.apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/messages`, {
+    async createMessage(apiClient: ApiClient, apiKey: string, params: CreateMessageParams): Promise<OaiaMessage> {
+        const apiResponse = await apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/messages`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`,
@@ -25,8 +25,8 @@ export class OaiaMessageDao {
         return apiResponse.json;
     }
 
-    async listMessagesForThread(apiKey: string, threadId: string): Promise<OaiaMessageList> {
-        const apiResponse = await this.apiClient.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+    async listMessagesForThread(apiClient: ApiClient, apiKey: string, threadId: string): Promise<OaiaMessageList> {
+        const apiResponse = await apiClient.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`,

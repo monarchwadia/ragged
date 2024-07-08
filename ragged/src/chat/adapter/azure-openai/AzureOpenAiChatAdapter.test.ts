@@ -8,7 +8,7 @@ describe("AzureOpenAiChatAdapter", () => {
 
     beforeEach(() => {
         apiClient = new ApiClient();
-        adapter = new AzureOpenAiChatAdapter(apiClient, {
+        adapter = new AzureOpenAiChatAdapter({
             apiKey: process.env.AZURE_OPENAI_API_KEY || "",
             apiVersion: process.env.AZURE_OPENAI_API_VERSION || "",
             resourceName: process.env.AZURE_OPENAI_RESOURCE_NAME || "",
@@ -24,7 +24,10 @@ describe("AzureOpenAiChatAdapter", () => {
                     type: "user",
                     text: "Hello"
                 }
-            ]
+            ],
+            context: {
+                apiClient
+            }
         });
 
         expect(response).toMatchObject({
