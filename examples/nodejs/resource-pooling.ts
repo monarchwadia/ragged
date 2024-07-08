@@ -79,15 +79,15 @@ const cPooled = new Chat(new PoolWrapperAdapter([
 const q = "Hello, what AI model are you using?";
 console.log("USER: " + q)
 const response1 = await cPooled.chat(q);
-console.log("BOT: " + response1.at(-1)?.text);
+console.log("BOT: " + response1.history.at(-1)?.text);
 
 // This second call will be forwarded to the OpenAI adapter.
 console.log("USER: " + q)
 const response2 = await cPooled.chat(q);
-console.log("BOT: " + response2.at(-1)?.text);
+console.log("BOT: " + response2.history.at(-1)?.text);
 
 // This third call will be forwarded to the Cohere adapter again.
 console.log("USER: " + q)
 const response3 = await cPooled.chat(q);
-console.log("BOT: " + response3.at(-1)?.text);
+console.log("BOT: " + response3.history.at(-1)?.text);
 

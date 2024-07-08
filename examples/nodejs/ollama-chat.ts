@@ -18,6 +18,6 @@ const c = Chat.with({
 });
 
 
-const messages = await c.chat('What is a rickroll?');
+const response = await c.chat('What is a rickroll?');
 
-console.log(messages.at(-1)?.text); // A rickroll is ...
+console.log(response.history.at(-1)?.text); // A rickroll is ...

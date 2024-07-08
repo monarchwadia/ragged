@@ -17,7 +17,11 @@ class AppendingAdapter implements BaseChatAdapter {
         return {
             history: [
                 { type: "bot", text: this.history }
-            ]
+            ],
+            raw: {
+                request: null,
+                response: null
+            }
         };
     }
 }
@@ -25,6 +29,6 @@ class AppendingAdapter implements BaseChatAdapter {
 const appending = new Chat(new AppendingAdapter("This is the start of the file."));
 
 const appendResponse = await appending.chat("Hello, world!");
-console.log(appendResponse.at(-1)?.text); // This is the start of the file.\nHello, world!
+console.log(appendResponse.history.at(-1)?.text); // This is the start of the file.\nHello, world!
 const appendResponse2 = await appending.chat("This is a test message.");
-console.log(appendResponse2.at(-1)?.text); // This is the start of the file.\nHello, world!\nThis is a test message.
+console.log(appendResponse2.history.at(-1)?.text); // This is the start of the file.\nHello, world!\nThis is a test message.

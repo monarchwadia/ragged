@@ -15,7 +15,7 @@ const c = Chat.with({
 });
 
 // chat with the model
-const messages = await c.chat([
+const response = await c.chat([
     {
         type: "user",
         text: "What do these images contain? Describe them.",
@@ -43,7 +43,7 @@ const messages = await c.chat([
 });
 
 // log the messages
-console.log(messages.at(-1)?.text);
+console.log(response.history.at(-1)?.text);
 
 // Output:
 // The first image is an emoji of a face with heart-shaped eyes, typically used to express love, adoration, or strong liking for something or someone.

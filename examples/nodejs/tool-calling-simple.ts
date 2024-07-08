@@ -39,5 +39,5 @@ const response = await c.chat("Get the contents of my homepage.", {
 });
 
 // Output the final text response.
-console.log(response.at(-1)?.text);
+console.log(response.history.at(-1)?.text);
 

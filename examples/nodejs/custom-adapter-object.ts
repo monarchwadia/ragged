@@ -20,12 +20,16 @@ const countingAdapter: BaseChatAdapter = {
         return {
             history: [
                 { type: "bot", text: "Your request had a total of " + totalCharacters + " characters in it." }
-            ]
+            ],
+            raw: {
+                request: null,
+                response: null
+            }
         };
     }
 }
 
 const count = new Chat(countingAdapter);
 
-const countResponse = await count.chat("This is a test message.");
-console.log(countResponse.at(-1)?.text); // Your request had a total of 23 characters in it.
+const { history } = await count.chat("This is a test message.");
+console.log(history.at(-1)?.text); // Your request had a total of 23 characters in it.

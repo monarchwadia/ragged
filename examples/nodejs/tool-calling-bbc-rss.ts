@@ -21,7 +21,7 @@ const response = await c.chat("Fetch and display the contents of https://feeds.b
 });
 
 // Output the final text response. We don't need to care about the intermediate messages, tool calling is handled automatically.
-console.log(response.at(-1)?.text); // "Here are some of the latest news from around the world according to the BBC: ..."
+console.log(response.history.at(-1)?.text); // "Here are some of the latest news from around the world according to the BBC: ..."
 
 // The tool definition
 function buildFetchTool() {

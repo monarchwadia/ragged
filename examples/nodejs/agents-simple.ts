@@ -90,7 +90,7 @@ async function getNextNumber(c: Chat, input: string): Promise<string> {
     ]);
 
     // Get the last message from the response
-    const lastMessage = response.at(-1)?.text;
+    const lastMessage = response.history.at(-1)?.text;
     return lastMessage || "";
 }
 
