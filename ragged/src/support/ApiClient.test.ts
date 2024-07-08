@@ -1,8 +1,6 @@
-import { before } from "node:test";
 import { ApiClient } from "./ApiClient";
 import { FetchRequestFailedError, FetchResponseNotOkError } from "./RaggedErrors";
 import { objToReadableStream } from "../test/objectToReadableStream";
-import { Logger } from "./logger/Logger";
 
 describe("ApiClient", () => {
   describe("post", () => {
@@ -20,35 +18,66 @@ describe("ApiClient", () => {
       global.fetch = originalFetch;
     });
 
-    it("should successfully parse and return JSON data from a request", async () => {
-      fetchMock.mockImplementationOnce(() =>
-        Promise.resolve(
-          new Response(
-            objToReadableStream({
-              some: "response",
-            })
+    describe("POST", () => {
+      let json: any;
+      let raw: Awaited<ReturnType<ApiClient['post']>>['raw']
+
+      beforeEach(async () => {
+        fetchMock.mockImplementationOnce(() =>
+          Promise.resolve(
+            new Response(
+              objToReadableStream({
+                some: "response",
+              })
+            )
           )
-        )
-      );
+        );
+  
+        const returnObj = await new ApiClient().post("https://example.com", {
+          body: {
+            some: "request",
+          },
+        });
 
-      const json = await new ApiClient().post("https://example.com", {
-        body: {
-          some: "request",
-        },
+        json = returnObj.json;
+        raw = returnObj.raw;
       });
 
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(fetchMock).toHaveBeenCalledWith("https://example.com", {
-        body: '{"some":"request"}',
-        method: "POST",
+      afterEach(() => {
+        jest.clearAllMocks();
       });
 
-      expect(json).toMatchInlineSnapshot(`
-        {
-          "some": "response",
-        }
-      `);
+      it("should have the right json object", () => {
+        expect(json).toMatchInlineSnapshot(`
+          {
+            "some": "response",
+          }
+        `);
+      })
+
+      it("should call fetch with a Request object with the right params.", async () => {
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        // get call
+        const call = fetchMock.mock.calls[0] as unknown as [Request];
+        expect(call[0]).toBeInstanceOf(Request);
+        expect(call[0].url).toBe("https://example.com/");
+        expect(call[0].method).toBe("POST");
+      });
+
+      it('should return the raw request object', () => {
+        expect(raw.request).toBeInstanceOf(Request);
+        expect(raw.request.url).toBe("https://example.com/");
+        expect(raw.request.method).toBe("POST");
+      })
+
+      it("should return the raw response object", () => {
+        expect(raw.response).toBeInstanceOf(Response);
+        expect(raw.response.body).toBeInstanceOf(ReadableStream);
+        expect(raw.response.status).toBe(200);
+      });
+
     });
+
 
 
     describe.each([300, 301, 400, 401, 404, 500, 503, 504])("Status code %s", (status) => {

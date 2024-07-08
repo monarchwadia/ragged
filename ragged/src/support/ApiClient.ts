@@ -3,9 +3,17 @@ import { FetchRequestFailedError, FetchResponseNotOkError } from "./RaggedErrors
 import { Logger } from "./logger/Logger";
 
 
-type PostOpts = {
+type ApiClientRequest = {
     headers?: RequestInit["headers"];
     body?: any;
+}
+
+type ApiClientResponse = {
+    json: any;
+    raw: {
+        request: Request;
+        response: Response;
+    }
 }
 
 /**
@@ -16,47 +24,65 @@ type PostOpts = {
 export class ApiClient {
     static logger: Logger = new Logger('ApiClient');
 
-    async get(url: string, request: PostOpts): Promise<any> {
-        return this.doCall("GET", url, request);
+    async get(url: string, requestInit: ApiClientRequest): Promise<ApiClientResponse> {
+        return this.doCall("GET", url, requestInit);
     }
 
-    async post(url: string, request: PostOpts): Promise<any> {
-        return this.doCall("POST", url, request);
+    async post(url: string, requestInit: ApiClientRequest): Promise<ApiClientResponse> {
+        return this.doCall("POST", url, requestInit);
     }
 
-    private async doCall(method: string, url: string, request: PostOpts): Promise<Response> {
+    private formatMessage (request: Request, message: string) {
+        return `${request.method.toUpperCase()} ${request.url}: ${message}`
+    };
+
+    private async doCall(method: string, url: string, apiClientRequest: ApiClientRequest): Promise<ApiClientResponse> {
         const requestInit: RequestInit = {}
 
         requestInit.method = method;
 
-        if (request.headers) {
-            requestInit.headers = request.headers;
+        if (apiClientRequest.headers) {
+            requestInit.headers = apiClientRequest.headers;
         }
 
-        if (request.body) {
-            requestInit.body = ApiJsonHandler.stringify(request.body)
+        if (apiClientRequest.body) {
+            requestInit.body = ApiJsonHandler.stringify(apiClientRequest.body)
         }
+
+        const request: Request = new Request(url, {
+            method,
+            headers: requestInit.headers,
+            body: requestInit.body
+        });
 
         // debug info
-        ApiClient.logger.info(`${method.toUpperCase()} ${url}: Sending request...`);
-        ApiClient.logger.debug(`${method.toUpperCase()} ${url}: Request body: ${JSON.stringify(request.body)}`);
-        ApiClient.logger.debug(`${method.toUpperCase()} ${url}: Request headers: ${JSON.stringify(request.headers)}`);
+        ApiClient.logger.info(this.formatMessage(request, "Sending request..."));
+        ApiClient.logger.debug(this.formatMessage(request, `Request body: ${JSON.stringify(request.body)}`));
+        ApiClient.logger.debug(this.formatMessage(request, `Request headers: ${JSON.stringify(request.headers)}`));
 
-        let response: Response | null = null;
+        let response: Response;
         try {
-            response = await fetch(url, requestInit);
+            response = await fetch(request);
         } catch (e) {
             throw new FetchRequestFailedError("Failed to make fetch call.", e);
         }
 
-        ApiClient.logger.info(`${method.toUpperCase()} ${url}: Response status: ${response.status}`);
-        ApiClient.logger.debug(`${method.toUpperCase()} ${url}: Response headers: ${JSON.stringify(response.headers)}`);
+        ApiClient.logger.info(this.formatMessage(request, `Response status: ${response.status}`));
+        ApiClient.logger.debug(this.formatMessage(request, `Response headers: ${JSON.stringify(response.headers)}`));
 
         if (!response.ok) {
             ApiClient.logger.error(await response.text())
             throw new FetchResponseNotOkError(response, response.status);
         }
 
-        return ApiJsonHandler.parseResponse(response);
+        const json = await ApiJsonHandler.parseResponse(response);
+
+        return {
+            json,
+            raw: {
+                request,
+                response
+            }
+        }
     }
 }
