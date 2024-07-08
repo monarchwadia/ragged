@@ -10,8 +10,8 @@ export type ChatAdapterRequest = {
 export type ChatAdapterResponse = {
     history: Message[];
     raw: {
-        request: Request;
-        response: Response;
+        request: Request | null;
+        response: Response | null;
     }
 }
 

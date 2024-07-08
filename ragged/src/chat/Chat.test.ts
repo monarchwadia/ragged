@@ -7,6 +7,7 @@ import { startPollyRecording } from "../test/startPollyRecording";
 import {
   ParameterValidationError,
 } from "../support/RaggedErrors";
+import { fakeRawsFactory } from "../test/fakeFactories";
 
 describe("Chat", () => {
   let adapter: DeepMockProxy<BaseChatAdapter>;
@@ -19,7 +20,7 @@ describe("Chat", () => {
 
   describe("Default behaviour", () => {
     it('supports 0 args in the chat call', () => {
-      adapter.chat.mockResolvedValue({ history: [] });
+      adapter.chat.mockResolvedValue({ history: [], raw: fakeRawsFactory() });
 
       c.chat();
 
@@ -27,7 +28,7 @@ describe("Chat", () => {
     })
 
     it("Calls the adapter with the correct request", async () => {
-      adapter.chat.mockResolvedValue({ history: [] });
+      adapter.chat.mockResolvedValue({ history: [], raw: fakeRawsFactory() });
 
       await c.chat(`This is a test message to the adapter`);
 
@@ -49,6 +50,7 @@ describe("Chat", () => {
             text: "This is a test response from the adapter",
           },
         ],
+        raw: fakeRawsFactory()
       });
 
       const history = await c.chat([
@@ -88,7 +90,7 @@ describe("Chat", () => {
         },
       ];
 
-      adapter.chat.mockResolvedValue({ history: expectedOutput });
+      adapter.chat.mockResolvedValue({ history: expectedOutput, raw: fakeRawsFactory() });
 
       const history = await c.chat(`This is a test message to the adapter`);
 
@@ -101,39 +103,52 @@ describe("Chat", () => {
       ] as Message[]);
     });
 
-    it("includes errors in the response", async () => {
-      adapter.chat.mockRejectedValue(new Error("This is an error"));
+    describe("When the adapter throws an error", () => {
+      it("includes errors in the response", async () => {
+        const ERROR_MESSAGE = "This is a super specific error message"
+        adapter.chat.mockRejectedValue(new Error(ERROR_MESSAGE));
 
-      const history = await c.chat(`This is a test message to the adapter`);
+        const history = await c.chat(`This is a test message to the adapter`);
 
-      expect(history).toMatchObject([
-        {
-          type: "user",
-          text: `This is a test message to the adapter`,
-        },
-        {
-          type: "error",
-          text: "This is an error",
-        },
-      ] as Message[]);
-    });
+        expect(history).toMatchObject([
+          {
+            type: "user",
+            text: `This is a test message to the adapter`,
+          },
+          {
+            type: "error",
+            text: ERROR_MESSAGE,
+          },
+        ] as Message[]);
+      });
 
-    it("includes unknown errors in the response", async () => {
-      adapter.chat.mockRejectedValue({});
+      it("includes unknown errors in the response", async () => {
+        adapter.chat.mockRejectedValue({});
 
-      const history = await c.chat(`This is a test message to the adapter`);
+        const history = await c.chat(`This is a test message to the adapter`);
 
-      expect(history).toMatchObject([
-        {
-          type: "user",
-          text: `This is a test message to the adapter`,
-        },
-        {
-          type: "error",
-          text: "An unknown error occurred",
-        },
-      ] as Message[]);
-    });
+        expect(history).toMatchObject([
+          {
+            type: "user",
+            text: `This is a test message to the adapter`,
+          },
+          {
+            type: "error",
+            text: "An unknown error occurred",
+          },
+        ] as Message[]);
+      });
+
+      describe.each([new Error("error"), {}])("The raw response object", (rejectedValue) => {
+        it("should set the raw request and response objects as null", async () => {
+          adapter.chat.mockRejectedValue(rejectedValue);
+
+          const history = await c.chat(`This is a test message to the adapter`);
+
+          throw new Error("Not implemented: history.raw should be { null, null }");
+        })
+      })
+    })
   });
 
   describe("with recording", () => {
@@ -148,6 +163,7 @@ describe("Chat", () => {
             text: "This is a test response from the adapter",
           },
         ],
+        raw: fakeRawsFactory()
       });
 
       let messages = await c.chat(`This is a test message to the adapter`);
@@ -172,6 +188,7 @@ describe("Chat", () => {
             text: "This is the last test response from the adapter",
           },
         ],
+        raw: fakeRawsFactory()
       });
 
       messages = await c.chat(`This is another test message to the adapter`);
@@ -210,6 +227,7 @@ describe("Chat", () => {
             text: "This is a test response from the adapter",
           },
         ],
+        raw: fakeRawsFactory()
       });
 
       const messages = await c.chat([
@@ -287,6 +305,7 @@ describe("Chat", () => {
             text: "This is a test response from the adapter",
           },
         ],
+        raw: fakeRawsFactory()
       });
 
       await c.chat(`Message 1`);
@@ -398,6 +417,7 @@ describe("Chat", () => {
               ],
             },
           ],
+          raw: fakeRawsFactory()
         });
 
         adapter.chat.mockResolvedValueOnce({
@@ -407,6 +427,7 @@ describe("Chat", () => {
               text: "And here's the news...",
             },
           ],
+          raw: fakeRawsFactory()
         });
 
         // chat generates a tool call response and re-queries the LLM
@@ -562,7 +583,7 @@ describe("Chat", () => {
 
   describe("with attachments", () => {
     it('should send attachments to the adapter', async () => {
-      adapter.chat.mockResolvedValue({ history: [] });
+      adapter.chat.mockResolvedValue({ history: [], raw: fakeRawsFactory() });
       await c.chat([
         {
           type: "user",
@@ -607,7 +628,8 @@ describe("Chat", () => {
             type: "bot",
             text: "This is a test response from the adapter"
           }
-        ]
+        ],
+        raw: fakeRawsFactory()
       });
 
       const history = await c.chat([
@@ -653,7 +675,7 @@ describe("Chat", () => {
   describe("parameter validation", () => {
     describe("chat()", () => {
       it("should not throw an error in sunny-day cases", async () => {
-        adapter.chat.mockResolvedValue({ history: [] });
+        adapter.chat.mockResolvedValue({ history: [], raw: fakeRawsFactory() });
 
         await c.chat();
         await c.chat("");

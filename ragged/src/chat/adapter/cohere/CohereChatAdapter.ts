@@ -14,9 +14,9 @@ export class CohereChatAdapter implements BaseChatAdapter {
         if (request.tools) {
             throw new NotImplementedError("Not implemented. Currently, Ragged does not support tools in Cohere requests.");
         }
-        const cohereRequest = CohereChatMapper.mapChatRequestToCohereRequest(request);
+        const cohereRequest = CohereChatMapper.mapChatRequestToCohereRequest(request.history);
 
-        const response = await this.apiClient.post('https://api.cohere.com/v1/chat', {
+        const apiResponse = await this.apiClient.post('https://api.cohere.com/v1/chat', {
             body: cohereRequest,
             headers: {
                 'accept': 'application/json',
@@ -25,6 +25,11 @@ export class CohereChatAdapter implements BaseChatAdapter {
             }
         });
 
-        return CohereChatMapper.mapCohereResponseToChatResponse(response);
+        const history = CohereChatMapper.mapCohereResponseToChatResponse(apiResponse.json);
+
+        return {
+            history,
+            raw: apiResponse.raw
+        }
     }
 }

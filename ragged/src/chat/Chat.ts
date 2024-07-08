@@ -163,21 +163,22 @@ export class Chat {
         return workingHistory;
     }
 
-    private async performChatRequest(request: ChatAdapterRequest) {
+    private async performChatRequest(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         Chat.logger.debug("Chat request: ", JSON.stringify(request));
-        let response: ChatAdapterResponse = { history: [] }; // will be replaced soon
         try {
-            response = await this.adapter.chat(request);
+            return await this.adapter.chat(request);
         } catch (e: unknown) {
             Chat.logger.error("Failed to chat", e);
 
-            if (e instanceof Error) {
-                response = { history: [{ type: "error", text: e.message }] };
-            } else {
-                response = { history: [{ type: "error", text: "An unknown error occurred" }] };
-            }
+            let message = e instanceof Error ? e.message : "An unknown error occurred";
+            return {
+                history: [{ type: "error", text: message }],
+                raw: {
+                    request: null,
+                    response: null
+                }   
+            };
         }
-        return response;
     }
 
     private static getToolCallMap(workingHistory: Message[]): ToolCallMap {

@@ -30,15 +30,13 @@ describe("cohereChatAdapterProvider", () => {
 
     await polly.stop();
 
-    expect(response).toMatchInlineSnapshot(`
-      {
-        "history": [
+    expect(response.history).toMatchInlineSnapshot(`
+        [
           {
             "text": "Hello! As an AI chatbot, I don't have emotions or feelings, but I'm always ready to assist you. How can I help you today?",
             "type": "bot",
           },
-        ],
-      }
+        ]
     `);
   });
 
@@ -71,15 +69,19 @@ describe("cohereChatAdapterProvider", () => {
 
     await polly.stop();
 
-    expect(response).toMatchInlineSnapshot(`
-      {
-        "history": [
+    expect(response.history).toMatchInlineSnapshot(`
+        [
           {
             "text": "I am an AI assistant chatbot, and I do not possess emotions or feelings. I am designed to assist users by providing helpful and thorough responses to their queries. How can I help you today?",
             "type": "bot",
           },
-        ],
-      }
+        ]
     `);
   });
+
+  describe("to be implemented", () => {
+    it.skip("should be able to switch models", () => {
+      throw new Error("Not working, it just uses blank model");
+    })
+  })
 });

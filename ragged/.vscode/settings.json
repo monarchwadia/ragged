@@ -1,4 +1,5 @@
 {
     "jest.runMode": "on-save",
-    "git.openRepositoryInParentFolders": "always"
+    "git.openRepositoryInParentFolders": "always",
+    "editor.formatOnSave": true
 }

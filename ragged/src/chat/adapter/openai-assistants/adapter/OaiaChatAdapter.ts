@@ -105,9 +105,14 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         const raggedMessages: Message[] = OaiaChatMapper.mapMessagesFromOaia(newResponseMessages);
 
         // TODO: Delete the assistants, threads, messages, and runs after we are done with them.
+        // TODO: Return an array of raw requests and responses
 
         return {
-            history: raggedMessages
+            history: raggedMessages,
+            raw: {
+                request: null,
+                response: null
+            }
         }
     }
 

@@ -101,9 +101,14 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
         const raggedMessages: Message[] = AzureOaiaChatMapper.mapMessagesFromAzureOaia(newResponseMessages);
 
         // TODO: Delete the assistants, threads, messages, and runs after we are done with them.
+        // TODO: Send back the request/response objects in a list on a metadata key.
 
         return {
-            history: raggedMessages
+            history: raggedMessages,
+            raw: {
+                request: null,
+                response: null
+            }
         }
     }
 

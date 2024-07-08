@@ -1,5 +1,6 @@
 import { AzureOpenAiChatCompletionRequestBody, AzureOpenAiChatCompletionResponseBody } from "./AzureOpenAiChatTypes";
 import { ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
+import { Message } from "../../Chat.types";
 
 const toMap: Record<ChatAdapterRequest['history'][0]['type'], AzureOpenAiChatCompletionRequestBody['messages'][0]['role'] | null> = {
     user: "user",
@@ -32,7 +33,7 @@ export class AzureOpenAiChatMappers {
 
         return { messages };
     }
-    static mapFromOpenAi(response: AzureOpenAiChatCompletionResponseBody): ChatAdapterResponse {
+    static mapFromOpenAi(response: AzureOpenAiChatCompletionResponseBody): Message[] {
         const messages: ChatAdapterResponse['history'] = [];
         for (let i = 0; i < response.choices.length; i++) {
             const choice = response.choices[i];
@@ -41,8 +42,6 @@ export class AzureOpenAiChatMappers {
                 type: fromMap[choice.message.role],
             });
         }
-        return {
-            history: messages
-        };
+        return messages;
     }
 }

@@ -20,24 +20,29 @@ export class AzureOpenAiChatAdapter implements BaseChatAdapter {
 
     async chat(request: ChatAdapterRequest) {
         const mappedRequest = AzureOpenAiChatMappers.mapToOpenAi(request);
-        const response = await this.chatCompletion(mappedRequest);
-        const mappedResponse = AzureOpenAiChatMappers.mapFromOpenAi(response);
-        return mappedResponse;
+        const apiResponse = await this.chatCompletion(mappedRequest);
+        const mappedResponse = AzureOpenAiChatMappers.mapFromOpenAi(apiResponse.json);
+        return {
+            history: mappedResponse,
+            raw: apiResponse.raw
+        };
     }
 
-    private async chatCompletion(body: AzureOpenAiChatCompletionRequestBody): Promise<AzureOpenAiChatCompletionResponseBody> {
+    private async chatCompletion(body: AzureOpenAiChatCompletionRequestBody) {
         const headers: HeadersInit = {
             'Content-Type': 'application/json',
             'api-key': `${this.config.apiKey}`
         };
 
-        return await this.driverApiClient.post(
+        const apiResponse = await this.driverApiClient.post(
             this.buildUrlFromConfig(),
             {
                 headers,
                 body
             }
         )
+
+        return apiResponse;
     }
 
     private buildUrlFromConfig() {
