@@ -70,7 +70,6 @@ export class Chat {
     }
 
     static with({ provider, config }: ChatWithConfig) {
-        const apiClient = new ApiClient();
         let adapter: BaseChatAdapter;
 
         switch (provider) {
@@ -96,7 +95,7 @@ export class Chat {
                 throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Chat.with().");
         }
 
-        return new Chat(adapter, apiClient);
+        return new Chat(adapter);
     }
 
     constructor(private adapter: BaseChatAdapter, private apiClient: ApiClient = new ApiClient()) { }

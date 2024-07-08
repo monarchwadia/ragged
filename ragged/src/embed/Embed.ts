@@ -20,7 +20,6 @@ export class Embed {
 
     static with({ provider, config }: EmbedWithConfig): Embed {
         let adapter: BaseEmbeddingAdapter;
-        const apiClient = new ApiClient();
 
         switch (provider) {
             case "openai":
@@ -32,7 +31,7 @@ export class Embed {
                 throw new ParameterValidationError("Invalid provider. Please check the documentation or your editor's code autocomplete for more information on how to use Embed.with().");
         }
 
-        return new Embed(adapter, apiClient);
+        return new Embed(adapter);
     }
 
     async embed(text: string): Promise<EmbedResponse>;
