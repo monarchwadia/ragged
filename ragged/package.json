@@ -1,6 +1,6 @@
 {
   "name": "ragged",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "A simple library for easy LLM access.",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
