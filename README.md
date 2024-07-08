@@ -7,12 +7,17 @@
 
 Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and Typescript. It makes it easy to access LLMs via a simple, easy to understand, and uncomplicated API.
 
+The heart of Ragged is a simple abstraction that allows you to interact with LLMs in a consistent way, regardless of the provider or model you are using. This abstraction makes it easy to switch between different LLMs without having to change your code.
+
+Ragged is designed to be simple, easy to use, and flexible. It is built with modern JavaScript and TypeScript features, and it is designed to be extensible and customizable. Ragged is a powerful tool for building chat-based applications, bots, and conversational interfaces as well as for use in RAG pipelines and other NLP tasks.
+
 ## Table of Contents 
 
 - [Ragged](#ragged)
   - [What is this?](#what-is-this)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
+  - [Ragged's LLM API Abstraction](#raggeds-llm-api-abstraction)
   - [Simple chat](#simple-chat)
   - [Message History](#message-history)
     - [Accessing message history](#accessing-message-history)
@@ -59,14 +64,41 @@ Installing Ragged is very easy.
 
 ```bash
 # either
-npm install ragged
+npm install --save-exact ragged
 # or
-pnpm install ragged
+pnpm add --save-exact ragged
 # or
-yarn install ragged
+yarn add --exact ragged
 ```
 
 That's it. You're ready to go!
+
+## Ragged's LLM API Abstraction
+
+Ragged's core abstraction is an easy-to-use `Message` interface.
+
+```ts
+const history: Message[] = [
+    { type: "user", text: "What is a rickroll?" },
+    { type: "bot", text: "A rickroll is a prank..." }
+]
+```
+
+This standard interface is the same across all LLM providers, making it easy to switch between providers without changing your code.
+
+Because this interface is standard, a lot of operations become very easy to perform. For example, you can access the last message in the history using the `.at` method.
+
+```ts
+console.log(history.at(-1)?.text); // A rickroll is a prank...
+```
+
+Or, you can simply modify history by pushing new messages to the array.
+
+```ts
+history.push({ type: "bot", text: "I'm a bot!" });
+```
+
+In the following sections, we will show you how to use Ragged to perform many complex operations with ease, including chat completion, tool calling, multimodal input, agent creation, and more.
 
 ## Simple chat
 
@@ -82,10 +114,10 @@ const c = Chat.with({
 });
 
 // chat with the model
-const messages = await c.chat('What is a rickroll?');
+const {history} = await c.chat('What is a rickroll?');
 
-// messages.at(-1) is a native JS array method for the last element
-console.log(messages.at(-1)?.text); // A rickroll is a prank...
+// {history}.at(-1) is a native JS array method for the last element
+console.log(history.at(-1)?.text); // A rickroll is a prank...
 ```
 
 Nothing to it!
@@ -181,7 +213,7 @@ Currently we only support base64 encoded images, but will expand this support in
 
 ```ts
 // chat with the model
-const messages = await c.chat([
+const { history } = await c.chat([
     {
         type: "user",
         text: "What do these images contain? Describe them.",
@@ -209,7 +241,7 @@ const messages = await c.chat([
 });
 
 // log the messages
-console.log(messages.at(-1)?.text);
+console.log(history.at(-1)?.text);
 
 // Output:
 // The first image is an emoji of a face with heart-shaped eyes, typically used to express love, adoration, or strong liking for something or someone.
@@ -249,13 +281,13 @@ In this example, we define a tool called `getHomepageTool`. This tool has the fo
 Once you have defined a tool, you can use it in a chat interaction by passing it to the `chat` method.
 
 ```ts
-const response = await c.chat("Get the contents of my homepage.", {
+const { history } = await c.chat("Get the contents of my homepage.", {
     // Pass the tool to the chat method.
     tools: [getHomepageTool],
     model: "gpt-3.5-turbo"
 });
 
-console.log(response.at(-1)?.text);
+console.log(history.at(-1)?.text);
 // RESPONSE: I retrieved the contents of your homepage. It says: "Hello! My name is John! I'm a student at a community college!"
 ```
 
@@ -287,13 +319,13 @@ const c = Chat.with({
     }
 });
 
-const response = await c.chat("Get the contents of my homepage.", {
+const { history } = await c.chat("Get the contents of my homepage.", {
     // Pass the tool to the chat method.
     tools: [getHomepageTool],
     model: "gpt-3.5-turbo"
 });
 
-console.log(response.at(-1)?.text);
+console.log(history.at(-1)?.text);
 
 // RESPONSE: I retrieved the contents of your homepage. It says: "Hello! My name is John! I'm a student at a community college!"
 ```
@@ -412,7 +444,7 @@ async function main() {
 
 async function getNextNumber(c: Chat, input: string): Promise<string> {
     // Call the LLM with the input
-    const response = await c.chat([
+    const { history } = await c.chat([
         {
             type: "system",
             text: `
@@ -453,7 +485,7 @@ async function getNextNumber(c: Chat, input: string): Promise<string> {
     ]);
 
     // Get the last message from the response
-    const lastMessage = response.at(-1)?.text;
+    const lastMessage = history.at(-1)?.text;
     return lastMessage || "";
 }
 
@@ -594,6 +626,7 @@ await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 | Autonomous Agents                  | 🟢 100%     | ❌           |
 | Message History                    | 🟢 100%     | ❌           |
 | Helpful Errors                     | 🟢 100%     | ❌           |
+| Rate Limits                        | 🟡 30%      | ❌           |
 | Streaming                          | 🔴 0%       | ❌           |
 | Model Fine-Tuning                  | 🔴 0%       | ❌           |
 | Multimodal Generation              | 🔴 0%       | ❌           |
@@ -657,8 +690,6 @@ const c = new Chat({
         return { history: [] };
     }
 });
-
-console.log(c);
 ```
 
 #### Object adapter
