@@ -708,6 +708,19 @@ describe("Chat", () => {
       jest.clearAllMocks();
     })
 
+    describe('beforeSerialize hook', () => {
+      it('should set the beforeSerialize hook on the API client before passing it into the adapter.', async () => {
+        const beforeSerializeMock = jest.fn();
+
+        await c.chat(`This is a test message to the adapter`, {
+          hooks: { beforeSerialize: beforeSerializeMock }
+        });
+
+        expect(adapter.chat.mock.calls).toHaveLength(1)
+        expect(adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.beforeSerialize).toBe(beforeSerializeMock);
+      });
+    })
+
     describe('beforeRequest hook', () => {
       it('should set the beforeRequest hook on the API client before passing it into the adapter.', async () => {
         const beforeRequestMock = jest.fn();

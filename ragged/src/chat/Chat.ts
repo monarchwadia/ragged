@@ -131,6 +131,9 @@ export class Chat {
 
             const apiClient = this.apiClientFactory();
 
+            if (hooks?.beforeSerialize) {
+                apiClient.hooks.beforeSerialize = hooks.beforeSerialize;
+            }
             if (hooks?.beforeRequest) {
                 apiClient.hooks.beforeRequest = hooks.beforeRequest;
             }

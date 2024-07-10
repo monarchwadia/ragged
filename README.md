@@ -86,6 +86,7 @@ In the following sections, we will show you how to use Ragged to perform many co
     - [Hook Contexts](#hook-contexts)
       - [BaseHookContext](#basehookcontext)
     - [Hook Types](#hook-types)
+      - [BeforeSerializeHook](#beforeserializehook)
       - [BeforeRequestHook](#beforerequesthook)
       - [AfterResponseHook](#afterresponsehook)
       - [AfterResponseParsedHook](#afterresponseparsedhook)
@@ -576,6 +577,32 @@ type BaseHookContext = {
 
 ### Hook Types
 
+#### BeforeSerializeHook
+
+The `BeforeSerializeHook` is executed before the request is serialized. This allows you to modify the request parameters before they are sent to the API. Its context includes the `requestParams` object.
+
+Note that after the BeforeSerializeHook is executed, the requestParams are frozen and cannot be modified in subsequent hooks.
+
+**Example Usage:**
+
+```typescript
+c.chat(`Hello, World!`, {
+    hooks: {
+        beforeSerialize: ({ requestParams }) => {
+            // You could log the request parameters before they are serialized
+            console.log("Before serialize:", requestParams);
+            
+            // You could also modify the request parameters
+            requestParams.url = "http://modified.com";
+            requestParams.body.some = "modified-field";
+            if (requestParams.method === "PUT" || requestParams.method === "PATCH") {
+                requestParams.method = "POST";
+            }
+        }
+    }
+})
+```
+
 #### BeforeRequestHook
 
 The `BeforeRequestHook` is executed before the request is sent. This allows you to modify the request or perform actions before the request is made. Its context includes the `request` object.
@@ -665,6 +692,17 @@ const c = Chat.with({
 
 c.chat(`say hello world`, {
     hooks: {
+        beforeSerialize: ({ requestParams }) => {
+            // You could log the request parameters before they are serialized
+            console.log("Before serialize:", requestParams);
+            
+            // You could also modify the request parameters
+            requestParams.url = "http://modified.com";
+            requestParams.body.some = "modified-field";
+            if (requestParams.method === "PUT" || requestParams.method === "PATCH") {
+                requestParams.method = "POST";
+            }
+        }
         beforeRequest: ({ request }) => {
             // Print the Content-Type header value, just to test the hook
             console.log("We will be sending the Content-Type header with value: ",

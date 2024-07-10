@@ -1,4 +1,4 @@
-import { AfterResponseHook, AfterResponseParsedHook, BeforeRequestHook, } from "../support/ApiClient";
+import { Hooks } from "../support/ApiClient";
 import { Tool } from "../tools/Tools.types";
 
 export type UserMessageAttachment =
@@ -54,9 +54,5 @@ export type MessageType = Message["type"];
 export type ChatConfig = {
     tools?: Tool[];
     model?: string;
-    hooks?: {
-        beforeRequest?: BeforeRequestHook;
-        afterResponse?: AfterResponseHook;
-        afterResponseParsed?: AfterResponseParsedHook;
-    }
+    hooks?: Hooks
 }

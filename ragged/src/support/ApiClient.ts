@@ -12,6 +12,10 @@ type BaseHookContext = {
     }
 }
 
+type BeforeSerializeHookContext = {
+
+} & BaseHookContext;
+
 type BeforeRequestHookContext = {
     request: Request;
 } & BaseHookContext;
@@ -27,11 +31,13 @@ type AfterResponseParsedHookContext = {
     json: any;
 } & BaseHookContext;
 
+export type BeforeSerializeHook = (context: BeforeSerializeHookContext) => Promise<void> | void;
 export type BeforeRequestHook = (context: BeforeRequestHookContext) => Promise<void> | void;
 export type AfterResponseHook = (context: AfterResponseHookContext) => Promise<void> | void;
 export type AfterResponseParsedHook = (context: AfterResponseParsedHookContext) => Promise<void> | void;
 
-type Hooks = {
+export type Hooks = {
+    beforeSerialize?: BeforeSerializeHook;
     beforeRequest?: BeforeRequestHook;
     afterResponse?: AfterResponseHook;
     afterResponseParsed?: AfterResponseParsedHook;
@@ -73,23 +79,44 @@ export class ApiClient {
     };
 
     private async doCall(method: string, url: string, apiClientRequest: ApiClientRequest): Promise<ApiClientResponse> {
+        const requestParamsMutable = {
+            method,
+            url,
+            headers: apiClientRequest.headers,
+            body: apiClientRequest.body
+        }
+
+        if (this.hooks?.beforeSerialize) {
+            ApiClient.logger.debug(this.formatMessage(new Request(url), "Running beforeSerialize hook..."));
+            await this.hooks.beforeSerialize({
+                requestParams: requestParamsMutable,
+                apiClient: this
+            });
+        }
+
         const requestInit: RequestInit = {}
 
-        requestInit.method = method;
+        requestInit.method = requestParamsMutable.method;
 
-        if (apiClientRequest.headers) {
-            requestInit.headers = apiClientRequest.headers;
+        if (requestParamsMutable.headers) {
+            requestInit.headers = requestParamsMutable.headers;
         }
 
-        if (apiClientRequest.body) {
-            requestInit.body = ApiJsonHandler.stringify(apiClientRequest.body)
+        if (requestParamsMutable.body) {
+            requestInit.body = ApiJsonHandler.stringify(requestParamsMutable.body)
         }
 
-        const request: Request = new Request(url, {
-            method,
-            headers: requestInit.headers,
-            body: requestInit.body
-        });
+        const request: Request = new Request(
+            requestParamsMutable.url,
+            {
+                method: requestInit.method,
+                headers: requestInit.headers,
+                body: requestInit.body
+            }
+        );
+
+        // Prevent modification of the requestParamsMutable object
+        Object.freeze(requestParamsMutable);
 
         // debug info
         ApiClient.logger.info(this.formatMessage(request, "Sending request..."));
@@ -99,12 +126,7 @@ export class ApiClient {
         if (this.hooks?.beforeRequest) {
             ApiClient.logger.debug(this.formatMessage(request, "Running beforeRequest hook..."));
             await this.hooks.beforeRequest({
-                requestParams: {
-                    method,
-                    headers: requestInit.headers,
-                    body: requestInit.body,
-                    url
-                },
+                requestParams: requestParamsMutable,
                 request,
                 apiClient: this
             });
@@ -120,12 +142,7 @@ export class ApiClient {
         if (this.hooks?.afterResponse) {
             ApiClient.logger.debug(this.formatMessage(request, "Running afterResponse hook..."));
             await this.hooks.afterResponse({
-                requestParams: {
-                    method,
-                    headers: requestInit.headers,
-                    body: requestInit.body,
-                    url
-                },
+                requestParams: requestParamsMutable,
                 request,
                 response,
                 apiClient: this
@@ -151,12 +168,7 @@ export class ApiClient {
         if (this.hooks?.afterResponseParsed) {
             ApiClient.logger.debug(this.formatMessage(request, "Running afterResponseParsed hook..."));
             await this.hooks.afterResponseParsed({
-                requestParams: {
-                    method,
-                    headers: requestInit.headers,
-                    body: requestInit.body,
-                    url
-                },
+                requestParams: requestParamsMutable,
                 request,
                 response,
                 apiClient: this,

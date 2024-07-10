@@ -142,6 +142,33 @@ describe("ApiClient", () => {
 
   describe("hooks", () => {
 
+    describe("beforeSerialize hook", () => {
+      it('should be able to modify the request params, such as raw json object, before they are serialized', async () => {
+        const apiClient = new ApiClient();
+        apiClient.hooks.beforeSerialize = ({ requestParams }) => {
+          requestParams.url = "http://modified.com";
+          requestParams.method = "OPTIONS";
+          requestParams.body.some = "modified";
+        };
+
+        await apiClient.post("https://example.com", {
+          body: {
+            some: "request",
+          }
+        });
+
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock).toHaveBeenCalledWith(expect.any(Request));
+
+        // @ts-expect-error
+        const requestObj: Request = fetchMock.mock.calls[0][0];
+        const body = await requestObj.json();
+        expect(body).toEqual({ some: "modified" });
+        expect(requestObj.url).toBe("http://modified.com/");
+        expect(requestObj.method).toBe("OPTIONS");
+      });
+    });
+
     describe('beforeRequest hook', () => {
       it('should be able to modify the request before it happens', async () => {
         const apiClient = new ApiClient();
