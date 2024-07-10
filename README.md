@@ -77,6 +77,17 @@ In the following sections, we will show you how to use Ragged to perform many co
     - [Incrementing Agent Example](#incrementing-agent-example)
     - [Multiple Agents Example](#multiple-agents-example)
   - [Logging](#logging)
+  - [Hooks](#hooks)
+    - [Types of Hooks](#types-of-hooks)
+    - [Hooks can be asynchronous](#hooks-can-be-asynchronous)
+    - [Hook Contexts](#hook-contexts)
+      - [BaseHookContext](#basehookcontext)
+    - [Hook Types](#hook-types)
+      - [BeforeRequestHook](#beforerequesthook)
+      - [AfterResponseHook](#afterresponsehook)
+      - [AfterResponseParsedHook](#afterresponseparsedhook)
+    - [Hooks can be async](#hooks-can-be-async)
+    - [Example with hooks](#example-with-hooks)
   - [Official LLM Adapters](#official-llm-adapters)
     - [OpenAI](#openai)
     - [Cohere](#cohere)
@@ -523,6 +534,154 @@ Logger.setLogLevel('warn'); // only log warnings
 Logger.setLogLevel('error'); // only log errors
 Logger.setLogLevel('none'); // turn off logging altogether
 ```
+
+## Hooks
+
+Ragged provides a powerful and flexible hook system that allows you to customize and extend the behavior of the API client. Hooks are functions that are executed at specific points during the request/response lifecycle, allowing you to modify requests, handle responses, and perform additional actions based on the API interactions.
+
+### Types of Hooks
+
+There are three types of hooks in Ragged:
+
+1. **BeforeRequestHook**
+2. **AfterResponseHook**
+3. **AfterResponseParsedHook**
+
+### Hooks can be asynchronous
+
+Hooks can be asynchronous, allowing you to perform asynchronous operations such as making additional API calls, reading/writing files, or interacting with databases. You can use `async` functions as your hooks to handle asynchronous operations.
+
+### Hook Contexts
+
+Each hook type receives a specific context object that contains relevant information about the request or response. The context objects share a base structure and have additional properties specific to the hook type.
+
+#### BaseHookContext
+
+The `BaseHookContext` contains common properties available to all hooks. Each hook also may have additional properties specific to its type.
+
+```typescript
+type BaseHookContext = {
+    apiClient: ApiClient;
+    requestParams: {
+        method: string;
+        url: string;
+        headers?: RequestInit["headers"];
+        body?: any;
+    }
+}
+```
+
+### Hook Types
+
+#### BeforeRequestHook
+
+The `BeforeRequestHook` is executed before the request is sent. This allows you to modify the request or perform actions before the request is made. Its context includes the `request` object.
+
+**Example Usage:**
+
+```typescript
+c.chat(`Hello, World!`, {
+    hooks: {
+        beforeRequest: ({ request }) => {
+            // You could log the request before it is sent
+            console.log("Before request:", request);
+            // You could also modify the request headers
+            request.headers.append('X-Custom-Header', 'custom-value');
+        }
+    }
+})
+```
+
+#### AfterResponseHook
+
+The `AfterResponseHook` is executed after the response is received but before it is parsed. This allows you to handle raw responses or perform actions based on the response status. Its context includes both the `request` and `response` objects.
+
+
+Be careful not to use the `.json()` or `.text()` methods on the response object in this hook! This will cause the response to be consumed and will prevent it from being parsed later, which will cause an error to be thrown by the `chat` method.
+
+**Example Usage:**
+
+```typescript
+c.chat(`Hello, World!`, {
+    hooks: {
+        afterResponse: ({ response }) => {
+            // You could log the response JSON
+            console.log("Logging the raw response:", response);
+        }
+    }
+});
+```
+
+#### AfterResponseParsedHook
+
+The `AfterResponseParsedHook` is executed after the response is parsed into JSON. This allows you to handle the parsed response or perform actions based on the response data.
+
+**Example Usage:**
+
+```typescript
+c.chat(`Hello, World!`, {
+    hooks: {
+        afterResponseParsed: async ({ json }) => {
+            // You could log the response JSON
+            console.log("JSON response:", json);
+            // You could also modify it
+            json.data = "Hello, World!";
+        }
+    }
+});
+```
+
+### Hooks can be async
+
+All hooks can be asynchronous, allowing you to perform asynchronous operations such as making additional API calls, reading/writing files, or interacting with databases. You can use `async` functions as your hooks to handle asynchronous operations.
+
+```ts
+c.chat(`Hello, World!`, {
+    hooks: {
+        // notice the async keyword... hooks can be async!
+        afterResponseParsed: async ({ json }) => {
+            await sendToSlack(json);
+        }
+    }
+});
+```
+
+### Example with hooks
+
+```typescript
+import { config } from "dotenv";
+config();
+import { Chat } from "ragged";
+
+const c = Chat.with({
+    provider: 'openai',
+    config: {
+        apiKey: process.env.OPENAI_API_KEY
+    }
+});
+
+c.chat(`say hello world`, {
+    hooks: {
+        beforeRequest: ({ request }) => {
+            // Print the Content-Type header value, just to test the hook
+            console.log("We will be sending the Content-Type header with value: ",
+                request.headers.get('Content-Type'));
+        },
+        afterResponse: ({ response }) => {
+            // Get the rate limit info from the response headers. This is very useful!
+            console.log("Received rate limit info from OpenAI: ",
+                Array.from(response.headers.entries())
+                    .filter(([key]) => key.startsWith('x-ratelimit')));
+        },
+        afterResponseParsed: (context) => {
+            // Finally, print the raw JSON response from OpenAI
+            console.log("Raw OpenAI response JSON: ",
+                context.json);
+        }
+    }
+});
+```
+
 ------
 
 ## Official LLM Adapters

@@ -12,13 +12,21 @@ const c = Chat.with({
 c.chat(`say hello world`, {
     hooks: {
         beforeRequest: ({ request }) => {
-            console.log("We will be sending the Content-Type header with value: ", request.headers.get('Content-Type'))
+            // Print the Content-Type header value, just to test the hook
+            console.log("We will be sending the Content-Type header with value: ",
+                request.headers.get('Content-Type'))
         },
         afterResponse: ({ response }) => {
-            console.log("Received rate limit info from OpenAI: ", Array.from(response.headers.entries()).filter(([key]) => key.startsWith('x-ratelimit')))
+            // Get the rate limit info from the response headers. This is very useful!
+            console.log("Received rate limit info from OpenAI: ",
+                Array.from(response.headers.entries())
+                    .filter(([key]) => key.startsWith('x-ratelimit')))
         },
         afterResponseParsed: (response) => {
-            console.log("Raw OpenAI response JSON: ", response.json)
+            // Finally, print the raw JSON response from OpenAI
+            console.log("Raw OpenAI response JSON: ",
+                response.json)
         }
     }
 })
+
