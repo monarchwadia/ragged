@@ -1,4 +1,3 @@
-import { ApiClient } from "../../../support/ApiClient";
 import { NotImplementedError } from "../../../support/RaggedErrors";
 import { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
 import { OllamaChatAdapterConfig } from "./OllamaChatAdapterTypes";

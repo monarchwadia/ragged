@@ -3,12 +3,10 @@
  */
 
 import { Chat } from "ragged"
-import type { ChatAdapterTypes } from "ragged";
-
-type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
+import type { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "ragged";
 
 const countingAdapter: BaseChatAdapter = {
-    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
+    chat: async (request: ChatAdapterRequest): Promise<ChatAdapterResponse> => {
         let totalCharacters = 0;
 
         for (const message of request.history) {

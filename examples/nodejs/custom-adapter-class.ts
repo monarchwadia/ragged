@@ -3,25 +3,19 @@
  */
 
 import { Chat } from "ragged"
-import type { ChatAdapterTypes } from "ragged"
-
-type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
+import type { BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "ragged"
 
 class AppendingAdapter implements BaseChatAdapter {
     constructor(private history: string = "") { }
 
-    async chat(request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> {
+    async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
 
         this.history += "\n" + request.history.map(message => message.text).join("n");
 
         return {
             history: [
                 { type: "bot", text: this.history }
-            ],
-            raw: {
-                request: null,
-                response: null
-            }
+            ]
         };
     }
 }

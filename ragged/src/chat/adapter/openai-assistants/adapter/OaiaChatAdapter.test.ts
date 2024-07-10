@@ -65,7 +65,7 @@ describe("OaiaChatAdapter", () => {
         },
       ]
     `);
-        expect(response.raw.request).toBeNull();
-        expect(response.raw.response).toBeNull();
+        expect(response.raw?.request).toBeNull();
+        expect(response.raw?.response).toBeNull();
     });
 });

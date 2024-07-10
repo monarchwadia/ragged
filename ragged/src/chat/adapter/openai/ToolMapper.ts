@@ -1,5 +1,5 @@
 import { Logger } from "../../../support/logger/Logger";
-import { ObjectProp, Tool, ToolProp } from "../../../tools/Tools.types";
+import { ObjectToolProp, Tool, ToolProp } from "../../../tools/Tools.types";
 import { OaiTool, OaiToolParam, OaiToolParamObject } from "./OpenAiApiTypes";
 
 export class OpenAiToolMapper {
@@ -49,7 +49,7 @@ export class OpenAiToolMapper {
         }
     }
 
-    private static mapObjectPropsToOaiObjectParam(obj: ObjectProp): OaiToolParamObject {
+    private static mapObjectPropsToOaiObjectParam(obj: ObjectToolProp): OaiToolParamObject {
         const rootObj: OaiToolParamObject = {
             type: "object",
             properties: {} as OaiToolParamObject['properties']

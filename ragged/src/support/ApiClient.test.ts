@@ -175,7 +175,7 @@ describe("ApiClient", () => {
         }
       });
 
-      expect(postResponse.raw.response.headers.get("X-Test")).toBe("value");
+      expect(postResponse.raw?.response.headers.get("X-Test")).toBe("value");
     })
 
     it('should be able to read and modify the JSON response in the afterResponseParsed hook', async () => {

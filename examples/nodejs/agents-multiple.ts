@@ -58,9 +58,8 @@ Climate change is not a problem for future generations to solve - it is happenin
 import { config } from 'dotenv';
 import chalk from "chalk";
 config();
-import { Chat, ChatTypes } from "ragged"
-
-type Tool = ChatTypes['Tool'];
+import { Chat } from "ragged"
+import type { Tool } from "ragged";
 
 // this is where we store the tweets. This is the shared workspace for the agents.
 type TweetHolder = {

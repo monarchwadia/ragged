@@ -4,8 +4,7 @@
 
 import { config } from 'dotenv';
 config();
-import { Chat, ChatTypes } from "ragged"
-type Tool = ChatTypes['Tool']
+import { Chat, Tool } from "ragged"
 
 // Defines a simple tool that fetches some mock homepage contents.
 const getHomepageTool: Tool = {

@@ -13,7 +13,7 @@ export type ChatAdapterRequest = {
 
 export type ChatAdapterResponse = {
     history: Message[];
-    raw: {
+    raw?: {
         request: Request | null;
         response: Response | null;
     }

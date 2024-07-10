@@ -1,7 +1,7 @@
 import { MappingError } from "../../../support/RaggedErrors";
 import { Logger } from "../../../support/logger/Logger";
 import { Message } from "../../Chat.types";
-import { ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
+import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { OllamaChatItem, OllamaChatRequestRoot } from "./OllamaApiRequestTypes";
 import { OllamaChatResponseRoot } from "./OllamaApiResponseTypes";
 import { OllamaChatAdapterConfig } from "./OllamaChatAdapterTypes";

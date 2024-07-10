@@ -1,4 +1,3 @@
-import { ApiClient } from "../../../support/ApiClient";
 import { OllamaChatAdapter } from "./OllamaChatAdapter";
 import { OllamaChatAdapterConfig } from "./OllamaChatAdapterTypes";
 

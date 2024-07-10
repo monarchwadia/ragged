@@ -5,17 +5,15 @@
 import { config } from 'dotenv';
 config();
 
-import { Chat, ApiClient } from "ragged";
-import { ChatAdapters, RaggedErrors } from "ragged";
-import type { ChatAdapterTypes } from "ragged";
-
-const provideCohereChatAdapter = ChatAdapters.Cohere.provideCohereChatAdapter;
-const provideOpenAiChatAdapter = ChatAdapters.OpenAi.provideOpenAiChatAdapter;
-const CohereChatAdapter = ChatAdapters.Cohere.CohereChatAdapter;
-const OpenAiChatAdapter = ChatAdapters.OpenAi.OpenAiChatAdapter;
-const { ParameterValidationError } = RaggedErrors;
-
-type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
+import { Chat } from "ragged";
+import {
+    CohereChatAdapter,
+    OpenAiChatAdapter,
+    ParameterValidationError,
+    BaseChatAdapter,
+    ChatAdapterRequest,
+    ChatAdapterResponse
+} from "ragged";
 /**
  * Adapter that wraps a pool of adapters and forwards requests to them in a round-robin fashion.
  */
@@ -37,7 +35,7 @@ export class PoolWrapperAdapter implements BaseChatAdapter {
      * All history is managed in `Chat` class; this class is
      * only responsible for forwarding and mapping the request.
      */
-    async chat(request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> {
+    async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         const response = await this.pool[this.index].chat(request);
         this.index = (this.index + 1) % this.pool.length;
         return response;

@@ -31,9 +31,9 @@ That's it. You're ready to go!
 Ragged's core Chat Completion abstraction is an easy-to-use `Message` interface.
 
 ```ts
-import { ChatTypes } from "ragged";
+import type { Message } from "ragged";
 
-const history: ChatTypes['Message'][] = [
+const history: Message[] = [
     { type: "user", text: "What is a rickroll?" },
     { type: "bot", text: "A rickroll is a prank..." }
 ]
@@ -264,9 +264,9 @@ Tools are very powerful! You can use tools to fetch data from external APIs, per
 To define a tool, first we import the Tool type from Ragged and then define a tool object.
 
 ```ts
-import { ChatTypes } from "ragged";
+import type { Tool } from "ragged";
 
-const getHomepageTool: ChatTypes['Tool'] = {
+const getHomepageTool: Tool = {
     id: "get-homepage-contents",
     description: "Gets the contents of my homepage.",
     handler: async () => {
@@ -298,9 +298,9 @@ Putting it all together, here's what it looks like:
 
 ```ts
 import { Chat } from "ragged"
-import { ChatTypes } from "ragged";
+import type { Tool } from "ragged";
 
-const getHomepageTool: ChatTypes['Tool'] = {
+const getHomepageTool: Tool = {
     id: "get-homepage-contents",
     description: "Gets the contents of my homepage.",
     props: {
@@ -340,9 +340,9 @@ The `Tool` object can also take an optional `props` object. This object allows t
 Here is an example of how to use the `props` object:
 
 ```ts
-import { ChatTypes } from "ragged";
+import type { Tool } from "ragged";
 
-const fetchTool: ChatTypes['Tool'] = {
+const fetchTool: Tool = {
     id: "fetch",
     description: "Do a simple GET call and retrieve the contents of a URL.",
     // The props object describes the expected input for the tool.
@@ -377,8 +377,8 @@ You can get the raw request and response objects from the tool handler by using 
 ```ts
 const { history, raw } = await c.chat("What is a rickroll?");
 console.log(history.at(-1)?.text); // A rickroll is a prank...
-console.log(raw.requests); // All API requests done during the chat (there can be more than 1 if you are doing tool calling)
-console.log(raw.responses); // All API responses done during the chat (there can be more than 1 if you are doing tool calling)
+console.log(raw?.requests); // All API requests done during the chat (there can be more than 1 if you are doing tool calling)
+console.log(raw?.responses); // All API responses done during the chat (there can be more than 1 if you are doing tool calling)
 ```
 
 ## Autonomous Agents
@@ -696,10 +696,10 @@ An inline adapter is a simple way to create a custom adapter. You can define the
 
 ```ts
 import { Chat } from "ragged"
-import type { ChatAdapterTypes } from "ragged"
+import type { ChatAdapterRequest ,ChatAdapterResponse } from "ragged"
 
 const c = new Chat({
-    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
+    chat: async (request: ChatAdapterRequest): Promise<ChatAdapterResponse> => {
         // Make your API calls here, then return the mapped response.
         // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };
@@ -716,10 +716,10 @@ You could also create a custom adapter as an object and pass it to the construct
 
 ```ts
 import { Chat } from "ragged"
-import type { ChatAdapterTypes } from "ragged"
+import type { BaseChatAdapter } from "ragged"
 
-const adapter: ChatAdapterTypes['BaseChatAdapter'] = {
-    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
+const adapter: BaseChatAdapter = {
+    chat: async (request: ChatAdapterRequest): Promise<ChatAdapterResponse> => {
         // Make your API calls here, then return the mapped response.
         // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };
@@ -737,12 +737,10 @@ const c = new Chat(adapter);
 You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
 
 ```ts
-import { Chat, ChatAdapterTypes } from "ragged"
-
-type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
+import { Chat, BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "ragged"
 
 class ExampleAdapter implements BaseChatAdapter {
-    async chat(request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> {
+    async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         // Make your API calls here, then return the mapped response.
         // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };

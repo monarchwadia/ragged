@@ -1,36 +1,36 @@
-export type StringProp = {
+export type StringToolProp = {
     type: "string";
     description?: string;
     required?: boolean;
 };
 
-export type NumberProp = {
+export type NumberToolProp = {
     type: "number";
     description?: string;
     required?: boolean;
 };
 
-export type BooleanProp = {
+export type BooleanToolProp = {
     type: "boolean";
     description?: string;
     required?: boolean;
 };
 
-export type ObjectProp = {
+export type ObjectToolProp = {
     type: "object";
     description?: string;
     required?: boolean;
     props: Record<string, ToolProp>;
 };
 
-export type ArrayProp = {
+export type ArrayToolProp = {
     type: "array";
     description?: string;
     required?: boolean;
     children: ToolProp;
 };
 
-export type ToolProp = StringProp | NumberProp | BooleanProp | ObjectProp | ArrayProp | undefined;
+export type ToolProp = StringToolProp | NumberToolProp | BooleanToolProp | ObjectToolProp | ArrayToolProp | undefined;
 
 /**
  * A validator is a function that takes the input properties of a tool and returns the

@@ -6,8 +6,7 @@ import fs from 'fs';
 import { config } from 'dotenv';
 config();
 
-import { Chat, ChatTypes } from "ragged"
-type Tool = ChatTypes['Tool']
+import { Chat, Tool } from "ragged"
 
 const c = Chat.with({
     provider: "openai",

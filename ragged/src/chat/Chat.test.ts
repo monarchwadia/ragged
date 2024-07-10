@@ -589,8 +589,8 @@ describe("Chat", () => {
       })
 
       it("should return the raw requests and responses", () => {
-        expect(response.raw.requests.length).toBe(2);
-        expect(response.raw.responses.length).toBe(2);
+        expect(response.raw?.requests.length).toBe(2);
+        expect(response.raw?.responses.length).toBe(2);
       })
 
     });

@@ -33,7 +33,7 @@ export type ChatWithConfig =
 
 export type ChatResponse = {
     history: Message[];
-    raw: {
+    raw?: {
         requests: Request[];
         responses: Response[];
     };
@@ -143,11 +143,11 @@ export class Chat {
             }
 
             const response: ChatAdapterResponse = await this.performChatRequest(request);
-            if (response.raw.request) {
-                rawRequests.push(response.raw.request);
+            if (response.raw?.request) {
+                rawRequests.push(response.raw?.request);
             }
-            if (response.raw.response) {
-                rawResponses.push(response.raw.response);
+            if (response.raw?.response) {
+                rawResponses.push(response.raw?.response);
             }
 
             workingHistory = [...workingHistory, ...response.history];

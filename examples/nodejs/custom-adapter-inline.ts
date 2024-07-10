@@ -3,10 +3,10 @@
  */
 
 import { Chat } from "ragged"
-import type { ChatAdapterTypes } from "ragged"
+import type { ChatAdapterRequest, ChatAdapterResponse } from "ragged"
 
 const echo = new Chat({
-    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
+    chat: async (request: ChatAdapterRequest): Promise<ChatAdapterResponse> => {
         return {
             history: request.history.map(message => ({ type: "bot", text: message.text })),
             raw: {

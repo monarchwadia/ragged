@@ -45,8 +45,8 @@ describe("ollamaChatAdapterProvider", () => {
         ]
     `);
 
-    expect(response.raw.request).toBeInstanceOf(Request);
-    expect(response.raw.response).toBeInstanceOf(Response);
+    expect(response.raw?.request).toBeInstanceOf(Request);
+    expect(response.raw?.response).toBeInstanceOf(Response);
   }, 15000);
 
   it("successfully does complex requests", async () => {
@@ -87,7 +87,7 @@ describe("ollamaChatAdapterProvider", () => {
           },
         ]
     `);
-    expect(response.raw.request).toBeInstanceOf(Request);
-    expect(response.raw.response).toBeInstanceOf(Response);
+    expect(response.raw?.request).toBeInstanceOf(Request);
+    expect(response.raw?.response).toBeInstanceOf(Response);
   }, 15000);
 });
