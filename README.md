@@ -794,8 +794,8 @@ await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 | Embeddings Generation              | 🟢 100%     | ❌           |
 | In-built Message History           | 🟢 100%     | ❌           |
 | Write your own custom LLM adapters | 🟢 100%     | ❌           |
+| Multimodal Input                   | 🟡 50%      | ❌           |
 | Tool Calling                       | 🟡 30%      | ❌           |
-| Multimodal Input                   | 🟡 30%      | ❌           |
 | Autonomous Agents                  | 🟢 100%     | ❌           |
 | Message History                    | 🟢 100%     | ❌           |
 | Helpful Errors                     | 🟢 100%     | ❌           |
