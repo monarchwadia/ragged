@@ -141,6 +141,59 @@ describe("ApiClient", () => {
   });
 
   describe("hooks", () => {
+    it('should be able to modify the request before it happens', () => {
+      const apiClient = new ApiClient();
+      apiClient.post("https://example.com", {
+        body: {
+          some: "request",
+        },
+        hooks: {
+          beforeRequest: async ({ request }) => {
+            request.headers.set("X-Test", "value");
+          }
+        }
+      });
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledWith(expect.any(Request));
+
+      // @ts-expect-error
+      const requestObj: Request = fetchMock.mock.calls[0][0];
+      expect(requestObj.headers.get("X-Test")).toBe("value");
+    })
+
+    it('should be able to modify the response after it happens', async () => {
+      const apiClient = new ApiClient();
+      const postResponse = await apiClient.post("https://example.com", {
+        body: {
+          some: "request",
+        },
+        hooks: {
+          afterResponse({ response }) {
+            response.headers.set("X-Test", "value");
+          },
+        }
+      });
+
+      expect(postResponse.raw.response.headers.get("X-Test")).toBe("value");
+    })
+
+    it('should be able to read and modify the JSON response in the afterResponseParsed hook', async () => {
+      const apiClient = new ApiClient();
+      const postResponse = await apiClient.post("https://example.com", {
+        body: {
+          some: "request",
+        },
+        hooks: {
+          afterResponseParsed({ response, json }) {
+            expect(json).toEqual({ some: "response" });
+            json.some = "modified";
+          },
+        }
+      });
+
+      expect(postResponse.json).toEqual({ some: "modified" });
+    });
 
   })
 });

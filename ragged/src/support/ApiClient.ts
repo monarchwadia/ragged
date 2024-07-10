@@ -1,14 +1,39 @@
 import { ApiJsonHandler } from "./ApiJsonHandler";
-import { FetchRequestFailedError, FetchResponseNotOkError } from "./RaggedErrors";
+import { FetchRequestFailedError, FetchResponseNotOkError, JsonParseError } from "./RaggedErrors";
 import { Logger } from "./logger/Logger";
 
+type BaseHookContext = {
+    apiClient: ApiClient;
+    requestParams: {
+        method: string;
+        url: string;
+        headers?: RequestInit["headers"];
+        body?: any;
+    }
+}
+
+type BeforeRequestHookContext = {
+    request: Request;
+} & BaseHookContext;
+
+type AfterResponseHookContext = {
+    request: Request;
+    response: Response;
+} & BaseHookContext;
+
+type AfterResponseParsedHookContext = {
+    request: Request;
+    response: Response;
+    json: any;
+} & BaseHookContext;
 
 type ApiClientRequest = {
     headers?: RequestInit["headers"];
     body?: any;
     hooks?: {
-        beforeRequest?: (request: Request) => void;
-        afterResponse?: (response: Response) => void;
+        beforeRequest?: (request: BeforeRequestHookContext) => Promise<void> | void;
+        afterResponse?: (response: AfterResponseHookContext) => Promise<void> | void;
+        afterResponseParsed?: (response: AfterResponseParsedHookContext) => Promise<void> | void;
     }
 }
 
@@ -64,11 +89,40 @@ export class ApiClient {
         ApiClient.logger.debug(this.formatMessage(request, `Request body: ${JSON.stringify(request.body)}`));
         ApiClient.logger.debug(this.formatMessage(request, `Request headers: ${JSON.stringify(request.headers)}`));
 
+        if (apiClientRequest.hooks?.beforeRequest) {
+            ApiClient.logger.debug(this.formatMessage(request, "Running beforeRequest hook..."));
+            apiClientRequest.hooks.beforeRequest({
+                requestParams: {
+                    method,
+                    headers: requestInit.headers,
+                    body: requestInit.body,
+                    url
+                },
+                request,
+                apiClient: this
+            });
+        }
+
         let response: Response;
         try {
             response = await fetch(request);
         } catch (e) {
             throw new FetchRequestFailedError("Failed to make fetch call.", e);
+        }
+
+        if (apiClientRequest.hooks?.afterResponse) {
+            ApiClient.logger.debug(this.formatMessage(request, "Running afterResponse hook..."));
+            apiClientRequest.hooks.afterResponse({
+                requestParams: {
+                    method,
+                    headers: requestInit.headers,
+                    body: requestInit.body,
+                    url
+                },
+                request,
+                response,
+                apiClient: this
+            });
         }
 
         ApiClient.logger.info(this.formatMessage(request, `Response status: ${response.status}`));
@@ -79,7 +133,29 @@ export class ApiClient {
             throw new FetchResponseNotOkError(response, response.status);
         }
 
-        const json = await ApiJsonHandler.parseResponse(response);
+        let json: any;
+        try {
+            json = await ApiJsonHandler.parseResponse(response);
+        } catch (e) {
+            ApiClient.logger.error(e);
+            throw new JsonParseError("Failed to parse JSON response.", e);
+        }
+
+        if (apiClientRequest.hooks?.afterResponseParsed) {
+            ApiClient.logger.debug(this.formatMessage(request, "Running afterResponseParsed hook..."));
+            apiClientRequest.hooks.afterResponseParsed({
+                requestParams: {
+                    method,
+                    headers: requestInit.headers,
+                    body: requestInit.body,
+                    url
+                },
+                request,
+                response,
+                apiClient: this,
+                json
+            });
+        }
 
         return {
             json,
