@@ -15,6 +15,7 @@ import { AzureOaiaDaoCommonConfig } from "./adapter/azure-openai-assistants/Dao.
 import { provideOllamaChatAdapter } from "./adapter/ollama/provideOllamaChatAdapter";
 import { OllamaChatAdapterConfig } from "./adapter/ollama/OllamaChatAdapterTypes";
 import { ApiClient } from "../support/ApiClient";
+import type { ApiClientFactory } from "../support/ApiClient.types"
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
@@ -98,7 +99,7 @@ export class Chat {
         return new Chat(adapter);
     }
 
-    constructor(private adapter: BaseChatAdapter, private apiClient: ApiClient = new ApiClient()) { }
+    constructor(private adapter: BaseChatAdapter, private apiClientFactory: ApiClientFactory = () => new ApiClient()) { }
 
     // TODO: Need to put tools, model inside options object.. consider also doing cascading options overrides
     async chat(): Promise<ChatResponse>;
@@ -111,7 +112,7 @@ export class Chat {
         const initializedChatState = this.validatedChatParams(...args);
         let { workingHistory } = initializedChatState;
         const { config } = initializedChatState;
-        const { tools, model } = config;
+        const { tools, model, hooks } = config;
 
         let rawRequests: Request[] = [];
         let rawResponses: Response[] = [];
@@ -128,12 +129,25 @@ export class Chat {
 
             let toolCallsWereResolved = false;
 
+            const apiClient = this.apiClientFactory();
+
+            if (hooks?.beforeRequest) {
+                apiClient.hooks.beforeRequest = hooks.beforeRequest;
+            }
+            if (hooks?.afterResponse) {
+                apiClient.hooks.afterResponse = hooks.afterResponse;
+            }
+            if (hooks?.afterResponseParsed) {
+                apiClient.hooks.afterResponseParsed = hooks.afterResponseParsed;
+            }
+
             const request: ChatAdapterRequest = {
                 history: workingHistory,
                 context: {
-                    apiClient: this.apiClient
+                    apiClient: apiClient
                 }
             };
+
             if (tools && tools.length) {
                 request.tools = [...tools];
             }

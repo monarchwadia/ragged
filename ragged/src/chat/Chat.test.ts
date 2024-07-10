@@ -9,16 +9,19 @@ import {
 } from "../support/RaggedErrors";
 import { fakeRawsFactory } from "../test/fakeFactories";
 import { ApiClient } from "../support/ApiClient";
+import { ApiClientFactory } from "../support/ApiClient.types";
 
 describe("Chat", () => {
   let adapter: DeepMockProxy<BaseChatAdapter>;
   let apiClient: DeepMockProxy<ApiClient>;
+  let apiClientFactory: () => DeepMockProxy<ApiClient>;
   let c: Chat;
 
   beforeEach(() => {
     adapter = mockDeep<BaseChatAdapter>();
     apiClient = mockDeep<ApiClient>();
-    c = new Chat(adapter, apiClient);
+    apiClientFactory = () => apiClient;
+    c = new Chat(adapter, apiClientFactory);
   });
 
   describe("Default behaviour", () => {
@@ -686,6 +689,59 @@ describe("Chat", () => {
         }
       ] as Message[]);
     });
+  });
+
+  describe('with hooks', () => {
+    beforeEach(() => {
+      adapter.chat.mockResolvedValue({
+        history: [
+          {
+            type: "bot",
+            text: "This is a test response from the adapter"
+          }
+        ],
+        raw: fakeRawsFactory()
+      });
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    })
+
+    describe('beforeRequest hook', () => {
+      it('should set the beforeRequest hook on the API client before passing it into the adapter.', async () => {
+        const beforeRequestMock = jest.fn();
+
+        await c.chat(`This is a test message to the adapter`, {
+          hooks: { beforeRequest: beforeRequestMock }
+        });
+
+        expect(adapter.chat.mock.calls).toHaveLength(1)
+        expect(adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.beforeRequest).toBe(beforeRequestMock);
+      });
+
+      it('should set the afterResponse hook on the API client before passing it into the adapter', async () => {
+        const afterResponse = jest.fn();
+
+        await c.chat(`This is a test message to the adapter`, {
+          hooks: { afterResponse: afterResponse }
+        });
+
+        expect(adapter.chat.mock.calls).toHaveLength(1)
+        expect(adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.afterResponse).toBe(afterResponse);
+      });
+
+      it('should set the afterResponseParsed hook on the API client before passing it into the adapter', async () => {
+        const afterResponseParsed = jest.fn();
+
+        await c.chat(`This is a test message to the adapter`, {
+          hooks: { afterResponseParsed: afterResponseParsed }
+        });
+
+        expect(adapter.chat.mock.calls).toHaveLength(1)
+        expect(adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.afterResponseParsed).toBe(afterResponseParsed);
+      });
+    })
   })
 
   describe("parameter validation", () => {
@@ -809,19 +865,19 @@ describe("Chat", () => {
           }
         });
       });
+      it('can instantiate azure-openai-assistants', () => {
+        const c = Chat.with({
+          provider: 'azure-openai-assistants',
+          config: {
+            apiKey: '123',
+            apiVersion: 'v1',
+            resourceName: 'resource',
+            deploymentName: 'deployment',
+            modelName: 'model'
+          }
+        });
+      })
     });
 
-    it('can instantiate azure-openai-assistants', () => {
-      const c = Chat.with({
-        provider: 'azure-openai-assistants',
-        config: {
-          apiKey: '123',
-          apiVersion: 'v1',
-          resourceName: 'resource',
-          deploymentName: 'deployment',
-          modelName: 'model'
-        }
-      });
-    })
-  })
+  });
 })
