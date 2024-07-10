@@ -9,7 +9,7 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
 
 The heart of Ragged is a simple abstraction that allows you to interact with LLMs in a consistent way, regardless of the provider or model you are using. This abstraction makes it easy to switch between different LLMs without having to change your code.
 
-## Goal
+## Ragged is not a framework.
 
 Ragged's job is to be a low-level connector library. it is, explicitly, not a framework; but it is meant to be easy to use. You can build your own framework on top of Ragged, or use it as a standalone library in your existing projects.
 
@@ -61,7 +61,7 @@ In the following sections, we will show you how to use Ragged to perform many co
 
 - [Ragged](#ragged)
   - [What is this?](#what-is-this)
-  - [Goal](#goal)
+  - [Ragged is not a framework.](#ragged-is-not-a-framework)
   - [Installation](#installation)
   - [Ragged's Chat Completion Abstraction](#raggeds-chat-completion-abstraction)
   - [Table of Contents](#table-of-contents)
