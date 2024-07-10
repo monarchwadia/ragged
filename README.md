@@ -1,7 +1,7 @@
 
 # Ragged
 
-![An image of an audio cable with a ragged blue denim insulation covering. The caption in the foreground reads "Ragged, the universal LLM client for JavaScript."](./ragged-social-card.jpeg)
+![](./ragged-social-card.jpeg)
 
 ## What is this?
 
@@ -9,7 +9,9 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
 
 The heart of Ragged is a simple abstraction that allows you to interact with LLMs in a consistent way, regardless of the provider or model you are using. This abstraction makes it easy to switch between different LLMs without having to change your code.
 
-Ragged is designed to be simple, easy to use, and flexible. It is built with modern JavaScript and TypeScript features, and it is designed to be extensible and customizable. Ragged is a powerful tool for building chat-based applications, bots, and conversational interfaces as well as for use in RAG pipelines and other NLP tasks.
+## Goal
+
+Ragged's job is to be a low-level connector library. it is, explicitly, not a framework; but it is meant to be easy to use. You can build your own framework on top of Ragged, or use it as a standalone library in your existing projects.
 
 ## Installation
 
@@ -59,6 +61,7 @@ In the following sections, we will show you how to use Ragged to perform many co
 
 - [Ragged](#ragged)
   - [What is this?](#what-is-this)
+  - [Goal](#goal)
   - [Installation](#installation)
   - [Ragged's Chat Completion Abstraction](#raggeds-chat-completion-abstraction)
   - [Table of Contents](#table-of-contents)
