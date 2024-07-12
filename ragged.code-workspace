@@ -29,6 +29,9 @@
 		"typescript.tsdk": "/node_modules/typescript/lib",
 		"jest.disabledWorkspaceFolders": [
 			"documentation",
-		]
+			"e2e",
+			"examples",
+			"scratch"
+		],
 	}
 }

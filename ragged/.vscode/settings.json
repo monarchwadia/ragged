@@ -1,5 +1,7 @@
 {
     "jest.runMode": "on-save",
     "git.openRepositoryInParentFolders": "always",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "jest.rootPath": ".",
+    "jest.jestCommandLine": "pnpm test -- "
 }
