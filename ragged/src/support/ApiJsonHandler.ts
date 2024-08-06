@@ -17,7 +17,9 @@ export class ApiJsonHandler {
     static stringify(obj: any): string {
         ApiJsonHandler.logger.debug(`Stringifying object to JSON:`, obj);
         try {
-            return JSON.stringify(obj);
+            const jsonString = JSON.stringify(obj, null, 2);
+            ApiJsonHandler.logger.debug(`Stringified JSON:`, jsonString);
+            return jsonString;
         } catch (e) {
             const err = new JsonStringifyError("Failed to stringify JSON.", e);
             throw err;
@@ -28,7 +30,9 @@ export class ApiJsonHandler {
         ApiJsonHandler.logger.debug(`Parsing response:`, response);
         try {
             const text = await response.text();
-            return ApiJsonHandler.parse(text);
+            const json = ApiJsonHandler.parse(text);
+            ApiJsonHandler.logger.debug(`Parsed response:`, JSON.stringify(json, null, 2));
+            return json;
         } catch (e) {
             const err = new JsonParseError("Failed to parse JSON response.", e);
             throw err;

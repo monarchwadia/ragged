@@ -115,13 +115,13 @@ export class ApiClient {
             }
         );
 
+
         // Prevent modification of the requestParamsMutable object
         Object.freeze(requestParamsMutable);
 
-        // debug info
         ApiClient.logger.info(this.formatMessage(request, "Sending request..."));
-        ApiClient.logger.debug(this.formatMessage(request, `Request body: ${JSON.stringify(request.body)}`));
-        ApiClient.logger.debug(this.formatMessage(request, `Request headers: ${JSON.stringify(request.headers)}`));
+        ApiClient.logger.debug(this.formatMessage(request, `Request body: ${JSON.stringify(requestParamsMutable.body, null, 2)}`));
+        ApiClient.logger.debug(this.formatMessage(request, `Request headers: ${JSON.stringify(requestParamsMutable.headers, null, 2)}`));
 
         if (this.hooks?.beforeRequest) {
             ApiClient.logger.debug(this.formatMessage(request, "Running beforeRequest hook..."));

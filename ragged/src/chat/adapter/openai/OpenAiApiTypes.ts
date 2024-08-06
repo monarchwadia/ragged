@@ -69,12 +69,12 @@ type OpenAiChatCompletionRequestBodyMessagesContentObject = {
   type: "text";
   text: string;
 }
-| {
-  type: "image_url";
-  image_url: {
-    url: string;
-  };
-}
+  | {
+    type: "image_url";
+    image_url: {
+      url: string;
+    };
+  }
 
 export type OpenAiChatCompletionRequestBody = {
   model: string;

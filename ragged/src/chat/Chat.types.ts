@@ -1,14 +1,11 @@
 import { Hooks } from "../support/ApiClient";
+import { DataUriEntity } from "../support/data-uri/DataUri.types";
 import { Tool } from "../tools/Tools.types";
 
 export type UserMessageAttachment =
     | {
         type: "image",
-        payload: {
-            mimeType: string;
-            encoding: "base64_data_url",
-            data: string;
-        }
+        payload: DataUriEntity
     }
 
 export type UserMessage = {

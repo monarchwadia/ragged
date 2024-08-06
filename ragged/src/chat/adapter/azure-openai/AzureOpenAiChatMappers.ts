@@ -1,6 +1,7 @@
-import { AzureOpenAiChatCompletionRequestBody, AzureOpenAiChatCompletionResponseBody } from "./AzureOpenAiChatTypes";
+import { AzureOpenAiChatCompletionRequestBody, AzureOpenAiChatCompletionResponseBody, AzureOpenAiChatRequestMessageUser } from "./AzureOpenAiChatTypes";
 import { ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
 import { Message } from "../../Chat.types";
+import { mapDataUriEntityToString } from "../../../support/data-uri/DataUriMapper";
 
 const toMap: Record<ChatAdapterRequest['history'][0]['type'], AzureOpenAiChatCompletionRequestBody['messages'][0]['role'] | null> = {
     user: "user",
@@ -25,10 +26,64 @@ export class AzureOpenAiChatMappers {
 
             if (role === null) continue;
 
-            messages.push({
-                role,
-                content: message.text || ""
-            });
+            switch (message.type) {
+                case "user": {
+                    // user message can have attachments
+                    const userMessage: AzureOpenAiChatRequestMessageUser = {
+                        role: "user",
+                        content: []
+                    };
+
+                    if (message.text) {
+                        userMessage.content.push({
+                            type: "text",
+                            text: message.text,
+                        })
+                    }
+
+                    if (message.attachments && message.attachments.length > 0) {
+                        for (const a of message.attachments) {
+                            userMessage.content.push({
+                                type: "image_url",
+                                image_url: {
+                                    url: mapDataUriEntityToString(a.payload),
+                                },
+                                detail: "auto"
+                            })
+                        }
+                    }
+
+                    messages.push(userMessage);
+
+                    break
+                };
+                default: {
+
+                    let mappedRole: AzureOpenAiChatCompletionRequestBody['messages'][0]['role'] | null;
+                    switch (message.type) {
+                        case "system":
+                            mappedRole = "system";
+                            break;
+                        case "bot":
+                            mappedRole = "assistant";
+                            break;
+                        case "error":
+                        default:
+                            mappedRole = null;
+                            break;
+                    }
+
+                    // if null, we dont map this message type
+                    if (mappedRole === null) continue;
+
+                    messages.push({
+                        role: mappedRole,
+                        content: message.text || ""
+                    });
+
+                    break;
+                }
+            }
         }
 
         return { messages };

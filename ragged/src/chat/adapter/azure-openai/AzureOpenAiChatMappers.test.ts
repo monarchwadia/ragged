@@ -17,7 +17,7 @@ describe("AzureOpenAiChatMappers", () => {
     })
 
     describe("mapToOpenAi", () => {
-        it("can map from chat adapter request", () => {
+        it("can map user messages from chat adapter request", () => {
             const request: Message[] = [
                 {
                     type: "user",
@@ -31,7 +31,12 @@ describe("AzureOpenAiChatMappers", () => {
                 messages: [
                     {
                         role: "user",
-                        content: "Hello"
+                        content: [
+                            {
+                                type: "text",
+                                text: "Hello"
+                            }
+                        ]
                     }
                 ]
             });
@@ -50,6 +55,54 @@ describe("AzureOpenAiChatMappers", () => {
                 messages: []
             });
         });
+
+        it('correctly maps images', () => {
+            const imgData = "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAADMElEQVR4nOzVwQnAIBQFQYXff81RUkQCOyDj1YOPnbXWPmeTRef+/3O/OyBjzh3CD95BfqICMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMO0TAAD//2Anhf4QtqobAAAAAElFTkSuQmCC";
+            const request: Message[] = [
+                {
+                    type: "user",
+                    text: "What is in this image?",
+                    attachments: [
+                        {
+                            type: "image",
+                            payload: {
+                                encoding: "base64_data_url",
+                                data: imgData,
+                                mimeType: "image/png",
+                            },
+                        }
+                    ]
+                }
+            ];
+
+            const result = AzureOpenAiChatMappers.mapToOpenAi(request);
+
+            // this has to be the `chatCompletionRequestMessageUser` type
+            // the messages need to be `chatCompletionRequestMessageContentPart` for the user
+
+            expect(result.messages.length).toBe(1);
+            const message0 = result.messages[0];
+            expect(message0.role).toBe('user');
+            expect(message0.content.length).toBe(2);
+            if (message0.role !== "user") {
+                throw new Error("expected role to be user, instead got " + message0.role);
+            }
+
+            expect(message0.content.length).toBe(2);
+
+            const content0 = message0.content[0];
+            if (content0.type !== "text") {
+                throw new Error("expected content type to be text, instead got" + content0.type);
+            }
+            expect(content0.text).toBe("What is in this image?");
+
+            const content1 = message0.content[1];
+            if (content1.type !== "image_url") {
+                throw new Error("expected content type to be text, instead got" + content1.type);
+            }
+            expect(content1.detail).toBe("auto");
+            expect(content1.image_url.url).toBe("data:image/png;base64," + imgData);
+        })
     });
 
     describe("mapFromOpenAi", () => {
