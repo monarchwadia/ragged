@@ -1,9 +1,15 @@
+import { ApiClient } from "../../../support/ApiClient";
 import { MappingError } from "../../../support/RaggedErrors";
 import { ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { OllamaChatResponseRoot } from "./OllamaApiResponseTypes";
 import { OllamaChatMapper } from "./OllamaChatMapper";
 
 describe("OllamaChatMapper", () => {
+  let apiClient: ApiClient;
+
+  beforeEach(() => {
+    apiClient = new ApiClient();
+  })
   describe("mapChatRequestToOllamaRequest", () => {
     it("should map a single user message to just the message field, and not contain any history field", () => {
       const request: ChatAdapterRequest = {
@@ -13,9 +19,12 @@ describe("OllamaChatMapper", () => {
             text: "Hello, how are you?",
           },
         ],
+        context: {
+          apiClient
+        }
       };
 
-      const mappedRequest = OllamaChatMapper.mapChatRequestToOllamaRequest(request, { model: "llama3", stream: false });
+      const mappedRequest = OllamaChatMapper.mapChatRequestToOllamaRequest(request, { model: "llama3" });
 
       expect(mappedRequest).toMatchObject({
         model: "llama3",
@@ -45,6 +54,9 @@ describe("OllamaChatMapper", () => {
             text: "Hello, how are you?",
           },
         ],
+        context: {
+          apiClient
+        }
       };
 
       const mappedRequest = OllamaChatMapper.mapChatRequestToOllamaRequest(request, { model: "llama3" });
@@ -65,7 +77,7 @@ describe("OllamaChatMapper", () => {
             content: "Hello, how are you?",
           }
         ],
-        stream: true
+        stream: false
       });
     });
 
@@ -77,6 +89,7 @@ describe("OllamaChatMapper", () => {
             text: "Hello, how are you?",
           },
         ],
+        context: { apiClient }
       };
 
       expect(() => OllamaChatMapper.mapChatRequestToOllamaRequest(request, { model: "" })).toThrow(MappingError);
@@ -85,6 +98,9 @@ describe("OllamaChatMapper", () => {
     it("throws an error if no messages are provided", () => {
       const request: ChatAdapterRequest = {
         history: [],
+        context: {
+          apiClient
+        }
       };
 
       expect(() => OllamaChatMapper.mapChatRequestToOllamaRequest(request, { model: "llama3" })).toThrow(MappingError);
@@ -107,14 +123,13 @@ describe("OllamaChatMapper", () => {
 
       const mappedResponse = OllamaChatMapper.mapOllamaResponseToChatResponse(response);
 
-      expect(mappedResponse).toMatchObject({
-        history: [
-          {
-            type: "bot",
-            text: "I am a response"
-          }
-        ]
-      });
+      expect(mappedResponse).toMatchObject([
+        {
+          type: "bot",
+          text: "I am a response"
+        }
+      ]
+      );
     });
   });
 });

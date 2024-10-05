@@ -21,8 +21,8 @@ describe("OaiaMessageDao", () => {
         modelName,
       };
       const apiClient = new ApiClient();
-      const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
-      const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
+      const oaiaMessageDao = new AzureOaiaMessageDao(config);
+      const oaiaThreadDao = new AzureOaiaThreadDao(config);
 
       const polly = startPollyRecording(
         "AzureOaiaMessageDao > createMessage > can be created",
@@ -33,16 +33,18 @@ describe("OaiaMessageDao", () => {
         }
       );
 
-      const thread = await oaiaThreadDao.createThread();
+      const thread = await oaiaThreadDao.createThread(apiClient);
 
-      const message = await oaiaMessageDao.createMessage({
-        threadId: thread.id,
-        body: {
-          role: "user",
-          content:
-            "I need to solve the equation `3x + 11 = 14`. Can you help me?",
-        },
-      });
+      const message = await oaiaMessageDao.createMessage(
+        apiClient,
+        {
+          threadId: thread.id,
+          body: {
+            role: "user",
+            content:
+              "I need to solve the equation `3x + 11 = 14`. Can you help me?",
+          },
+        });
 
       await polly.stop();
 
@@ -81,8 +83,8 @@ describe("OaiaMessageDao", () => {
         modelName,
       };
       const apiClient = new ApiClient();
-      const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
-      const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
+      const oaiaMessageDao = new AzureOaiaMessageDao(config);
+      const oaiaThreadDao = new AzureOaiaThreadDao(config);
 
       const polly = startPollyRecording(
         "AzureOaiaMessageDao > list messages for thread > can be listed",
@@ -93,18 +95,20 @@ describe("OaiaMessageDao", () => {
         }
       );
 
-      const thread = await oaiaThreadDao.createThread();
+      const thread = await oaiaThreadDao.createThread(apiClient);
 
-      await oaiaMessageDao.createMessage({
-        threadId: thread.id,
-        body: {
-          role: "user",
-          content:
-            "I need to solve the equation `3x + 11 = 14`. Can you help me?",
-        },
-      });
+      await oaiaMessageDao.createMessage(
+        apiClient,
+        {
+          threadId: thread.id,
+          body: {
+            role: "user",
+            content:
+              "I need to solve the equation `3x + 11 = 14`. Can you help me?",
+          },
+        });
 
-      const messages = await oaiaMessageDao.listMessagesForThread(thread.id);
+      const messages = await oaiaMessageDao.listMessagesForThread(apiClient, thread.id);
 
       await polly.stop();
 

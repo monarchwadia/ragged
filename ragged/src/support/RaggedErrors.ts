@@ -85,3 +85,10 @@ export class RetryError extends BaseRaggedError {
         this.name = "RetryError";
     }
 }
+
+export class InstantiationError extends BaseRaggedError {
+    constructor(message: string) {
+        super(message);
+        this.name = "InstantiationError";
+    }
+}

@@ -1,8 +1,17 @@
+import { Hooks } from "../support/ApiClient";
+import { DataUriEntity } from "../support/data-uri/DataUri.types";
 import { Tool } from "../tools/Tools.types";
+
+export type UserMessageAttachment =
+    | {
+        type: "image",
+        payload: DataUriEntity
+    }
 
 export type UserMessage = {
     type: "user";
     text: string | null;
+    attachments?: UserMessageAttachment[];
 };
 
 export type BotMessage = {
@@ -42,4 +51,5 @@ export type MessageType = Message["type"];
 export type ChatConfig = {
     tools?: Tool[];
     model?: string;
+    hooks?: Hooks
 }

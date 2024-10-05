@@ -23,10 +23,10 @@ describe("OaiaRunDaoDao", () => {
         modelName,
       };
       const apiClient = new ApiClient();
-      const oaiaAssistantDao = new AzureOaiaDao(apiClient, config);
-      const oaiaMessageDao = new AzureOaiaMessageDao(apiClient, config);
-      const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, config);
-      const oaiaRunDao = new AzureOaiaRunDao(apiClient, config);
+      const oaiaAssistantDao = new AzureOaiaDao(config);
+      const oaiaMessageDao = new AzureOaiaMessageDao(config);
+      const oaiaThreadDao = new AzureOaiaThreadDao(config);
+      const oaiaRunDao = new AzureOaiaRunDao(config);
 
       const polly = startPollyRecording(
         "AzureOaiaRunDao > createRun > can be created",
@@ -37,17 +37,19 @@ describe("OaiaRunDaoDao", () => {
         }
       );
 
-      const assistant = await oaiaAssistantDao.createAssistant({
-        name: "assistantName",
-        description: "assistantDescription",
-        model: modelName,
-        instructions: "talk funny",
-        tools: [],
-      });
+      const assistant = await oaiaAssistantDao.createAssistant(
+        apiClient,
+        {
+          name: "assistantName",
+          description: "assistantDescription",
+          model: modelName,
+          instructions: "talk funny",
+          tools: [],
+        });
 
-      const thread = await oaiaThreadDao.createThread();
+      const thread = await oaiaThreadDao.createThread(apiClient);
 
-      await oaiaMessageDao.createMessage({
+      await oaiaMessageDao.createMessage(apiClient, {
         threadId: thread.id,
         body: {
           role: "user",
@@ -56,7 +58,7 @@ describe("OaiaRunDaoDao", () => {
         },
       });
 
-      const run = await oaiaRunDao.createRun({
+      const run = await oaiaRunDao.createRun(apiClient, {
         threadId: thread.id,
         assistant_id: assistant.id,
       });

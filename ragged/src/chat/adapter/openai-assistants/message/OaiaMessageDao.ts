@@ -10,10 +10,10 @@ export type CreateMessageParams = {
 }
 
 export class OaiaMessageDao {
-    constructor(private apiClient: ApiClient) { }
+    constructor() { }
 
-    createMessage(apiKey: string, params: CreateMessageParams): Promise<OaiaMessage> {
-        return this.apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/messages`, {
+    async createMessage(apiClient: ApiClient, apiKey: string, params: CreateMessageParams): Promise<OaiaMessage> {
+        const apiResponse = await apiClient.post(`https://api.openai.com/v1/threads/${params.threadId}/messages`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`,
@@ -21,15 +21,19 @@ export class OaiaMessageDao {
             },
             body: params.body
         });
+
+        return apiResponse.json;
     }
 
-    listMessagesForThread(apiKey: string, threadId: string): Promise<OaiaMessageList> {
-        return this.apiClient.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
+    async listMessagesForThread(apiClient: ApiClient, apiKey: string, threadId: string): Promise<OaiaMessageList> {
+        const apiResponse = await apiClient.get(`https://api.openai.com/v1/threads/${threadId}/messages`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${apiKey}`,
                 "OpenAI-Beta": "assistants=v2"
             }
         });
+
+        return apiResponse.json;
     }
 }

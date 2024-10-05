@@ -6,8 +6,7 @@ import fs from 'fs';
 import { config } from 'dotenv';
 config();
 
-import { Chat, ChatTypes } from "ragged"
-type Tool = ChatTypes['Tool']
+import { Chat, Tool } from "ragged"
 
 const c = Chat.with({
     provider: "openai",
@@ -96,7 +95,7 @@ const catTool: Tool = {
 }
 
 const response = await c.chat(`
-Read this current file, which is "tool-calling.ts". 
+Read this current file, which is "tool-calling-list-files.ts". 
 
 Also read "/home/monarch/workspace/ragged/README.md" . This documentation is for Ragged, which provides the ChatCompletion instance in tool-calling.tsx.
 
@@ -105,7 +104,7 @@ Tell me how the README can be improved based on what you can see the tool-callin
 Write the new documentation sections for tool calling so I can copy paste it directly in the README.
 `, {
     tools: [lsTool, pwdTool, catTool],
-    model: "gpt-4"
+    model: "gpt-4o"
 });
 
-console.log(response.at(-1)?.text); // The files in the directory / are: bin, ....
+console.log(response.history.at(-1)?.text); // The files in the directory / are: bin, ....

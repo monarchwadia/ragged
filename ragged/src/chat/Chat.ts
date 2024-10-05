@@ -13,7 +13,9 @@ import { provideAzureOpenAiChatAdapter } from "./adapter/azure-openai/provideAzu
 import { provideAzureOpenaiAssistantsChatAdapter } from "./adapter/azure-openai-assistants/provideAzureOpenaiAssistantsChatAdapter";
 import { AzureOaiaDaoCommonConfig } from "./adapter/azure-openai-assistants/Dao.types";
 import { provideOllamaChatAdapter } from "./adapter/ollama/provideOllamaChatAdapter";
-import { OllamaChatAdapterConfig } from "./adapter/ollama/OllamaChatAdapter";
+import { OllamaChatAdapterConfig } from "./adapter/ollama/OllamaChatAdapterTypes";
+import { ApiClient } from "../support/ApiClient";
+import type { ApiClientFactory } from "../support/ApiClient.types"
 
 type ToolCallMap = Record<string, {
     message: BotMessage,
@@ -29,6 +31,14 @@ export type ChatWithConfig =
     | { provider: "azure-openai", config: AzureOpenAiChatAdapterConfig }
     | { provider: "azure-openai-assistants", config: AzureOaiaDaoCommonConfig }
     | { provider: string, config: any };
+
+export type ChatResponse = {
+    history: Message[];
+    raw?: {
+        requests: Request[];
+        responses: Response[];
+    };
+}
 
 export class Chat {
     private static logger = new Logger("Chat");
@@ -89,20 +99,23 @@ export class Chat {
         return new Chat(adapter);
     }
 
-    constructor(private adapter: BaseChatAdapter) { }
+    constructor(private adapter: BaseChatAdapter, private apiClientFactory: ApiClientFactory = () => new ApiClient()) { }
 
     // TODO: Need to put tools, model inside options object.. consider also doing cascading options overrides
-    async chat(): Promise<Message[]>;
-    async chat(config: ChatConfig): Promise<Message[]>;
-    async chat(userMessage: string): Promise<Message[]>;
-    async chat(userMessage: string, config: ChatConfig): Promise<Message[]>;
-    async chat(messages: Message[]): Promise<Message[]>;
-    async chat(messages: Message[], config: ChatConfig): Promise<Message[]>;
-    async chat(...args: any[]): Promise<Message[]> {
+    async chat(): Promise<ChatResponse>;
+    async chat(config: ChatConfig): Promise<ChatResponse>;
+    async chat(userMessage: string): Promise<ChatResponse>;
+    async chat(userMessage: string, config: ChatConfig): Promise<ChatResponse>;
+    async chat(messages: Message[]): Promise<ChatResponse>;
+    async chat(messages: Message[], config: ChatConfig): Promise<ChatResponse>;
+    async chat(...args: any[]): Promise<ChatResponse> {
         const initializedChatState = this.validatedChatParams(...args);
         let { workingHistory } = initializedChatState;
         const { config } = initializedChatState;
-        const { tools, model } = config;
+        const { tools, model, hooks } = config;
+
+        let rawRequests: Request[] = [];
+        let rawResponses: Response[] = [];
 
         // ======= start of loop =======
 
@@ -116,7 +129,28 @@ export class Chat {
 
             let toolCallsWereResolved = false;
 
-            const request: ChatAdapterRequest = { history: workingHistory };
+            const apiClient = this.apiClientFactory();
+
+            if (hooks?.beforeSerialize) {
+                apiClient.hooks.beforeSerialize = hooks.beforeSerialize;
+            }
+            if (hooks?.beforeRequest) {
+                apiClient.hooks.beforeRequest = hooks.beforeRequest;
+            }
+            if (hooks?.afterResponse) {
+                apiClient.hooks.afterResponse = hooks.afterResponse;
+            }
+            if (hooks?.afterResponseParsed) {
+                apiClient.hooks.afterResponseParsed = hooks.afterResponseParsed;
+            }
+
+            const request: ChatAdapterRequest = {
+                history: workingHistory,
+                context: {
+                    apiClient: apiClient
+                }
+            };
+
             if (tools && tools.length) {
                 request.tools = [...tools];
             }
@@ -126,6 +160,12 @@ export class Chat {
             }
 
             const response: ChatAdapterResponse = await this.performChatRequest(request);
+            if (response.raw?.request) {
+                rawRequests.push(response.raw?.request);
+            }
+            if (response.raw?.response) {
+                rawResponses.push(response.raw?.response);
+            }
 
             workingHistory = [...workingHistory, ...response.history];
 
@@ -160,24 +200,31 @@ export class Chat {
             }
         }
 
-        return workingHistory;
+        return {
+            history: workingHistory,
+            raw: {
+                requests: rawRequests,
+                responses: rawResponses
+            }
+        };
     }
 
-    private async performChatRequest(request: ChatAdapterRequest) {
+    private async performChatRequest(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         Chat.logger.debug("Chat request: ", JSON.stringify(request));
-        let response: ChatAdapterResponse = { history: [] }; // will be replaced soon
         try {
-            response = await this.adapter.chat(request);
+            return await this.adapter.chat(request);
         } catch (e: unknown) {
             Chat.logger.error("Failed to chat", e);
 
-            if (e instanceof Error) {
-                response = { history: [{ type: "error", text: e.message }] };
-            } else {
-                response = { history: [{ type: "error", text: "An unknown error occurred" }] };
-            }
+            let message = e instanceof Error ? e.message : "An unknown error occurred";
+            return {
+                history: [{ type: "error", text: message }],
+                raw: {
+                    request: null,
+                    response: null
+                }
+            };
         }
-        return response;
     }
 
     private static getToolCallMap(workingHistory: Message[]): ToolCallMap {

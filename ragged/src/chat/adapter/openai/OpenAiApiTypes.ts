@@ -65,11 +65,22 @@ export type OaiTool = {
   }
 }
 
+type OpenAiChatCompletionRequestBodyMessagesContentObject = {
+  type: "text";
+  text: string;
+}
+  | {
+    type: "image_url";
+    image_url: {
+      url: string;
+    };
+  }
+
 export type OpenAiChatCompletionRequestBody = {
   model: string;
   messages: {
     role: string;
-    content: string | null;
+    content: string | null | OpenAiChatCompletionRequestBodyMessagesContentObject[];
     // TODO: the upstream DTO might be different from ChoiceToolCall
     tool_calls?: ChoiceToolCall[];
   }[];

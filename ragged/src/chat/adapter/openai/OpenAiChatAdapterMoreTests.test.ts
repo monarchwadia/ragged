@@ -14,15 +14,25 @@ describe("OpenAiChatDriver", () => {
     };
 
     apiClient = new ApiClient();
-    driver = new OpenAiChatDriver(apiClient, config);
+    driver = new OpenAiChatDriver(config);
   });
 
-  afterEach(() => { jest.clearAllMocks() });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("should pass the body directly into the apiclient", () => {
-    const spy = jest.spyOn(apiClient, "post").mockImplementation(() => Promise.resolve(new Response(objToReadableStream("{}"))));
+    const spy = jest.spyOn(apiClient, "post").mockImplementation(() =>
+      Promise.resolve({
+        json: {},
+        raw: {
+          request: new Request("https://not-real.com"),
+          response: new Response(new ReadableStream()),
+        },
+      })
+    );
 
-    driver.chat({ model: "gpt-3.5-turbo", history: [] });
+    driver.chat({ model: "gpt-3.5-turbo", history: [], context: { apiClient } });
 
     expect(spy).toHaveBeenCalledWith(
       "https://api.openai.com/v1/chat/completions",
@@ -31,11 +41,10 @@ describe("OpenAiChatDriver", () => {
           "Content-Type": "application/json",
           Authorization: `Bearer undefined`,
         },
-        body: { "model": "gpt-3.5-turbo", "messages": [], "tools": undefined },
+        body: { model: "gpt-3.5-turbo", messages: [], tools: undefined },
       }
     );
-
-  })
+  });
 
   it("should perform a chat completion", async () => {
     const polly = startPollyRecording(
@@ -43,6 +52,7 @@ describe("OpenAiChatDriver", () => {
     );
     const result = await driver.chat({
       model: "gpt-3.5-turbo",
+      context: { apiClient },
       history: [
         { type: "system", text: "You are a chatbot." },
         { type: "user", text: "What are you?" },
@@ -50,6 +60,13 @@ describe("OpenAiChatDriver", () => {
     });
     await polly.stop();
 
-    expect(result).toMatchSnapshot();
+    expect(result.history).toMatchInlineSnapshot(`
+      [
+        {
+          "text": "I am a chatbot, a computer program designed to simulate conversation with human users. How can I assist you today?",
+          "type": "bot",
+        },
+      ]
+    `);
   });
 });

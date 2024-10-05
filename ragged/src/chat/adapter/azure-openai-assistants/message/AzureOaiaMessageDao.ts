@@ -11,28 +11,32 @@ export type CreateMessageParams = {
 }
 
 export class AzureOaiaMessageDao {
-    constructor(private apiClient: ApiClient, private config: AzureOaiaDaoCommonConfig) { }
+    constructor(private config: AzureOaiaDaoCommonConfig) { }
 
-    createMessage(params: CreateMessageParams): Promise<OaiaMessage> {
+    async createMessage(apiClient: ApiClient, params: CreateMessageParams): Promise<OaiaMessage> {
         const url = `https://${this.config.resourceName}.openai.azure.com/openai/threads/${params.threadId}/messages?api-version=${this.config.apiVersion}`;
 
-        return this.apiClient.post(url, {
+        const apiResponse = await apiClient.post(url, {
             headers: {
                 "Content-Type": "application/json",
                 "api-key": this.config.apiKey
             },
             body: params.body
         });
+
+        return apiResponse.json;
     }
 
-    listMessagesForThread(threadId: string): Promise<OaiaMessageList> {
+    async listMessagesForThread(apiClient: ApiClient, threadId: string): Promise<OaiaMessageList> {
         const url = `https://${this.config.resourceName}.openai.azure.com/openai/threads/${threadId}/messages?api-version=${this.config.apiVersion}`;
 
-        return this.apiClient.get(url, {
+        const apiResponse = await apiClient.get(url, {
             headers: {
                 "Content-Type": "application/json",
                 "api-key": this.config.apiKey
             }
         });
+
+        return apiResponse.json;
     }
 }

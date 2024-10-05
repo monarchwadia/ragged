@@ -1,34 +1,104 @@
 
 # Ragged
 
-![An image of an audio cable with a ragged blue denim insulation covering. The caption in the foreground reads "Ragged, the universal LLM client for JavaScript."](./ragged-social-card.jpeg)
+![](./ragged-social-card.jpeg)
 
 ## What is this?
 
 Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and Typescript. It makes it easy to access LLMs via a simple, easy to understand, and uncomplicated API.
 
+The heart of Ragged is a simple abstraction that allows you to interact with LLMs in a consistent way, regardless of the provider or model you are using. This abstraction makes it easy to switch between different LLMs without having to change your code.
+
+## Ragged is not a framework.
+
+Ragged's job is to be a low-level connector library. it is, explicitly, not a framework; but it is meant to be easy to use. You can build your own framework on top of Ragged, or use it as a standalone library in your existing projects.
+
+## Installation
+
+Installing Ragged is very easy.
+
+```bash
+# either
+npm install --save-exact ragged
+# or
+pnpm add --save-exact ragged
+# or
+yarn add --exact ragged
+```
+
+That's it. You're ready to go!
+
+## Ragged's Chat Completion Abstraction
+
+Ragged's core Chat Completion abstraction is an easy-to-use `Message` interface.
+
+```ts
+import type { Message } from "ragged";
+
+const history: Message[] = [
+    { type: "user", text: "What is a rickroll?" },
+    { type: "bot", text: "A rickroll is a prank..." }
+]
+```
+
+Because this interface is standard, a lot of operations become very easy to perform. For example, you can access the last message in the history using the `.at` method.
+
+```ts
+console.log(history.at(-1)?.text); // A rickroll is a prank...
+```
+
+Or, you can simply modify history by pushing new messages to the array.
+
+```ts
+history.push({ type: "bot", text: "I'm a bot!" });
+```
+
+About 90% of Ragged is built around this simple interface. (The other 10% is for Embeddings, which has its own analog to the `Message` type). This standard interface is the same across all LLM providers, making it easy to switch between providers without changing your code.
+
+In the following sections, we will show you how to use Ragged to perform many complex operations with ease, including chat completion, tool calling, multimodal input, agent creation, and more.
+
 ## Table of Contents 
 
 - [Ragged](#ragged)
   - [What is this?](#what-is-this)
-  - [Table of Contents](#table-of-contents)
+  - [Ragged is not a framework.](#ragged-is-not-a-framework)
   - [Installation](#installation)
+  - [Ragged's Chat Completion Abstraction](#raggeds-chat-completion-abstraction)
+  - [Table of Contents](#table-of-contents)
   - [Simple chat](#simple-chat)
   - [Message History](#message-history)
     - [Accessing message history](#accessing-message-history)
     - [Setting message history](#setting-message-history)
   - [Freezing History](#freezing-history)
+  - [Image Input, a.k.a. Multimodal](#image-input-aka-multimodal)
   - [Tool Calling](#tool-calling)
     - [Tool Props](#tool-props)
+    - [Raw request and response objects](#raw-request-and-response-objects)
   - [Autonomous Agents](#autonomous-agents)
     - [What is an agent?](#what-is-an-agent)
     - [How agents work in Ragged](#how-agents-work-in-ragged)
     - [Incrementing Agent Example](#incrementing-agent-example)
     - [Multiple Agents Example](#multiple-agents-example)
+  - [Logging](#logging)
+  - [Hooks](#hooks)
+    - [Types of Hooks](#types-of-hooks)
+    - [Hooks can be asynchronous](#hooks-can-be-asynchronous)
+    - [Hook Contexts](#hook-contexts)
+      - [BaseHookContext](#basehookcontext)
+    - [Hook Types](#hook-types)
+      - [BeforeSerializeHook](#beforeserializehook)
+      - [BeforeRequestHook](#beforerequesthook)
+      - [AfterResponseHook](#afterresponsehook)
+      - [AfterResponseParsedHook](#afterresponseparsedhook)
+    - [Hooks can be async](#hooks-can-be-async)
+    - [Example with hooks](#example-with-hooks)
   - [Official LLM Adapters](#official-llm-adapters)
     - [OpenAI](#openai)
     - [Cohere](#cohere)
     - [OpenAI Assistants](#openai-assistants)
+    - [Azure OpenAI](#azure-openai)
+    - [Azure OpenAI Assistants](#azure-openai-assistants)
+    - [Ollama](#ollama)
   - [Feature Roadmap](#feature-roadmap)
     - [Built-in Providers and Models](#built-in-providers-and-models)
   - [Custom LLM Adapters](#custom-llm-adapters)
@@ -48,21 +118,6 @@ Ragged is a 0-dependency, lightweight, universal LLM client for JavaScript and T
       - [Main folder](#main-folder)
       - [Supporting folders](#supporting-folders)
 
-## Installation
-
-Installing Ragged is very easy.
-
-```bash
-# either
-npm install ragged
-# or
-pnpm install ragged
-# or
-yarn install ragged
-```
-
-That's it. You're ready to go!
-
 ## Simple chat
 
 Ragged is very easy to use. Here is a complete application that shows chat completion.
@@ -77,10 +132,10 @@ const c = Chat.with({
 });
 
 // chat with the model
-const messages = await c.chat('What is a rickroll?');
+const {history} = await c.chat('What is a rickroll?');
 
-// messages.at(-1) is a native JS array method for the last element
-console.log(messages.at(-1)?.text); // A rickroll is a prank...
+// {history}.at(-1) is a native JS array method for the last element
+console.log(history.at(-1)?.text); // A rickroll is a prank...
 ```
 
 Nothing to it!
@@ -168,6 +223,50 @@ const response2 = await c.chat('What is my name?');
 // Response: I do not know your name. Please tell me.
 ```
 
+## Image Input, a.k.a. Multimodal
+
+Ragged supports multimodal input. This means that you can pass images to the LLM along with text. This is useful for creating more interactive and engaging chat experiences.
+
+Currently we only support base64 encoded images, but will expand this support in the future.
+
+```ts
+// chat with the model
+const { history } = await c.chat([
+    {
+        type: "user",
+        text: "What do these images contain? Describe them.",
+        attachments: [
+            {
+                type: "image",
+                payload: {
+                    data: "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAApgAAAKYB3X3/OAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVEiJtZZPbBtFFMZ/M7ubXdtdb1xSFyeilBapySVU8h8OoFaooFSqiihIVIpQBKci6KEg9Q6H9kovIHoCIVQJJCKE1ENFjnAgcaSGC6rEnxBwA04Tx43t2FnvDAfjkNibxgHxnWb2e/u992bee7tCa00YFsffekFY+nUzFtjW0LrvjRXrCDIAaPLlW0nHL0SsZtVoaF98mLrx3pdhOqLtYPHChahZcYYO7KvPFxvRl5XPp1sN3adWiD1ZAqD6XYK1b/dvE5IWryTt2udLFedwc1+9kLp+vbbpoDh+6TklxBeAi9TL0taeWpdmZzQDry0AcO+jQ12RyohqqoYoo8RDwJrU+qXkjWtfi8Xxt58BdQuwQs9qC/afLwCw8tnQbqYAPsgxE1S6F3EAIXux2oQFKm0ihMsOF71dHYx+f3NND68ghCu1YIoePPQN1pGRABkJ6Bus96CutRZMydTl+TvuiRW1m3n0eDl0vRPcEysqdXn+jsQPsrHMquGeXEaY4Yk4wxWcY5V/9scqOMOVUFthatyTy8QyqwZ+kDURKoMWxNKr2EeqVKcTNOajqKoBgOE28U4tdQl5p5bwCw7BWquaZSzAPlwjlithJtp3pTImSqQRrb2Z8PHGigD4RZuNX6JYj6wj7O4TFLbCO/Mn/m8R+h6rYSUb3ekokRY6f/YukArN979jcW+V/S8g0eT/N3VN3kTqWbQ428m9/8k0P/1aIhF36PccEl6EhOcAUCrXKZXXWS3XKd2vc/TRBG9O5ELC17MmWubD2nKhUKZa26Ba2+D3P+4/MNCFwg59oWVeYhkzgN/JDR8deKBoD7Y+ljEjGZ0sosXVTvbc6RHirr2reNy1OXd6pJsQ+gqjk8VWFYmHrwBzW/n+uMPFiRwHB2I7ih8ciHFxIkd/3Omk5tCDV1t+2nNu5sxxpDFNx+huNhVT3/zMDz8usXC3ddaHBj1GHj/As08fwTS7Kt1HBTmyN29vdwAw+/wbwLVOJ3uAD1wi/dUH7Qei66PfyuRj4Ik9is+hglfbkbfR3cnZm7chlUWLdwmprtCohX4HUtlOcQjLYCu+fzGJH2QRKvP3UNz8bWk1qMxjGTOMThZ3kvgLI5AzFfo379UAAAAASUVORK5CYII=",
+                    encoding: "base64_data_url",
+                    mimeType: "image/png",
+                },
+            },
+            {
+                type: "image",
+                payload: {
+                    encoding: "base64_data_url",
+                    data: "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAADMElEQVR4nOzVwQnAIBQFQYXff81RUkQCOyDj1YOPnbXWPmeTRef+/3O/OyBjzh3CD95BfqICMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMO0TAAD//2Anhf4QtqobAAAAAElFTkSuQmCC",
+                    mimeType: "image/png",
+                },
+            },
+        ],
+    },
+], {
+    model: "gpt-4o"
+});
+
+// log the messages
+console.log(history.at(-1)?.text);
+
+// Output:
+// The first image is an emoji of a face with heart-shaped eyes, typically used to express love, adoration, or strong liking for something or someone.
+// The second image is a gradient background that transitions from dark to light colors. The colors include black, brown, orange at the top, and transition through white and blue towards the bottom.
+
+```
+
 ## Tool Calling
 
 > [!TIP]
@@ -180,9 +279,9 @@ Tools are very powerful! You can use tools to fetch data from external APIs, per
 To define a tool, first we import the Tool type from Ragged and then define a tool object.
 
 ```ts
-import { ChatTypes } from "ragged";
+import type { Tool } from "ragged";
 
-const getHomepageTool: ChatTypes['Tool'] = {
+const getHomepageTool: Tool = {
     id: "get-homepage-contents",
     description: "Gets the contents of my homepage.",
     handler: async () => {
@@ -200,13 +299,13 @@ In this example, we define a tool called `getHomepageTool`. This tool has the fo
 Once you have defined a tool, you can use it in a chat interaction by passing it to the `chat` method.
 
 ```ts
-const response = await c.chat("Get the contents of my homepage.", {
+const { history } = await c.chat("Get the contents of my homepage.", {
     // Pass the tool to the chat method.
     tools: [getHomepageTool],
     model: "gpt-3.5-turbo"
 });
 
-console.log(response.at(-1)?.text);
+console.log(history.at(-1)?.text);
 // RESPONSE: I retrieved the contents of your homepage. It says: "Hello! My name is John! I'm a student at a community college!"
 ```
 
@@ -214,9 +313,9 @@ Putting it all together, here's what it looks like:
 
 ```ts
 import { Chat } from "ragged"
-import { ChatTypes } from "ragged";
+import type { Tool } from "ragged";
 
-const getHomepageTool: ChatTypes['Tool'] = {
+const getHomepageTool: Tool = {
     id: "get-homepage-contents",
     description: "Gets the contents of my homepage.",
     props: {
@@ -238,13 +337,13 @@ const c = Chat.with({
     }
 });
 
-const response = await c.chat("Get the contents of my homepage.", {
+const { history } = await c.chat("Get the contents of my homepage.", {
     // Pass the tool to the chat method.
     tools: [getHomepageTool],
     model: "gpt-3.5-turbo"
 });
 
-console.log(response.at(-1)?.text);
+console.log(history.at(-1)?.text);
 
 // RESPONSE: I retrieved the contents of your homepage. It says: "Hello! My name is John! I'm a student at a community college!"
 ```
@@ -256,9 +355,9 @@ The `Tool` object can also take an optional `props` object. This object allows t
 Here is an example of how to use the `props` object:
 
 ```ts
-import { ChatTypes } from "ragged";
+import type { Tool } from "ragged";
 
-const fetchTool: ChatTypes['Tool'] = {
+const fetchTool: Tool = {
     id: "fetch",
     description: "Do a simple GET call and retrieve the contents of a URL.",
     // The props object describes the expected input for the tool.
@@ -285,6 +384,17 @@ Here, we define a tool called `fetchTool`. This tool has a `props` object that d
 
 > [!WARNING]
 > It's important to note that the LLM can hallucinate the props object. This means that the LLM can pass props which are not defined in the props object. This is dangerous, as it can lead to unexpected behavior. To prevent this, you should always validate the props object before using it in your tool handler.
+
+### Raw request and response objects
+
+You can get the raw request and response objects from the tool handler by using the `raw` property. This property contains the raw vanillla `Request` and `Response` objects that were sent to and received from the tool handler.
+
+```ts
+const { history, raw } = await c.chat("What is a rickroll?");
+console.log(history.at(-1)?.text); // A rickroll is a prank...
+console.log(raw?.requests); // All API requests done during the chat (there can be more than 1 if you are doing tool calling)
+console.log(raw?.responses); // All API responses done during the chat (there can be more than 1 if you are doing tool calling)
+```
 
 ## Autonomous Agents
 
@@ -363,7 +473,7 @@ async function main() {
 
 async function getNextNumber(c: Chat, input: string): Promise<string> {
     // Call the LLM with the input
-    const response = await c.chat([
+    const { history } = await c.chat([
         {
             type: "system",
             text: `
@@ -404,7 +514,7 @@ async function getNextNumber(c: Chat, input: string): Promise<string> {
     ]);
 
     // Get the last message from the response
-    const lastMessage = response.at(-1)?.text;
+    const lastMessage = history.at(-1)?.text;
     return lastMessage || "";
 }
 
@@ -416,6 +526,203 @@ await main();
 
 Agents can get very complex, with multiple agents running at the same time. Here is an example of a simple chat application that uses multiple agents to generate a conversation: [examples/nodejs/agents-multiple.ts](examples/nodejs/agents-multiple.ts).
 
+## Logging
+
+Ragged has a built-in logging system that allows you to log messages to the console. This is useful for debugging and troubleshooting your code. You can use the `Logger` class to control the logging level and format of the log messages.
+
+```ts
+import { Logger } from "ragged";
+Logger.setLogLevel('debug'); // make it verbose
+Logger.setLogLevel('info'); // default
+Logger.setLogLevel('warn'); // only log warnings
+Logger.setLogLevel('error'); // only log errors
+Logger.setLogLevel('none'); // turn off logging altogether
+```
+
+## Hooks
+
+Ragged provides a powerful and flexible hook system that allows you to customize and extend the behavior of the API client. Hooks are functions that are executed at specific points during the request/response lifecycle, allowing you to modify requests, handle responses, and perform additional actions based on the API interactions.
+
+### Types of Hooks
+
+There are three types of hooks in Ragged:
+
+1. **BeforeRequestHook**
+2. **AfterResponseHook**
+3. **AfterResponseParsedHook**
+
+### Hooks can be asynchronous
+
+Hooks can be asynchronous, allowing you to perform asynchronous operations such as making additional API calls, reading/writing files, or interacting with databases. You can use `async` functions as your hooks to handle asynchronous operations.
+
+### Hook Contexts
+
+Each hook type receives a specific context object that contains relevant information about the request or response. The context objects share a base structure and have additional properties specific to the hook type.
+
+#### BaseHookContext
+
+The `BaseHookContext` contains common properties available to all hooks. Each hook also may have additional properties specific to its type.
+
+```typescript
+type BaseHookContext = {
+    apiClient: ApiClient;
+    requestParams: {
+        method: string;
+        url: string;
+        headers?: RequestInit["headers"];
+        body?: any;
+    }
+}
+```
+
+### Hook Types
+
+#### BeforeSerializeHook
+
+The `BeforeSerializeHook` is executed before the request is serialized. This allows you to modify the request parameters before they are sent to the API. Its context includes the `requestParams` object.
+
+Note that after the BeforeSerializeHook is executed, the requestParams are frozen and cannot be modified in subsequent hooks.
+
+**Example Usage:**
+
+```typescript
+c.chat(`Hello, World!`, {
+    hooks: {
+        beforeSerialize: ({ requestParams }) => {
+            // You could log the request parameters before they are serialized
+            console.log("Before serialize:", requestParams);
+            
+            // You could also modify the request parameters
+            requestParams.url = "http://modified.com";
+            requestParams.body.some = "modified-field";
+            if (requestParams.method === "PUT" || requestParams.method === "PATCH") {
+                requestParams.method = "POST";
+            }
+        }
+    }
+})
+```
+
+#### BeforeRequestHook
+
+The `BeforeRequestHook` is executed before the request is sent. This allows you to modify the request or perform actions before the request is made. Its context includes the `request` object.
+
+**Example Usage:**
+
+```typescript
+c.chat(`Hello, World!`, {
+    hooks: {
+        beforeRequest: ({ request }) => {
+            // You could log the request before it is sent
+            console.log("Before request:", request);
+            // You could also modify the request headers
+            request.headers.append('X-Custom-Header', 'custom-value');
+        }
+    }
+})
+```
+
+#### AfterResponseHook
+
+The `AfterResponseHook` is executed after the response is received but before it is parsed. This allows you to handle raw responses or perform actions based on the response status. Its context includes both the `request` and `response` objects.
+
+
+Be careful not to use the `.json()` or `.text()` methods on the response object in this hook! This will cause the response to be consumed and will prevent it from being parsed later, which will cause an error to be thrown by the `chat` method.
+
+**Example Usage:**
+
+```typescript
+c.chat(`Hello, World!`, {
+    hooks: {
+        afterResponse: ({ response }) => {
+            // You could log the response JSON
+            console.log("Logging the raw response:", response);
+        }
+    }
+});
+```
+
+#### AfterResponseParsedHook
+
+The `AfterResponseParsedHook` is executed after the response is parsed into JSON. This allows you to handle the parsed response or perform actions based on the response data.
+
+**Example Usage:**
+
+```typescript
+c.chat(`Hello, World!`, {
+    hooks: {
+        afterResponseParsed: async ({ json }) => {
+            // You could log the response JSON
+            console.log("JSON response:", json);
+            // You could also modify it
+            json.data = "Hello, World!";
+        }
+    }
+});
+```
+
+### Hooks can be async
+
+All hooks can be asynchronous, allowing you to perform asynchronous operations such as making additional API calls, reading/writing files, or interacting with databases. You can use `async` functions as your hooks to handle asynchronous operations.
+
+```ts
+c.chat(`Hello, World!`, {
+    hooks: {
+        // notice the async keyword... hooks can be async!
+        afterResponseParsed: async ({ json }) => {
+            await sendToSlack(json);
+        }
+    }
+});
+```
+
+### Example with hooks
+
+```typescript
+import { config } from "dotenv";
+config();
+import { Chat } from "ragged";
+
+const c = Chat.with({
+    provider: 'openai',
+    config: {
+        apiKey: process.env.OPENAI_API_KEY
+    }
+});
+
+c.chat(`say hello world`, {
+    hooks: {
+        beforeSerialize: ({ requestParams }) => {
+            // You could log the request parameters before they are serialized
+            console.log("Before serialize:", requestParams);
+            
+            // You could also modify the request parameters
+            requestParams.url = "http://modified.com";
+            requestParams.body.some = "modified-field";
+            if (requestParams.method === "PUT" || requestParams.method === "PATCH") {
+                requestParams.method = "POST";
+            }
+        }
+        beforeRequest: ({ request }) => {
+            // Print the Content-Type header value, just to test the hook
+            console.log("We will be sending the Content-Type header with value: ",
+                request.headers.get('Content-Type'));
+        },
+        afterResponse: ({ response }) => {
+            // Get the rate limit info from the response headers. This is very useful!
+            console.log("Received rate limit info from OpenAI: ",
+                Array.from(response.headers.entries())
+                    .filter(([key]) => key.startsWith('x-ratelimit')));
+        },
+        afterResponseParsed: (context) => {
+            // Finally, print the raw JSON response from OpenAI
+            console.log("Raw OpenAI response JSON: ",
+                context.json);
+        }
+    }
+});
+```
+
 ------
 
 ## Official LLM Adapters
@@ -423,8 +730,6 @@ Agents can get very complex, with multiple agents running at the same time. Here
 Ragged supports multiple LLM providers out of the box. You can use these providers to interact with the LLMs and generate responses to your prompts.
 
 ### OpenAI
-
-The OpenAI adapter allows you to interact with the OpenAI API.
 
 ```ts
 const c = Chat.with({
@@ -437,9 +742,7 @@ await c.chat('What is a rickroll?', { model: 'gpt-4' });
 ### Cohere
 
 > [!WARNING]
-> Cohere is a new provider, and tool calling is not yet functional. The adapter is still in development and may not work as expected. Please use with caution.
-
-The Cohere adapter allows you to interact with the Cohere API. You can use this adapter to chat with the CommandR and Command models.
+> This is a new provider, and tool calling is not yet functional.
 
 ```ts
 const c = Chat.with({
@@ -452,15 +755,75 @@ await c.chat('What is a rickroll?', { model: 'command-nightly' });
 ### OpenAI Assistants
 
 > [!WARNING]
-> OpenAI Assistants is a new provider, and tool calling is not yet functional. The adapter is still in development and may not work as expected. Please use with caution.
+> This is a new provider, and tool calling is not yet functional.
 
-The OpenAI Assistants adapter allows you to interact with the OpenAI Assistants API. You can use this adapter to chat with the GPT-4o, GPT-4T, GPT-4, and GPT-3.5 models.
+The OpenAI Assistants adapter allows you to interact with the OpenAI Assistants API. The adapter creates assistants, threads, messages, and runs under the hood for you. As a result, you get a relatively streamlined experience.
 
 ```ts
 const c = Chat.with({
     provider: 'openai-assistants',
-    config: { apiKey: process.env.OPENAI_ASSISTANTS_API_KEY }
+    config: {
+    apiKey: '123',
+    assistant: {
+        model: 'model',
+        description: 'description',
+        instructions: 'instructions',
+        name: 'name',
+    }
+    }
 });
+await c.chat('What is a rickroll?', { model: 'gpt-4o' });
+```
+
+### Azure OpenAI
+
+> [!WARNING]
+> This is a new provider, and tool calling is not yet functional.
+
+```ts
+const c = Chat.with({
+    provider: 'azure-openai',
+    config: {
+    apiKey: '123',
+    apiVersion: 'v1',
+    resourceName: 'resource',
+    deploymentName: 'deployment'
+    }
+});
+await c.chat('What is a rickroll?', { model: 'gpt-4o' });
+```
+
+### Azure OpenAI Assistants
+
+> [!WARNING]
+> This is a new provider, and tool calling is not yet functional.
+
+The Azure OpenAI Assistants adapter allows you to interact with the OpenAI Assistants API. The adapter creates assistants, threads, messages, and runs under the hood for you. As a result, you get a relatively streamlined experience.
+
+```ts
+const c = Chat.with({
+provider: 'azure-openai-assistants',
+config: {
+    apiKey: '123',
+    apiVersion: 'v1',
+    resourceName: 'resource',
+    deploymentName: 'deployment',
+    modelName: 'model'
+}
+});
+await c.chat('What is a rickroll?', { model: 'gpt-4o' });
+```
+
+### Ollama
+
+> [!WARNING]
+> This is a new provider, and tool calling is not yet functional.
+
+```ts
+const c = Chat.with({
+    provider: 'ollama',
+    config: {}
+})
 await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 ```
 
@@ -472,14 +835,14 @@ await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 | Embeddings Generation              | 🟢 100%     | ❌           |
 | In-built Message History           | 🟢 100%     | ❌           |
 | Write your own custom LLM adapters | 🟢 100%     | ❌           |
+| Multimodal Input                   | 🟡 50%      | ❌           |
 | Tool Calling                       | 🟡 30%      | ❌           |
 | Autonomous Agents                  | 🟢 100%     | ❌           |
 | Message History                    | 🟢 100%     | ❌           |
 | Helpful Errors                     | 🟢 100%     | ❌           |
+| Rate Limits                        | 🟡 30%      | ❌           |
 | Streaming                          | 🔴 0%       | ❌           |
 | Model Fine-Tuning                  | 🔴 0%       | ❌           |
-| File Input                         | 🔴 0%       | ❌           |
-| Multimodal Input                   | 🔴 0%       | ❌           |
 | Multimodal Generation              | 🔴 0%       | ❌           |
 
 \* By "API Frozen," we mean that these features will not change in a breaking way. We will add new features, but we will not change the existing interface in a way that breaks existing code.
@@ -489,21 +852,21 @@ await c.chat('What is a rickroll?', { model: 'gpt-4o' });
 
 The following table lists the providers and models that Ragged Comes with out of the box. If you want to use a different provider or model, you can create a custom adapter.
 
-| Provider                | Models                  | Chat | Embeddings | Tool Calls |
-| ----------------------- | ----------------------- | ---- | ---------- | ---------- |
-| OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅    | ✅          | ✅          |
-| OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | ✅    | ❌          | ❌          |
-| Azure OpenAI            | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          |
-| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ❌    | ❌          | ❌          |
-| Together                | Several OSS Models      | ❌    | ❌          | ❌          |
-| Cohere                  | CommandR, Command       | ✅    | ❌          | ❌          |
-| Anthropic               | Claude 2, Claude 3      | ❌    | ❌          | ❌          |
-| Mistral                 | 7B, 8x7B, S, M & L      | ❌    | ❌          | ❌          |
-| Groq                    | Lama2-70B, Mixtral-8x7b | ❌    | ❌          | ❌          |
-| DeepSeek                | Chat and Code           | ❌    | ❌          | ❌          |
-| Ollama                  | All models              | ❌    | ❌          | ❌          |
-| Google Gemini           | Gemini: Flash, Pro      | ❌    | ❌          | ❌          |
-| Hugging Face            | OSS Model               | ❌    | ❌          | ❌          |
+| Provider                | Models                  | Chat | Embeddings | Tool Calls | Multimodal |
+| ----------------------- | ----------------------- | ---- | ---------- | ---------- | ---------- |
+| OpenAI                  | GPT: 4o, 4T, 4, 3.5     | ✅    | ✅          | ✅          | ✅          |
+| OpenAI Assistants       | GPT: 4o, 4T, 4, 3.5     | ✅    | ❌          | ❌          | ❌          |
+| Azure OpenAI            | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          | ❌          |
+| Azure OpenAI Assistants | GPT: 4, 4T, 3.5         | ✅    | ❌          | ❌          | ❌          |
+| Together                | Several OSS Models      | ❌    | ❌          | ❌          | ❌          |
+| Cohere                  | CommandR, Command       | ✅    | ❌          | ❌          | ❌          |
+| Anthropic               | Claude 2, Claude 3      | ❌    | ❌          | ❌          | ❌          |
+| Mistral                 | 7B, 8x7B, S, M & L      | ❌    | ❌          | ❌          | ❌          |
+| Groq                    | Lama2-70B, Mixtral-8x7b | ❌    | ❌          | ❌          | ❌          |
+| DeepSeek                | Chat and Code           | ❌    | ❌          | ❌          | ❌          |
+| Ollama                  | All models              | ✅    | ❌          | ❌          | ❌          |
+| Google Gemini           | Gemini: Flash, Pro      | ❌    | ❌          | ❌          | ❌          |
+| Hugging Face            | OSS Model               | ❌    | ❌          | ❌          | ❌          |
 
 
 ## Custom LLM Adapters
@@ -533,16 +896,15 @@ An inline adapter is a simple way to create a custom adapter. You can define the
 
 ```ts
 import { Chat } from "ragged"
-import type { ChatAdapterTypes } from "ragged"
+import type { ChatAdapterRequest ,ChatAdapterResponse } from "ragged"
 
 const c = new Chat({
-    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
+    chat: async (request: ChatAdapterRequest): Promise<ChatAdapterResponse> => {
         // Make your API calls here, then return the mapped response.
+        // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };
     }
 });
-
-console.log(c);
 ```
 
 #### Object adapter
@@ -554,11 +916,12 @@ You could also create a custom adapter as an object and pass it to the construct
 
 ```ts
 import { Chat } from "ragged"
-import type { ChatAdapterTypes } from "ragged"
+import type { BaseChatAdapter } from "ragged"
 
-const adapter: ChatAdapterTypes['BaseChatAdapter'] = {
-    chat: async (request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> => {
+const adapter: BaseChatAdapter = {
+    chat: async (request: ChatAdapterRequest): Promise<ChatAdapterResponse> => {
         // Make your API calls here, then return the mapped response.
+        // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };
     }
 }
@@ -574,13 +937,12 @@ const c = new Chat(adapter);
 You could also create a custom adapter as a class and pass it to the constructor. This is useful if you want to use inheritance or if you want to use a constructor function, or store state.
 
 ```ts
-import { Chat, ChatAdapterTypes } from "ragged"
-
-type BaseChatAdapter = ChatAdapterTypes["BaseChatAdapter"];
+import { Chat, BaseChatAdapter, ChatAdapterRequest, ChatAdapterResponse } from "ragged"
 
 class ExampleAdapter implements BaseChatAdapter {
-    async chat(request: ChatAdapterTypes['ChatAdapterRequest']): Promise<ChatAdapterTypes['ChatAdapterResponse']> {
+    async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
         // Make your API calls here, then return the mapped response.
+        // request.context.apiClient.post('https://some-llm.com', { text: request.text })
         return { history: [] };
     }
 }

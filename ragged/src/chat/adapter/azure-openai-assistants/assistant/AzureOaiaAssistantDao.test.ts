@@ -12,7 +12,7 @@ describe("AzureOaiaDao", () => {
   describe("createAssistant", () => {
     it.skip("can be created", async () => {
       const apiClient = new ApiClient();
-      const azureOaiaDao = new AzureOaiaDao(apiClient, {
+      const azureOaiaDao = new AzureOaiaDao({
         apiKey,
         resourceName,
         deploymentName,
@@ -24,13 +24,15 @@ describe("AzureOaiaDao", () => {
         "AzureOaiaDao > createAssistant > can be created"
       );
 
-      const assistant = await azureOaiaDao.createAssistant({
-        name: "Financial Analyst Assistant",
-        instructions:
-          "You are an expert financial analyst. Use you knowledge base to answer questions about audited financial statements.",
-        tools: [],
-        model: modelName,
-      });
+      const assistant = await azureOaiaDao.createAssistant(
+        apiClient,
+        {
+          name: "Financial Analyst Assistant",
+          instructions:
+            "You are an expert financial analyst. Use you knowledge base to answer questions about audited financial statements.",
+          tools: [],
+          model: modelName,
+        });
 
       await polly.stop();
 

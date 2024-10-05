@@ -1,3 +1,7 @@
 {
-    "jest.runMode": "on-demand"
+    "jest.runMode": {
+        "type": "on-save"
+    },
+    "git.openRepositoryInParentFolders": "always",
+    "editor.formatOnSave": true
 }

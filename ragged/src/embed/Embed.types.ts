@@ -1,3 +1,5 @@
+import { ApiClient } from "../support/ApiClient";
+
 /**
  * Request to get an embedding for a given text
  */
@@ -10,6 +12,9 @@ export type EmbedRequest = {
      * Model to use for the embedding
      */
     model?: string;
+    context: {
+        apiClient: ApiClient
+    }
 }
 
 /**

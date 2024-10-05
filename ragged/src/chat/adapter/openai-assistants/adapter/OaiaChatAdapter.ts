@@ -1,3 +1,4 @@
+import { ApiClient } from "../../../../support/ApiClient";
 import { RetryError } from "../../../../support/RaggedErrors";
 import { Logger } from "../../../../support/logger/Logger";
 import { Message } from "../../../Chat.types";
@@ -51,8 +52,10 @@ export class OaiaChatAdapter implements BaseChatAdapter {
     constructor(private opts: OaiaChatAdapterConstructorOpts) { }
 
     async chat(request: ChatAdapterRequest): Promise<ChatAdapterResponse> {
+        const apiClient = request.context.apiClient;
+
         OaiaChatAdapter.logger.debug("Creating assistant...");
-        const assistant = await this.opts.assistantDao.createAssistant(this.opts.config.apiKey, {
+        const assistant = await this.opts.assistantDao.createAssistant(apiClient, this.opts.config.apiKey, {
             instructions: this.opts.config.assistant.instructions,
             model: this.opts.config.assistant.model,
             name: this.opts.config.assistant.name,
@@ -62,11 +65,11 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         });
 
         OaiaChatAdapter.logger.debug("Creating thread...");
-        const thread = await this.opts.threadDao.createThread(this.opts.config.apiKey);
+        const thread = await this.opts.threadDao.createThread(apiClient, this.opts.config.apiKey);
 
         OaiaChatAdapter.logger.debug("Creating messages");
         for (const message of request.history) {
-            await this.opts.messageDao.createMessage(this.opts.config.apiKey, {
+            await this.opts.messageDao.createMessage(apiClient, this.opts.config.apiKey, {
                 threadId: thread.id,
                 body: {
                     content: message.text || "",
@@ -76,7 +79,7 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         }
 
         OaiaChatAdapter.logger.debug("Running assistant...");
-        const run = await this.opts.runDao.createRun(this.opts.config.apiKey, {
+        const run = await this.opts.runDao.createRun(apiClient, this.opts.config.apiKey, {
             threadId: thread.id,
             body: {
                 assistant_id: assistant.id,
@@ -84,14 +87,14 @@ export class OaiaChatAdapter implements BaseChatAdapter {
             },
         });
 
-        const finishedRun = await this.pollRun(run.id, thread.id);
+        const finishedRun = await this.pollRun(apiClient, run.id, thread.id);
 
         if (!finishedRun) {
             throw new RetryError("Failed to get the run after polling for it.");
         }
 
         OaiaChatAdapter.logger.debug("Fetching messages...");
-        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(this.opts.config.apiKey, thread.id);
+        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(apiClient, this.opts.config.apiKey, thread.id);
 
         // All new messages from OAI Assistants come back with a thread_id. But because the messages we
         // created did not originate inside a thread, i.e. they were created just a few lines ago for the first time,
@@ -105,9 +108,14 @@ export class OaiaChatAdapter implements BaseChatAdapter {
         const raggedMessages: Message[] = OaiaChatMapper.mapMessagesFromOaia(newResponseMessages);
 
         // TODO: Delete the assistants, threads, messages, and runs after we are done with them.
+        // TODO: Return an array of raw requests and responses
 
         return {
-            history: raggedMessages
+            history: raggedMessages,
+            raw: {
+                request: null,
+                response: null
+            }
         }
     }
 
@@ -117,7 +125,7 @@ export class OaiaChatAdapter implements BaseChatAdapter {
      * @param thread 
      * @returns 
      */
-    private async pollRun(runId: string, threadId: string): Promise<OaiaRun | null> {
+    private async pollRun(apiClient: ApiClient, runId: string, threadId: string): Promise<OaiaRun | null> {
         // TODO: Loop until run is complete
         // TODO: when runStatus is "requires_action", we need to handle the tool calls there.
 
@@ -130,7 +138,7 @@ export class OaiaChatAdapter implements BaseChatAdapter {
             try {
                 OaiaChatAdapter.logger.debug("Fetching run...");
 
-                latestRun = await this.opts.runDao.getRun(this.opts.config.apiKey, {
+                latestRun = await this.opts.runDao.getRun(apiClient, this.opts.config.apiKey, {
                     runId: runId,
                     threadId: threadId
                 });

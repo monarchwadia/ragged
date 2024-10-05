@@ -1,3 +1,4 @@
+import { ApiClient } from "../../../../support/ApiClient";
 import { RetryError } from "../../../../support/RaggedErrors";
 import { Logger } from "../../../../support/logger/Logger";
 import { Message } from "../../../Chat.types";
@@ -52,42 +53,48 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
         AzureOaiaChatAdapter.logger.debug("Creating assistant...");
 
         // TODO: FIX THIS
-        const assistant = await this.opts.assistantDao.createAssistant({
-            instructions: "",
-            model: this.opts.config.modelName,
-            name: "",
-            tools: [],
-            description: ""
-        });
+        const assistant = await this.opts.assistantDao.createAssistant(
+            request.context.apiClient,
+            {
+                instructions: "",
+                model: this.opts.config.modelName,
+                name: "",
+                tools: [],
+                description: ""
+            });
 
         AzureOaiaChatAdapter.logger.debug("Creating thread...");
-        const thread = await this.opts.threadDao.createThread();
+        const thread = await this.opts.threadDao.createThread(request.context.apiClient,);
 
         AzureOaiaChatAdapter.logger.debug("Creating messages");
         for (const message of request.history) {
-            await this.opts.messageDao.createMessage({
-                threadId: thread.id,
-                body: {
-                    content: message.text || "",
-                    role: message.type === "user" ? "user" : "assistant"
-                }
-            });
+            await this.opts.messageDao.createMessage(
+                request.context.apiClient,
+                {
+                    threadId: thread.id,
+                    body: {
+                        content: message.text || "",
+                        role: message.type === "user" ? "user" : "assistant"
+                    }
+                });
         }
 
         AzureOaiaChatAdapter.logger.debug("Running assistant...");
-        const run = await this.opts.runDao.createRun({
-            threadId: thread.id,
-            assistant_id: assistant.id
-        });
+        const run = await this.opts.runDao.createRun(
+            request.context.apiClient,
+            {
+                threadId: thread.id,
+                assistant_id: assistant.id
+            });
 
-        const finishedRun = await this.pollRun(run.id, thread.id);
+        const finishedRun = await this.pollRun(request.context.apiClient, run.id, thread.id);
 
         if (!finishedRun) {
             throw new RetryError("Failed to get the run after polling for it.");
         }
 
         AzureOaiaChatAdapter.logger.debug("Fetching messages...");
-        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(thread.id);
+        const listMessageResponse = await this.opts.messageDao.listMessagesForThread(request.context.apiClient, thread.id);
 
         // All new messages from OAI Assistants come back with a thread_id. But because the messages we
         // created did not originate inside a thread, i.e. they were created just a few lines ago for the first time,
@@ -101,9 +108,14 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
         const raggedMessages: Message[] = AzureOaiaChatMapper.mapMessagesFromAzureOaia(newResponseMessages);
 
         // TODO: Delete the assistants, threads, messages, and runs after we are done with them.
+        // TODO: Send back the request/response objects in a list on a metadata key.
 
         return {
-            history: raggedMessages
+            history: raggedMessages,
+            raw: {
+                request: null,
+                response: null
+            }
         }
     }
 
@@ -113,7 +125,7 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
      * @param thread 
      * @returns 
      */
-    private async pollRun(runId: string, threadId: string): Promise<OaiaRun | null> {
+    private async pollRun(apiClient: ApiClient, runId: string, threadId: string): Promise<OaiaRun | null> {
         // TODO: Loop until run is complete
         // TODO: when runStatus is "requires_action", we need to handle the tool calls there.
 
@@ -126,10 +138,14 @@ export class AzureOaiaChatAdapter implements BaseChatAdapter {
             try {
                 AzureOaiaChatAdapter.logger.debug("Fetching run...");
 
-                latestRun = await this.opts.runDao.getRun(this.opts.config.apiKey, {
-                    runId: runId,
-                    threadId: threadId
-                });
+                latestRun = await this.opts.runDao.getRun(
+                    apiClient,
+                    this.opts.config.apiKey,
+                    {
+                        runId: runId,
+                        threadId: threadId
+                    }
+                );
 
                 // Check if the run is finished
                 runIsFinished = latestRun && this.isRunFinished(latestRun.status)

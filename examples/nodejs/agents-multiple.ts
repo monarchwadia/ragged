@@ -58,9 +58,8 @@ Climate change is not a problem for future generations to solve - it is happenin
 import { config } from 'dotenv';
 import chalk from "chalk";
 config();
-import { Chat, ChatTypes } from "ragged"
-
-type Tool = ChatTypes['Tool'];
+import { Chat } from "ragged"
+import type { Tool } from "ragged";
 
 // this is where we store the tweets. This is the shared workspace for the agents.
 type TweetHolder = {
@@ -198,7 +197,7 @@ const writeTweet = async (): Promise<string> => {
 
     const result = await c.chat(`Write a tweet about climate change.`);
 
-    const tweet = result.at(-1)?.text;
+    const tweet = result.history.at(-1)?.text;
 
     if (!tweet) {
         throw new Error("Failed to generate tweet.")
@@ -239,7 +238,7 @@ const rewriteTweet = async (tweet: TweetHolder): Promise<string> => {
         ----------------------------- END: Feedback -----------------------------
     `)
 
-    const rewrittenTweet = result.at(-1)?.text;
+    const rewrittenTweet = result.history.at(-1)?.text;
 
     if (!rewrittenTweet) {
         throw new Error("Failed to rewrite tweet.")

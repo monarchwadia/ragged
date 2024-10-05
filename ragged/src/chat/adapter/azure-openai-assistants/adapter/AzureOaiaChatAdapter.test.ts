@@ -65,15 +65,20 @@ describe("AzureOaiaChatAdapter", () => {
 
       await adapter.chat({
         history: [{ text: "Hello, whats your name?", type: "user" }],
+        context: {
+          apiClient
+        }
       });
 
-      expect(assistantDao.createAssistant).toHaveBeenCalledWith({
-        name: "",
-        description: "",
-        model: "mocked-modelName",
-        instructions: "",
-        tools: [],
-      });
+      expect(assistantDao.createAssistant).toHaveBeenCalledWith(
+        apiClient,
+        {
+          name: "",
+          description: "",
+          model: "mocked-modelName",
+          instructions: "",
+          tools: [],
+        });
     });
   });
 
@@ -94,10 +99,10 @@ describe("AzureOaiaChatAdapter", () => {
         modelName,
       };
       apiClient = new ApiClient();
-      assistantDao = new AzureOaiaDao(apiClient, config);
-      threadDao = new AzureOaiaThreadDao(apiClient, config);
-      messageDao = new AzureOaiaMessageDao(apiClient, config);
-      runDao = new AzureOaiaRunDao(apiClient, config);
+      assistantDao = new AzureOaiaDao(config);
+      threadDao = new AzureOaiaThreadDao(config);
+      messageDao = new AzureOaiaMessageDao(config);
+      runDao = new AzureOaiaRunDao(config);
 
       adapter = new AzureOaiaChatAdapter({
         config,
@@ -124,6 +129,9 @@ describe("AzureOaiaChatAdapter", () => {
         const response = await adapter.chat({
           history: [{ text: "Hello, whats your name?", type: "user" }],
           model: modelName,
+          context: {
+            apiClient
+          }
         });
 
         await polly.stop();

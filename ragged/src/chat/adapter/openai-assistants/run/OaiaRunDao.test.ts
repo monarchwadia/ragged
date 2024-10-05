@@ -9,10 +9,10 @@ describe("OaiaRunDaoDao", () => {
   describe("createRun", () => {
     it("can be created", async () => {
       const apiClient = new ApiClient();
-      const oaiaAssistantDao = new OaiaAssistantDao(apiClient);
-      const oaiaMessageDao = new OaiaMessageDao(apiClient);
-      const oaiaThreadDao = new OaiaThreadDao(apiClient);
-      const oaiaRunDao = new OaiaRunDao(apiClient);
+      const oaiaAssistantDao = new OaiaAssistantDao();
+      const oaiaMessageDao = new OaiaMessageDao();
+      const oaiaThreadDao = new OaiaThreadDao();
+      const oaiaRunDao = new OaiaRunDao();
 
       const polly = startPollyRecording(
         "OaiaRunDao > createRun > can be created",
@@ -24,6 +24,7 @@ describe("OaiaRunDaoDao", () => {
       );
 
       const assistant = await oaiaAssistantDao.createAssistant(
+        apiClient,
         process.env.OPENAI_API_KEY as string,
         {
           name: "assistantName",
@@ -35,19 +36,24 @@ describe("OaiaRunDaoDao", () => {
       );
 
       const thread = await oaiaThreadDao.createThread(
+        apiClient,
         process.env.OPENAI_API_KEY as string
       );
 
-      await oaiaMessageDao.createMessage(process.env.OPENAI_API_KEY as string, {
-        threadId: thread.id,
-        body: {
-          role: "user",
-          content:
-            "I need to solve the equation `3x + 11 = 14`. Can you help me?",
-        },
-      });
+      await oaiaMessageDao.createMessage(
+        apiClient,
+        process.env.OPENAI_API_KEY as string,
+        {
+          threadId: thread.id,
+          body: {
+            role: "user",
+            content:
+              "I need to solve the equation `3x + 11 = 14`. Can you help me?",
+          },
+        });
 
       const run = await oaiaRunDao.createRun(
+        apiClient,
         process.env.OPENAI_API_KEY as string,
         {
           threadId: thread.id,

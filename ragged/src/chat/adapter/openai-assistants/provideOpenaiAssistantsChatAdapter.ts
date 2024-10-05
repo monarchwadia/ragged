@@ -8,35 +8,18 @@ import { OaiaMessageDao } from "./message/OaiaMessageDao";
 import { OaiaRunDao } from "./run/OaiaRunDao";
 import { OaiaThreadDao } from "./thread/OaiaThreadDao";
 
-// export type OpenAiChatProviderParam = {
-//     config?: Partial<OpenAiChatAdapterConfig>;
-//     apiClient?: ApiClient;
-// }
-// export const provideOpenAiChatAdapter = (params: OpenAiChatProviderParam = {}): OpenAiChatAdapter => {
-//     const apiClient = params.apiClient || new ApiClient();
-//     const config = params.config || {};
-
-//     const adapter = new OpenAiChatAdapter(apiClient, config)
-
-//     return adapter;
-// }
-
 export type OpenaiAssistantsChatProviderParam = {
     config: OpenaiAssistantsChatAdapterConfig;
-    apiClient?: ApiClient;
 }
 
 export const provideOpenaiAssistantsChatAdapter = (params: OpenaiAssistantsChatProviderParam): OaiaChatAdapter => {
-    const config = params.config || {};
-    const apiClient = params.apiClient || new ApiClient();
-
-    const assistantDao = new OaiaAssistantDao(apiClient);
-    const threadDao = new OaiaThreadDao(apiClient);
-    const messageDao = new OaiaMessageDao(apiClient);
-    const runDao = new OaiaRunDao(apiClient);
+    const assistantDao = new OaiaAssistantDao();
+    const threadDao = new OaiaThreadDao();
+    const messageDao = new OaiaMessageDao();
+    const runDao = new OaiaRunDao();
 
     const adapter = new OaiaChatAdapter({
-        config: config,
+        config: params.config,
         assistantDao,
         threadDao,
         messageDao,

@@ -1,5 +1,5 @@
 import { MappingError } from "../../../support/RaggedErrors";
-import { BotMessage } from "../../Chat.types";
+import { BotMessage, Message } from "../../Chat.types";
 import { ChoiceToolCall, OaiTool, OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody, OpenAiMessage, OpenAiToolMessage } from "./OpenAiApiTypes";
 import { ChatAdapterRequest, ChatAdapterResponse } from "../BaseChatAdapter.types";
 import { Logger } from "../../../support/logger/Logger";
@@ -17,10 +17,53 @@ export const mapToOpenAi = (request: ChatAdapterRequest): OpenAiChatCompletionRe
 
             switch (message.type) {
                 case "user":
-                    messages.push({
-                        role: "user",
-                        content: message.text
-                    });
+                    if (message.attachments?.length) {
+                        const content: OpenAiChatCompletionRequestBody["messages"][0]["content"] = [];
+
+                        if (message.text) {
+                            content.push({
+                                type: "text",
+                                text: message.text
+                            });
+                        }
+
+                        message.attachments.forEach(attachment => {
+                            switch(attachment.type) {
+                                case "image":
+                                    let dataUrl: string;
+
+                                    switch(attachment.payload.encoding) {
+                                        case "base64_data_url":
+                                            dataUrl = `data:${attachment.payload.mimeType};base64,${attachment.payload.data}`;
+                                            break;
+                                        default:
+                                            logger.warn(`Unknown and unhandled attachment encoding: ${attachment.payload.encoding}. This will not get sent to OpenAI. Here is the full attachment: `, attachment);
+                                            return;
+                                    }
+
+                                    content.push({
+                                        type: "image_url",
+                                        image_url: {
+                                            url: dataUrl
+                                        }
+                                    });
+                                    break;
+                                default:
+                                    logger.warn(`Unknown and unhandled attachment type: ${attachment.type}. This will not get sent to OpenAI. Here is the full attachment: `, attachment);
+                                    break;
+                            }
+                        })
+
+                        messages.push({
+                            role: "user",
+                            content
+                        });
+                    } else {
+                        messages.push({
+                            role: "user",
+                            content: message.text
+                        });
+                    }
                     break
                 case "bot": {
 
@@ -123,14 +166,12 @@ export const mapToOpenAi = (request: ChatAdapterRequest): OpenAiChatCompletionRe
     }
 }
 
-export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatAdapterResponse => {
+export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): Message[] => {
     try {
         const history: ChatAdapterResponse['history'] = [];
 
         if (!response.choices) {
-            return {
-                history
-            }
+            return history;
         }
 
         if (response.choices?.length && response.choices?.length > 1) {
@@ -187,9 +228,7 @@ export const mapFromOpenAi = (response: OpenAiChatCompletionResponseBody): ChatA
             }
         }
 
-        return {
-            history
-        }
+        return history;
     } catch (e) {
         throw new MappingError("Failed to map OpenAI response to ChatResponse", e);
     }

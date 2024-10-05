@@ -23,7 +23,7 @@ const roleMapRaggedCohere: Record<Message['type'], CohereChatItem['role']> = {
 
 export class CohereChatMapper {
     static logger: Logger = new Logger("CohereChatMapper");
-    static mapChatRequestToCohereRequest(request: ChatAdapterRequest): CohereChatRequestRoot {
+    static mapChatRequestToCohereRequest(request: Message[]): CohereChatRequestRoot {
         const root: CohereChatRequestRoot = {
             message: undefined
         }
@@ -31,7 +31,7 @@ export class CohereChatMapper {
         // ===== map history =====
 
         const chat_history: CohereChatRequestRoot['chat_history'] = [];
-        request.history.forEach((item) => {
+        request.forEach((item) => {
             const mappedRole = roleMapRaggedCohere[item.type];
             chat_history.push({
                 role: mappedRole,
@@ -48,11 +48,11 @@ export class CohereChatMapper {
         // In such a case, throw an error, as there should always be a user message provided in Cohere.
         // It's OK if the last user message is followed by tool messages. In this case, just pass undefined as the message.
 
-        if (request.history.length === 0) {
+        if (request.length === 0) {
             throw new MappingError("No history provided in request. Cohere needs at least one message to start a conversation.");
         }
 
-        const previousMessage = request.history[request.history.length - 1];
+        const previousMessage = request[request.length - 1];
 
         if (previousMessage.type === "user") {
             if (previousMessage.text === null) {
@@ -80,18 +80,16 @@ export class CohereChatMapper {
 
         return root;
     }
-    static mapCohereResponseToChatResponse(response: CohereChatResponseRoot): ChatAdapterResponse {
+    static mapCohereResponseToChatResponse(response: CohereChatResponseRoot): Message[] {
         if (!response.text) {
-            this.logger.warn("No 'text' field was received in response from Cohere. This is unexpected, and may indicate an error in Ragged's logic.");
+            CohereChatMapper.logger.warn("No 'text' field was received in response from Cohere. This is unexpected, and may indicate an error in Ragged's logic.");
         }
 
-        return {
-            history: [
-                {
-                    type: "bot",
-                    text: response.text
-                }
-            ]
-        }
+        return [
+            {
+                type: "bot",
+                text: response.text
+            }
+        ]
     }
 }

@@ -12,7 +12,7 @@ describe("AzureOaiaThreadDao", () => {
   describe("createThread", () => {
     it.skip("can be created", async () => {
       const apiClient = new ApiClient();
-      const oaiaThreadDao = new AzureOaiaThreadDao(apiClient, {
+      const oaiaThreadDao = new AzureOaiaThreadDao({
         apiKey,
         resourceName,
         deploymentName,
@@ -24,7 +24,7 @@ describe("AzureOaiaThreadDao", () => {
         "AzureOaiaThreadDao > createThread > can be created"
       );
 
-      const thread = await oaiaThreadDao.createThread();
+      const thread = await oaiaThreadDao.createThread(apiClient);
 
       await polly.stop();
 

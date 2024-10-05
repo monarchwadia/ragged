@@ -11,6 +11,6 @@ const c = Chat.with({
     config: { apiKey: process.env.COHERE_API_KEY, model: 'command-light' }
 });
 
-const messages = await c.chat('What is a rickroll?');
+const { history } = await c.chat('What is a rickroll?');
 
-console.log(messages.at(-1)?.text); // A rickroll is ...
+console.log(history.at(-1)?.text); // A rickroll is ...

@@ -1,5 +1,4 @@
 import { ApiClient } from "../../../support/ApiClient";
-import { Logger } from "../../../support/logger/Logger";
 import { BaseChatAdapter, ChatAdapterRequest } from "../BaseChatAdapter.types";
 import { OpenAiChatCompletionRequestBody, OpenAiChatCompletionResponseBody } from "./OpenAiApiTypes";
 import { mapFromOpenAi, mapToOpenAi } from "./OpenAiChatMappers";
@@ -12,12 +11,11 @@ export type OpenAiChatAdapterConfig = {
 }
 
 export class OpenAiChatAdapter implements BaseChatAdapter {
-    private logger: Logger = new Logger('OpenAiChatDriver');
     private apiKey: string | undefined;
     private organizationId: string | undefined;
     private rootUrl: string = "https://api.openai.com/v1/chat/completions";
 
-    constructor(private driverApiClient: ApiClient, config: OpenAiChatAdapterConfig = {}) {
+    constructor(config: OpenAiChatAdapterConfig = {}) {
         if (config.apiKey) {
             this.apiKey = config.apiKey;
         }
@@ -33,13 +31,17 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
 
     async chat(request: ChatAdapterRequest) {
         const mappedRequest = mapToOpenAi(request);
-        const response = await this.chatCompletion(mappedRequest);
-        const mappedResponse = mapFromOpenAi(response);
-        return mappedResponse;
+        const apiResponse = await this.chatCompletion(request.context.apiClient, mappedRequest);
+        const mappedResponse = mapFromOpenAi(apiResponse.json);
+        return {
+            history: mappedResponse,
+            raw: apiResponse.raw
+
+        };
     }
 
 
-    private async chatCompletion(body: OpenAiChatCompletionRequestBody): Promise<OpenAiChatCompletionResponseBody> {
+    private async chatCompletion(apiClient: ApiClient, body: OpenAiChatCompletionRequestBody) {
         const headers: HeadersInit = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.apiKey}`
@@ -49,7 +51,7 @@ export class OpenAiChatAdapter implements BaseChatAdapter {
             headers['OpenAI-Organization'] = this.organizationId;
         }
 
-        return await this.driverApiClient.post(
+        return await apiClient.post(
             this.rootUrl,
             {
                 headers,
