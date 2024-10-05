@@ -104,7 +104,7 @@ importers:
         specifier: ^4.47.3
         version: 4.47.3
       ragged:
-        specifier: ^0.8.3
+        specifier: workspace:*
         version: link:../../ragged
       tsx:
         specifier: ^4.7.1

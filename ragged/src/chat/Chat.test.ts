@@ -4,9 +4,7 @@ import { Message } from "./Chat.types";
 import { BaseChatAdapter } from "./adapter/BaseChatAdapter.types";
 import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { startPollyRecording } from "../test/startPollyRecording";
-import {
-  ParameterValidationError,
-} from "../support/RaggedErrors";
+import { ParameterValidationError } from "../support/RaggedErrors";
 import { fakeRawsFactory } from "../test/fakeFactories";
 import { ApiClient } from "../support/ApiClient";
 import { ApiClientFactory } from "../support/ApiClient.types";
@@ -25,13 +23,16 @@ describe("Chat", () => {
   });
 
   describe("Default behaviour", () => {
-    it('supports 0 args in the chat call', () => {
+    it("supports 0 args in the chat call", () => {
       adapter.chat.mockResolvedValue({ history: [], raw: fakeRawsFactory() });
 
       c.chat();
 
-      expect(adapter.chat).toHaveBeenCalledWith({ history: [], context: { apiClient } });
-    })
+      expect(adapter.chat).toHaveBeenCalledWith({
+        history: [],
+        context: { apiClient },
+      });
+    });
 
     it("Calls the adapter with the correct request", async () => {
       adapter.chat.mockResolvedValue({ history: [], raw: fakeRawsFactory() });
@@ -45,7 +46,7 @@ describe("Chat", () => {
             text: "This is a test message to the adapter",
           },
         ],
-        context: { apiClient }
+        context: { apiClient },
       });
     });
 
@@ -57,7 +58,7 @@ describe("Chat", () => {
             text: "This is a test response from the adapter",
           },
         ],
-        raw: fakeRawsFactory()
+        raw: fakeRawsFactory(),
       });
 
       const chatResponse = await c.chat([
@@ -97,9 +98,14 @@ describe("Chat", () => {
         },
       ];
 
-      adapter.chat.mockResolvedValue({ history: expectedOutput, raw: fakeRawsFactory() });
+      adapter.chat.mockResolvedValue({
+        history: expectedOutput,
+        raw: fakeRawsFactory(),
+      });
 
-      const chatResponse = await c.chat(`This is a test message to the adapter`);
+      const chatResponse = await c.chat(
+        `This is a test message to the adapter`
+      );
 
       expect(chatResponse.history).toMatchObject([
         {
@@ -112,10 +118,12 @@ describe("Chat", () => {
 
     describe("When the adapter throws an error", () => {
       it("includes errors in the response", async () => {
-        const ERROR_MESSAGE = "This is a super specific error message"
+        const ERROR_MESSAGE = "This is a super specific error message";
         adapter.chat.mockRejectedValue(new Error(ERROR_MESSAGE));
 
-        const chatResponse = await c.chat(`This is a test message to the adapter`);
+        const chatResponse = await c.chat(
+          `This is a test message to the adapter`
+        );
 
         expect(chatResponse.history).toMatchObject([
           {
@@ -132,7 +140,9 @@ describe("Chat", () => {
       it("includes unknown errors in the response", async () => {
         adapter.chat.mockRejectedValue({});
 
-        const chatResponse = await c.chat(`This is a test message to the adapter`);
+        const chatResponse = await c.chat(
+          `This is a test message to the adapter`
+        );
 
         expect(chatResponse.history).toMatchObject([
           {
@@ -146,16 +156,24 @@ describe("Chat", () => {
         ] as Message[]);
       });
 
-      describe.each([new Error("error"), {}])("The raw response object", (rejectedValue) => {
-        it("should set the raw request and response objects as empty strings", async () => {
-          adapter.chat.mockRejectedValue(rejectedValue);
+      describe.each([new Error("error"), {}])(
+        "The raw response object",
+        (rejectedValue) => {
+          it("should set the raw request and response objects as empty strings", async () => {
+            adapter.chat.mockRejectedValue(rejectedValue);
 
-          const chatResponse = await c.chat(`This is a test message to the adapter`);
+            const chatResponse = await c.chat(
+              `This is a test message to the adapter`
+            );
 
-          expect(chatResponse.raw).toMatchObject({ requests: [], responses: [] });
-        })
-      })
-    })
+            expect(chatResponse.raw).toMatchObject({
+              requests: [],
+              responses: [],
+            });
+          });
+        }
+      );
+    });
   });
 
   describe("with recording", () => {
@@ -170,7 +188,7 @@ describe("Chat", () => {
             text: "This is a test response from the adapter",
           },
         ],
-        raw: fakeRawsFactory()
+        raw: fakeRawsFactory(),
       });
 
       let chatResponse = await c.chat(`This is a test message to the adapter`);
@@ -195,10 +213,12 @@ describe("Chat", () => {
             text: "This is the last test response from the adapter",
           },
         ],
-        raw: fakeRawsFactory()
+        raw: fakeRawsFactory(),
       });
 
-      chatResponse = await c.chat(`This is another test message to the adapter`);
+      chatResponse = await c.chat(
+        `This is another test message to the adapter`
+      );
 
       const expectedValue = [
         {
@@ -234,7 +254,7 @@ describe("Chat", () => {
             text: "This is a test response from the adapter",
           },
         ],
-        raw: fakeRawsFactory()
+        raw: fakeRawsFactory(),
       });
 
       const chatResponse = await c.chat([
@@ -269,7 +289,9 @@ describe("Chat", () => {
 
       adapter.chat.mockRejectedValue(new Error("This is an error"));
 
-      const chatResponse = await c.chat(`This is a test message to the adapter`);
+      const chatResponse = await c.chat(
+        `This is a test message to the adapter`
+      );
 
       expect(chatResponse.history).toMatchObject([
         {
@@ -288,7 +310,9 @@ describe("Chat", () => {
 
       adapter.chat.mockRejectedValue({});
 
-      const chatResponse = await c.chat(`This is a test message to the adapter`);
+      const chatResponse = await c.chat(
+        `This is a test message to the adapter`
+      );
 
       expect(chatResponse.history).toMatchObject([
         {
@@ -312,7 +336,7 @@ describe("Chat", () => {
             text: "This is a test response from the adapter",
           },
         ],
-        raw: fakeRawsFactory()
+        raw: fakeRawsFactory(),
       });
 
       await c.chat(`Message 1`);
@@ -403,6 +427,135 @@ describe("Chat", () => {
     });
   });
 
+  describe("without recording", () => {
+    beforeEach(() => {
+      c.record(false);
+    });
+
+    it("should return the history of messages in the response", async () => {
+      // adapter should return just the LLM response
+      adapter.chat.mockResolvedValue({
+        history: [
+          {
+            type: "bot",
+            text: "This is a test response from the adapter",
+          },
+        ],
+        raw: fakeRawsFactory(),
+      });
+
+      let chatResponse = await c.chat(`This is a test message to the adapter`);
+
+      expect(chatResponse.history).toMatchObject([
+        {
+          type: "user",
+          text: `This is a test message to the adapter`,
+        },
+        {
+          type: "bot",
+          text: "This is a test response from the adapter",
+        },
+      ] as Message[]);
+
+      // and one more try
+
+      adapter.chat.mockResolvedValue({
+        history: [
+          {
+            type: "bot",
+            text: "This is the last test response from the adapter",
+          },
+        ],
+        raw: fakeRawsFactory(),
+      });
+
+      chatResponse = await c.chat(
+        `This is another test message to the adapter`
+      );
+
+      const expectedValue = [
+        {
+          type: "user",
+          text: `This is another test message to the adapter`,
+        },
+        {
+          type: "bot",
+          text: "This is the last test response from the adapter",
+        },
+      ] as Message[];
+
+      expect(chatResponse.history).toMatchObject(expectedValue);
+      expect(c.history).toMatchObject([]);
+    });
+
+    it("should return the correct history of messages in the response when manually setting history on the object", async () => {
+      const c = Chat.with({
+        provider: "openai",
+        config: {
+          apiKey: process.env.OPENAI_API_KEY,
+        },
+      });
+
+      c.record(false);
+
+      c.history = [
+        {
+          type: "system",
+          text: "This is a system message",
+        },
+        {
+          type: "user",
+          text: "This is a test message to the adapter",
+        },
+        {
+          type: "bot",
+          text: "This is a test response from the adapter",
+        },
+      ];
+
+      const polly = startPollyRecording(
+        "without-recording-should-return-correct-history-of-messages-when-manually-setting-history",
+        { matchRequestsBy: { order: true } }
+      );
+
+      let response: Awaited<ReturnType<typeof c.chat>>;
+      try {
+        response = await c.chat("This is another test message to the adapter");
+      } finally {
+        await polly.stop();
+      }
+
+      expect(response.history.length).toBe(5);
+
+      expect(response.history[0]).toMatchObject({
+        type: "system",
+        text: "This is a system message",
+      });
+
+      expect(response.history[1]).toMatchObject({
+        type: "user",
+        text: "This is a test message to the adapter",
+      });
+
+      expect(response.history[2]).toMatchObject({
+        type: "bot",
+        text: "This is a test response from the adapter",
+      });
+
+      expect(response.history[3]).toMatchObject({
+        type: "user",
+        text: "This is another test message to the adapter",
+      });
+
+      expect(response.history[4]).toMatchInlineSnapshot(`
+        {
+          "text": "Acknowledged, this is another test response from the adapter",
+          "type": "bot",
+        }
+      `);
+    });
+  });
+
   describe("tool calling", () => {
     describe("automatic tool call handling", () => {
       it("should automatically call the tool handler when a tool call is detected and send a response to the LLM", async () => {
@@ -424,7 +577,7 @@ describe("Chat", () => {
               ],
             },
           ],
-          raw: fakeRawsFactory()
+          raw: fakeRawsFactory(),
         });
 
         adapter.chat.mockResolvedValueOnce({
@@ -434,7 +587,7 @@ describe("Chat", () => {
               text: "And here's the news...",
             },
           ],
-          raw: fakeRawsFactory()
+          raw: fakeRawsFactory(),
         });
 
         // chat generates a tool call response and re-queries the LLM
@@ -501,11 +654,11 @@ describe("Chat", () => {
       let response: ChatResponse;
       beforeEach(async () => {
         const c = Chat.with({
-          provider: 'openai',
+          provider: "openai",
           config: {
-            apiKey: process.env.OPENAI_API_KEY
-          }
-        })
+            apiKey: process.env.OPENAI_API_KEY,
+          },
+        });
 
         const lsTool: Tool = {
           id: "ls",
@@ -550,9 +703,8 @@ describe("Chat", () => {
         });
 
         await polly.stop();
-      })
+      });
       it("should return the expected response", () => {
-
         expect(response.history).toMatchInlineSnapshot(`
           [
             {
@@ -589,18 +741,17 @@ describe("Chat", () => {
             },
           ]
         `);
-      })
+      });
 
       it("should return the raw requests and responses", () => {
         expect(response.raw?.requests.length).toBe(2);
         expect(response.raw?.responses.length).toBe(2);
-      })
-
+      });
     });
   });
 
   describe("with attachments", () => {
-    it('should send attachments to the adapter', async () => {
+    it("should send attachments to the adapter", async () => {
       adapter.chat.mockResolvedValue({ history: [], raw: fakeRawsFactory() });
       await c.chat([
         {
@@ -613,10 +764,10 @@ describe("Chat", () => {
                 mimeType: "image/png",
                 encoding: "base64_data_url",
                 data: "some base64 data",
-              }
-            }
-          ]
-        }
+              },
+            },
+          ],
+        },
       ]);
 
       expect(adapter.chat).toHaveBeenCalledWith({
@@ -632,23 +783,23 @@ describe("Chat", () => {
                   mimeType: "image/png",
                   encoding: "base64_data_url",
                   data: "some base64 data",
-                }
-              }
-            ]
-          }
-        ]
+                },
+              },
+            ],
+          },
+        ],
       });
     });
 
-    it('should preserve attachments in history', async () => {
+    it("should preserve attachments in history", async () => {
       adapter.chat.mockResolvedValue({
         history: [
           {
             type: "bot",
-            text: "This is a test response from the adapter"
-          }
+            text: "This is a test response from the adapter",
+          },
         ],
-        raw: fakeRawsFactory()
+        raw: fakeRawsFactory(),
       });
 
       const chatResponse = await c.chat([
@@ -662,10 +813,10 @@ describe("Chat", () => {
                 mimeType: "image/png",
                 encoding: "base64_data_url",
                 data: "some base64 data",
-              }
-            }
-          ]
-        }
+              },
+            },
+          ],
+        },
       ]);
 
       expect(chatResponse.history).toMatchObject([
@@ -679,83 +830,93 @@ describe("Chat", () => {
                 mimeType: "image/png",
                 encoding: "base64_data_url",
                 data: "some base64 data",
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         {
           type: "bot",
-          text: "This is a test response from the adapter"
-        }
+          text: "This is a test response from the adapter",
+        },
       ] as Message[]);
     });
   });
 
-  describe('with hooks', () => {
+  describe("with hooks", () => {
     beforeEach(() => {
       adapter.chat.mockResolvedValue({
         history: [
           {
             type: "bot",
-            text: "This is a test response from the adapter"
-          }
+            text: "This is a test response from the adapter",
+          },
         ],
-        raw: fakeRawsFactory()
+        raw: fakeRawsFactory(),
       });
     });
 
     afterEach(() => {
       jest.clearAllMocks();
-    })
+    });
 
-    describe('beforeSerialize hook', () => {
-      it('should set the beforeSerialize hook on the API client before passing it into the adapter.', async () => {
+    describe("beforeSerialize hook", () => {
+      it("should set the beforeSerialize hook on the API client before passing it into the adapter.", async () => {
         const beforeSerializeMock = jest.fn();
 
         await c.chat(`This is a test message to the adapter`, {
-          hooks: { beforeSerialize: beforeSerializeMock }
+          hooks: { beforeSerialize: beforeSerializeMock },
         });
 
-        expect(adapter.chat.mock.calls).toHaveLength(1)
-        expect(adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.beforeSerialize).toBe(beforeSerializeMock);
+        expect(adapter.chat.mock.calls).toHaveLength(1);
+        expect(
+          adapter.chat.mock.lastCall?.[0].context.apiClient.hooks
+            .beforeSerialize
+        ).toBe(beforeSerializeMock);
       });
-    })
+    });
 
-    describe('beforeRequest hook', () => {
-      it('should set the beforeRequest hook on the API client before passing it into the adapter.', async () => {
+    describe("beforeRequest hook", () => {
+      it("should set the beforeRequest hook on the API client before passing it into the adapter.", async () => {
         const beforeRequestMock = jest.fn();
 
         await c.chat(`This is a test message to the adapter`, {
-          hooks: { beforeRequest: beforeRequestMock }
+          hooks: { beforeRequest: beforeRequestMock },
         });
 
-        expect(adapter.chat.mock.calls).toHaveLength(1)
-        expect(adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.beforeRequest).toBe(beforeRequestMock);
+        expect(adapter.chat.mock.calls).toHaveLength(1);
+        expect(
+          adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.beforeRequest
+        ).toBe(beforeRequestMock);
       });
 
-      it('should set the afterResponse hook on the API client before passing it into the adapter', async () => {
+      it("should set the afterResponse hook on the API client before passing it into the adapter", async () => {
         const afterResponse = jest.fn();
 
         await c.chat(`This is a test message to the adapter`, {
-          hooks: { afterResponse: afterResponse }
+          hooks: { afterResponse: afterResponse },
         });
 
-        expect(adapter.chat.mock.calls).toHaveLength(1)
-        expect(adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.afterResponse).toBe(afterResponse);
+        expect(adapter.chat.mock.calls).toHaveLength(1);
+        expect(
+          adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.afterResponse
+        ).toBe(afterResponse);
       });
 
-      it('should set the afterResponseParsed hook on the API client before passing it into the adapter', async () => {
+      it("should set the afterResponseParsed hook on the API client before passing it into the adapter", async () => {
         const afterResponseParsed = jest.fn();
 
         await c.chat(`This is a test message to the adapter`, {
-          hooks: { afterResponseParsed: afterResponseParsed }
+          hooks: { afterResponseParsed: afterResponseParsed },
         });
 
-        expect(adapter.chat.mock.calls).toHaveLength(1)
-        expect(adapter.chat.mock.lastCall?.[0].context.apiClient.hooks.afterResponseParsed).toBe(afterResponseParsed);
+        expect(adapter.chat.mock.calls).toHaveLength(1);
+        expect(
+          adapter.chat.mock.lastCall?.[0].context.apiClient.hooks
+            .afterResponseParsed
+        ).toBe(afterResponseParsed);
       });
-    })
-  })
+    });
+  });
 
   describe("parameter validation", () => {
     describe("chat()", () => {
@@ -821,76 +982,75 @@ describe("Chat", () => {
     });
   });
 
-  describe('Chat.with', () => {
-    describe('instantiation', () => {
-      it('can instantiate openai', () => {
+  describe("Chat.with", () => {
+    describe("instantiation", () => {
+      it("can instantiate openai", () => {
         const c = Chat.with({
-          provider: 'openai',
+          provider: "openai",
           config: {
-            apiKey: '123'
-          }
+            apiKey: "123",
+          },
         });
-        expect(c).toBeDefined();
-      })
-
-      it('can instantiate cohere', () => {
-        const c = Chat.with({
-          provider: 'cohere',
-          config: {
-            apiKey: '123'
-          }
-        });
-
-        expect(c).toBeDefined();
-      })
-
-      it('can instantiate ollama', () => {
-        const c = Chat.with({
-          provider: 'ollama',
-          config: {}
-        })
         expect(c).toBeDefined();
       });
 
-      it('can instantiate azure-openai', () => {
+      it("can instantiate cohere", () => {
         const c = Chat.with({
-          provider: 'azure-openai',
+          provider: "cohere",
           config: {
-            apiKey: '123',
-            apiVersion: 'v1',
-            resourceName: 'resource',
-            deploymentName: 'deployment'
-          }
+            apiKey: "123",
+          },
+        });
+
+        expect(c).toBeDefined();
+      });
+
+      it("can instantiate ollama", () => {
+        const c = Chat.with({
+          provider: "ollama",
+          config: {},
+        });
+        expect(c).toBeDefined();
+      });
+
+      it("can instantiate azure-openai", () => {
+        const c = Chat.with({
+          provider: "azure-openai",
+          config: {
+            apiKey: "123",
+            apiVersion: "v1",
+            resourceName: "resource",
+            deploymentName: "deployment",
+          },
         });
       });
 
-      it('can instantiate openai-assistants', () => {
+      it("can instantiate openai-assistants", () => {
         const c = Chat.with({
-          provider: 'openai-assistants',
+          provider: "openai-assistants",
           config: {
-            apiKey: '123',
+            apiKey: "123",
             assistant: {
-              model: 'model',
-              description: 'description',
-              instructions: 'instructions',
-              name: 'name',
-            }
-          }
+              model: "model",
+              description: "description",
+              instructions: "instructions",
+              name: "name",
+            },
+          },
         });
       });
-      it('can instantiate azure-openai-assistants', () => {
+      it("can instantiate azure-openai-assistants", () => {
         const c = Chat.with({
-          provider: 'azure-openai-assistants',
+          provider: "azure-openai-assistants",
           config: {
-            apiKey: '123',
-            apiVersion: 'v1',
-            resourceName: 'resource',
-            deploymentName: 'deployment',
-            modelName: 'model'
-          }
+            apiKey: "123",
+            apiVersion: "v1",
+            resourceName: "resource",
+            deploymentName: "deployment",
+            modelName: "model",
+          },
         });
-      })
+      });
     });
-
   });
-})
+});
