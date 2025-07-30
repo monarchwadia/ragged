@@ -7,12 +7,32 @@ type ConfigProvider = {
 };
 const configs: ConfigProvider[] = [
   {
-    label: "openai",
+    label: "OpenAI with GPT-4o",
     config: {
       provider: "openai",
       config: {
         apiKey: process.env.OPENAI_API_KEY,
         model: "gpt-4o",
+      },
+    },
+  },
+  {
+    label: "Cohere Command Light",
+    config: {
+      provider: "cohere",
+      config: {
+        apiKey: process.env.COHERE_API_KEY,
+        model: "command-light",
+      },
+    },
+  },
+  {
+    label: "Cohere Command Nightly",
+    config: {
+      provider: "cohere",
+      config: {
+        apiKey: process.env.COHERE_API_KEY,
+        model: "command-nightly",
       },
     },
   },
@@ -22,7 +42,6 @@ describe("Test Builds", () => {
   it.each(configs)(
     "should echo chat response for %s provider",
     async (config) => {
-      console.log("OPENAI API KEY", process.env.OPENAI_API_KEY);
       const chat = Chat.with(config.config);
       const response = await chat.chat("Respond with exactly: Hello, world!");
       expect(response).toBeDefined();
