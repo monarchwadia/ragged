@@ -4,5 +4,5 @@ packages:
   - examples/*
   - scratch
   - test-builds
-  - test-e2e
+
 

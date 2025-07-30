@@ -12,6 +12,7 @@
     "build-skiptests": "pnpm build:base",
     "build:base": "rm -rf ./build &&  tsc -p tsconfig.build.json --emitDeclarationOnly && tsx build.ts",
     "test": "jest",
+    "test:integration": "RUN_TEST_TYPE=integration jest",
     "tdd": "jest --watch"
   },
   "keywords": [],

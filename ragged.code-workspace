@@ -13,10 +13,6 @@
 			"name": "Test Builds"
 		},
 		{
-			"path": "./test-e2e",
-			"name": "Test E2E"
-		},
-		{
 			"path": "./documentation",
 			"name": "Documentation"
 		},

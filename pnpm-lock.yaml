@@ -215,6 +215,9 @@ importers:
 
   test-e2e:
     dependencies:
+      '@types/jest':
+        specifier: 29.5.12
+        version: 29.5.12
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -225,9 +228,9 @@ importers:
         specifier: ^29.4.0
         version: 29.4.0(@babel/core@7.24.3)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.3))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.13.0))(typescript@5.5.2)
     devDependencies:
-      '@types/jest':
-        specifier: 29.5.12
-        version: 29.5.12
+      '@types/node':
+        specifier: ^20.13.0
+        version: 20.13.0
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@20.13.0)
