@@ -3,7 +3,7 @@ import { tmpdir } from "os";
 import path from "path";
 import { mkdtemp } from "node:fs/promises";
 import { join } from 'node:path'
-import { exec, execSync } from "child_process";
+import { execSync } from "child_process";
 import PackageJson from '@npmcli/package-json';
 import deepmerge from "deepmerge";
 
@@ -43,7 +43,7 @@ export class TempWorkspace {
 
     /**
      * Creates a temporary directory and copies Ragged's built files into it.
-     * The Ragged file are the same ones as installed in this e2e project.
+     * The Ragged file are the same ones as installed in this project.
      */
     async asyncInit() {
         // Create a temporary directory

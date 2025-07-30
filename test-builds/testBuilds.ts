@@ -5,7 +5,7 @@
  * dependencies work correctly across a wide range of consumer project setups.
  *
  * Each combination is tried in isolation, and results are tabulated and printed.
- * Invalid or legacy combinations are excluded. This is intended for E2E validation
+ * Invalid or legacy combinations are excluded. This is intended for validation
  * of build compatibility, not for CI or production use.
  */
 import { BuildSettings, TempWorkspace } from "./TempWorkspace";

@@ -1,7 +1,6 @@
-# E2E tests
+# Build tests tests
 
-These are E2E tests that are async. Currently, they are not run in CI. They are used to test builds locally, and make sure 
-the Ragged module can be npm installed and used in a project.
+These are build tests that are async. Currently, they are not run in CI. They are used to test builds locally, and make sure the Ragged module can be npm installed and used in a variety of projects.
 
 ## Running the tests
 
@@ -25,7 +24,7 @@ By default, the tests will use the latest version of the Ragged module from npm.
 # make sure you link ragged
 cd ../ragged/ragged;
 pnpm link --global;
-cd ../e2e;
+cd ../test-builds;
 RAGGED_SOURCE=globally-linked pnpm run start
 ```
 

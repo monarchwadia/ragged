@@ -1,11 +1,12 @@
 {
-  "name": "e2e",
+  "name": "test-builds",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "tsx testBuilds.ts"
   },
+  "private": true,
   "keywords": [],
   "author": "",
   "license": "ISC",

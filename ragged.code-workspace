@@ -9,8 +9,8 @@
 			"name": "Ragged"
 		},
 		{
-			"path": "./e2e",
-			"name": "End-to-End Tests"
+			"path": "./test-builds",
+			"name": "Test Builds"
 		},
 		{
 			"path": "./documentation",

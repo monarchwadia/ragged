@@ -3,5 +3,5 @@ packages:
   - documentation
   - examples/*
   - scratch
-  - e2e
+  - test-builds
 
