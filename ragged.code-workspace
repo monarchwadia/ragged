@@ -33,6 +33,7 @@
 		"typescript.tsdk": "/node_modules/typescript/lib",
 		"jest.disabledWorkspaceFolders": [
 			"documentation",
-		]
+		],
+		"editor.formatOnSave": true
 	}
 }

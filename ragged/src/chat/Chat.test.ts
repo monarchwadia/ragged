@@ -9,7 +9,6 @@ import {
 } from "../support/RaggedErrors";
 import { fakeRawsFactory } from "../test/fakeFactories";
 import { ApiClient } from "../support/ApiClient";
-import { ApiClientFactory } from "../support/ApiClient.types";
 
 describe("Chat", () => {
   let adapter: DeepMockProxy<BaseChatAdapter>;
