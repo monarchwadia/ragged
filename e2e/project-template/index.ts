@@ -5,4 +5,9 @@ console.log(Chat.with({
     provider: "openai",
     config: { apiKey: "nope" }
 }))
-console.log(Embed.with("openai", { apiKey: "nope" }));
+console.log(Embed.with({
+    provider: "openai",
+    config: {
+        apiKey: "nope"
+    }
+}));

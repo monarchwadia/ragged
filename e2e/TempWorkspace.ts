@@ -27,8 +27,8 @@ const doExecSync: typeof execSync = (...args: any[]) => {
 export type BuildSettings = {
     tsconfig?: {
         compilerOptions: {
-            moduleResolution?: "node" | "ESNext"
-            module?: "commonjs" | "ESNext"
+            moduleResolution?: string
+            module?: string
         }
     },
     packageJson?: {
