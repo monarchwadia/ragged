@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsx testBuilds.ts",
-    "DISABLED:test": "jest --testNamePattern=META_SELFTEST_SUITE",
-    "DISABLED:tdd": "jest --watch --testNamePattern=META_SELFTEST_SUITE"
+    "start": "tsx testBuilds.ts"
   },
   "keywords": [],
   "author": "",
